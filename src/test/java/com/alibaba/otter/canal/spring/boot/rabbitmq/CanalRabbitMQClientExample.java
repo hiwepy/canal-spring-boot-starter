@@ -51,13 +51,7 @@ public class CanalRabbitMQClientExample extends AbstractRocektMQTest {
     public static void main(String[] args) {
         try {
             final CanalRabbitMQClientExample rocketMQClientExample = new CanalRabbitMQClientExample(nameServers,
-                topic,
-                groupId,
-                enableMessageTrace,
-                accessKey,
-                secretKey,
-                accessChannel,
-                namespace);
+            		nameServers, groupId, accessKey, secretKey, accessKey, accessChannel, null, running);
             logger.info("## Start the rocketmq consumer: {}-{}", topic, groupId);
             rocketMQClientExample.start();
             logger.info("## The canal rocketmq consumer is running now ......");

@@ -1,4 +1,4 @@
-# curator-spring-boot-starter
+# canal-spring-boot-starter
 
 #### 组件简介
 

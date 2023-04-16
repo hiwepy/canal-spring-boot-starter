@@ -40,7 +40,6 @@ public class CanalClient {
     	this.connector = connector;
     }
 
-    
     protected void start() {
         Assert.notNull(connector, "connector is null");
         thread = new Thread(this::process);

@@ -1,10 +1,6 @@
 package com.alibaba.otter.canal.spring.boot;
 
-import org.slf4j.MDC;
-import org.springframework.util.Assert;
-
 import com.alibaba.otter.canal.client.CanalConnector;
-import com.alibaba.otter.canal.protocol.Message;
 
 /**
  * From https://github.com/alibaba/canal/tree/master/example

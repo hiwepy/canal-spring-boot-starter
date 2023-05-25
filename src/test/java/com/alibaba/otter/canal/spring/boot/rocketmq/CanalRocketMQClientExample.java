@@ -1,15 +1,14 @@
 package com.alibaba.otter.canal.spring.boot.rocketmq;
 
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
+import com.alibaba.otter.canal.client.rocketmq.RocketMQCanalConnector;
+import com.alibaba.otter.canal.protocol.Message;
+import com.alibaba.otter.canal.spring.boot.utils.CanalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
-import com.alibaba.otter.canal.client.rocketmq.RocketMQCanalConnector;
-import com.alibaba.otter.canal.protocol.Message;
-import com.alibaba.otter.canal.spring.boot.utils.CanalUtils;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * From https://github.com/alibaba/canal/tree/master/example

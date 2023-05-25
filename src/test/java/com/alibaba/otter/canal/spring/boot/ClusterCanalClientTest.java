@@ -1,10 +1,9 @@
 package com.alibaba.otter.canal.spring.boot;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.alibaba.otter.canal.client.CanalConnector;
 import com.alibaba.otter.canal.client.CanalConnectors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * From https://github.com/alibaba/canal/tree/master/example

@@ -15,14 +15,11 @@
  */
 package com.alibaba.otter.canal.spring.boot;
 
+import com.lmax.disruptor.dsl.ProducerType;
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import com.lmax.disruptor.dsl.ProducerType;
-
-import lombok.Data;
-
 /**
- * https://www.ishumei.com/
  * 
  * @author ： <a href="https://github.com/hiwepy">hiwepy</a>
  */

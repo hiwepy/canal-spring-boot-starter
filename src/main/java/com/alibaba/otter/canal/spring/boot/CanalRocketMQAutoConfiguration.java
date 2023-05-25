@@ -1,17 +1,14 @@
 package com.alibaba.otter.canal.spring.boot;
 
+import com.alibaba.otter.canal.client.rocketmq.RocketMQCanalConnector;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.StringUtils;
-
-import com.alibaba.otter.canal.client.rocketmq.RocketMQCanalConnector;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Configuration
 @ConditionalOnClass({ RocketMQCanalConnector.class, DefaultMQPushConsumer.class })
@@ -20,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CanalRocketMQAutoConfiguration {
 
-	@Bean(destroyMethod = "disconnect")
+	@Bean(initMethod = "connect", destroyMethod = "disconnect")
 	public RocketMQCanalConnector rocketMQCanalConnector(CanalRocketMQProperties properties) {
 
 		// 1、创建连接实例

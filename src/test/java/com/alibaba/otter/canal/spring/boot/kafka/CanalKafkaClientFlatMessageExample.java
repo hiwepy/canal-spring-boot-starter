@@ -1,14 +1,13 @@
 package com.alibaba.otter.canal.spring.boot.kafka;
 
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
+import com.alibaba.otter.canal.client.kafka.KafkaCanalConnector;
+import com.alibaba.otter.canal.protocol.FlatMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
-import com.alibaba.otter.canal.client.kafka.KafkaCanalConnector;
-import com.alibaba.otter.canal.protocol.FlatMessage;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * From https://github.com/alibaba/canal/tree/master/example

@@ -15,9 +15,8 @@
  */
 package com.alibaba.otter.canal.spring.boot;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
 import lombok.Data;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(CanalRocketMQProperties.PREFIX)
 @Data

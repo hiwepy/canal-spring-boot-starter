@@ -1,17 +1,13 @@
 package com.alibaba.otter.canal.spring.boot;
+
+import com.alibaba.otter.canal.client.CanalConnector;
+import com.alibaba.otter.canal.client.CanalConnectors;
+import com.alibaba.otter.canal.common.utils.AddressUtils;
+import com.alibaba.otter.canal.protocol.CanalEntry.*;
+import com.alibaba.otter.canal.protocol.Message;
+
 import java.net.InetSocketAddress;
 import java.util.List;
-
-import com.alibaba.otter.canal.client.CanalConnectors;
-import com.alibaba.otter.canal.client.CanalConnector;
-import com.alibaba.otter.canal.common.utils.AddressUtils;
-import com.alibaba.otter.canal.protocol.Message;
-import com.alibaba.otter.canal.protocol.CanalEntry.Column;
-import com.alibaba.otter.canal.protocol.CanalEntry.Entry;
-import com.alibaba.otter.canal.protocol.CanalEntry.EntryType;
-import com.alibaba.otter.canal.protocol.CanalEntry.EventType;
-import com.alibaba.otter.canal.protocol.CanalEntry.RowChange;
-import com.alibaba.otter.canal.protocol.CanalEntry.RowData;
 
 /**
  * From https://github.com/alibaba/canal/tree/master/example

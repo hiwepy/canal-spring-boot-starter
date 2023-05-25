@@ -15,18 +15,17 @@
  */
 package com.alibaba.otter.canal.spring.boot.rabbitmq;
 
-import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
-
 import com.alibaba.otter.canal.client.rabbitmq.RabbitMQCanalConnector;
 import com.alibaba.otter.canal.protocol.FlatMessage;
 import com.alibaba.otter.canal.protocol.Message;
 import com.alibaba.otter.canal.spring.boot.rocketmq.AbstractRocektMQTest;
 import com.alibaba.otter.canal.spring.boot.utils.CanalUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.Assert;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Rabbitmq client example

@@ -360,7 +360,10 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<canal.version>1.1.6</canal.version>
+		<ddlutils.version>1.0-20060223</ddlutils.version>
 		<disruptor.version>3.4.4</disruptor.version>
+		<kafka-clients.version>3.4.0</kafka-clients.version>
+		<pulsar-client.version>3.0.0</pulsar-client.version>
 		<maven.version>3.0</maven.version>
        	<maven-gpg-plugin.version>1.6</maven-gpg-plugin.version>
         <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
@@ -368,6 +371,7 @@
         <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
         <maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
 		<maven-nexus-staging-plugin.version>1.6.8</maven-nexus-staging-plugin.version>
+		<rocketmq-client.version>4.9.2</rocketmq-client.version>
 	</properties>
 	
 	<dependencyManagement>
@@ -386,9 +390,27 @@
 			</dependency>
 			<!-- https://mvnrepository.com/artifact/com.lmax/disruptor -->
 			<dependency>
-			    <groupId>com.lmax</groupId>
-			    <artifactId>disruptor</artifactId>
-			    <version>${disruptor.version}</version>
+				<groupId>com.lmax</groupId>
+				<artifactId>disruptor</artifactId>
+				<version>${disruptor.version}</version>
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/org.apache.kafka/kafka-clients -->
+			<dependency>
+				<groupId>org.apache.kafka</groupId>
+				<artifactId>kafka-clients</artifactId>
+				<version>${kafka-clients.version}</version>
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/org.apache.pulsar/pulsar-client -->
+			<dependency>
+				<groupId>org.apache.pulsar</groupId>
+				<artifactId>pulsar-client</artifactId>
+				<version>${pulsar-client.version}</version>
+			</dependency>
+			<!-- https://mvnrepository.com/artifact/org.apache.rocketmq/rocketmq-client -->
+			<dependency>
+				<groupId>org.apache.rocketmq</groupId>
+				<artifactId>rocketmq-client</artifactId>
+				<version>${rocketmq-client.version}</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -481,11 +503,10 @@
 		<dependency>
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
-		</dependency>
+		</dependency><!--
 		<dependency>
-			<groupId>org.apache.ddlutils</groupId>
+			<groupId>org.apache.db.ddlutils</groupId>
 			<artifactId>ddlutils</artifactId>
-			<version>1.0</version>
 			<exclusions>
 				<exclusion>
 					<groupId>commons-beanutils</groupId>
@@ -528,23 +549,31 @@
 					<artifactId>commons-betwixt</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>
+		</dependency>-->
 		
 		<!-- https://mvnrepository.com/artifact/com.rabbitmq/amqp-client -->
 		<dependency>
 			<groupId>com.rabbitmq</groupId>
 			<artifactId>amqp-client</artifactId>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.apache.rocketmq/rocketmq-client -->
-		<dependency>
-			<groupId>org.apache.rocketmq</groupId>
-			<artifactId>rocketmq-client</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.apache.kafka/kafka-clients -->
 		<dependency>
 			<groupId>org.apache.kafka</groupId>
 			<artifactId>kafka-clients</artifactId>
-			<version>3.4.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.pulsar/pulsar-client -->
+		<dependency>
+			<groupId>org.apache.pulsar</groupId>
+			<artifactId>pulsar-client</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.rocketmq/rocketmq-client -->
+		<dependency>
+			<groupId>org.apache.rocketmq</groupId>
+			<artifactId>rocketmq-client</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>

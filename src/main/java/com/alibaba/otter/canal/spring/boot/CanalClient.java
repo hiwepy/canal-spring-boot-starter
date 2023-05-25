@@ -15,14 +15,13 @@
  */
 package com.alibaba.otter.canal.spring.boot;
 
+import com.alibaba.otter.canal.client.CanalConnector;
+import com.alibaba.otter.canal.protocol.Message;
+import com.alibaba.otter.canal.spring.boot.utils.CanalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.util.Assert;
-
-import com.alibaba.otter.canal.client.CanalConnector;
-import com.alibaba.otter.canal.protocol.Message;
-import com.alibaba.otter.canal.spring.boot.utils.CanalUtils;
 
 /**
  * Copy From https://github.com/alibaba/canal/tree/master/example

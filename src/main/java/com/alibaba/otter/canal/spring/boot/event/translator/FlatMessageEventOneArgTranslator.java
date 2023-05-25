@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, hiwepy (https://github.com/hiwepy).
+ * Copyright (c) 2017, hiwepy (https://github.com/hiwepy).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -13,21 +13,17 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.alibaba.otter.canal.spring.boot;
+package com.alibaba.otter.canal.spring.boot.event.translator;
 
-import com.alibaba.otter.canal.client.CanalConnector;
+import com.alibaba.otter.canal.protocol.FlatMessage;
+import com.alibaba.otter.canal.spring.boot.event.FlatMessageEvent;
+import com.lmax.disruptor.EventTranslatorOneArg;
 
-public class CanalShutdownHook extends Thread{
-	
-	private CanalConnector connector;
-	
-	public CanalShutdownHook(CanalConnector connector) {
-		this.connector = connector;
-	}
-	
+public class FlatMessageEventOneArgTranslator implements EventTranslatorOneArg<FlatMessageEvent, FlatMessage> {
+
 	@Override
-	public void run() {
-		connector.disconnect();
+	public void translateTo(FlatMessageEvent event, long sequence, FlatMessage message) {
+		event.setMessage(message);
 	}
-	
+
 }

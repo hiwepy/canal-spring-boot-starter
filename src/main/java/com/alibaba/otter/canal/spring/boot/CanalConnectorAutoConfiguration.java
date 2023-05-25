@@ -6,7 +6,10 @@ import com.alibaba.otter.canal.client.impl.ClusterNodeAccessStrategy;
 import com.alibaba.otter.canal.client.impl.SimpleCanalConnector;
 import com.alibaba.otter.canal.client.impl.SimpleNodeAccessStrategy;
 import com.alibaba.otter.canal.common.zookeeper.ZkClientx;
+import com.alibaba.otter.canal.spring.boot.event.MessageEvent;
+import com.lmax.disruptor.dsl.Disruptor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -26,7 +29,9 @@ import java.util.List;
 public class CanalConnectorAutoConfiguration {
 
     @Bean(initMethod = "connect", destroyMethod = "disconnect")
-    public CanalConnector canalConnector(CanalConnectorProperties connectorProperties){
+    public CanalConnector canalConnector(CanalConnectorProperties connectorProperties,
+                                         @Qualifier("canalDisruptor") Disruptor<MessageEvent> canalDisruptor){
+
         if (StringUtils.hasText(connectorProperties.getZkServers())) {
             ClusterCanalConnector canalConnector = new ClusterCanalConnector(connectorProperties.getUsername(),
                     connectorProperties.getPassword(),
@@ -35,7 +40,7 @@ public class CanalConnectorAutoConfiguration {
                             ZkClientx.getZkClient(connectorProperties.getZkServers())));
             canalConnector.setSoTimeout(connectorProperties.getSoTimeout());
             canalConnector.setIdleTimeout(connectorProperties.getIdleTimeout());
-            return canalConnector;
+            return InstrumentedCanalConnectors.create(canalConnector, canalDisruptor);
         } else if (StringUtils.hasText(connectorProperties.getAddresses())) {
             ClusterCanalConnector canalConnector = new ClusterCanalConnector(
                     connectorProperties.getUsername(),
@@ -44,7 +49,8 @@ public class CanalConnectorAutoConfiguration {
                     new SimpleNodeAccessStrategy(parseAddresses(connectorProperties.getAddresses())));
             canalConnector.setSoTimeout(connectorProperties.getSoTimeout());
             canalConnector.setIdleTimeout(connectorProperties.getIdleTimeout());
-            return canalConnector;
+
+            return InstrumentedCanalConnectors.create(canalConnector, canalDisruptor);
         } else {
 
             InetSocketAddress address = new InetSocketAddress(connectorProperties.getHost(), connectorProperties.getPort());
@@ -54,7 +60,8 @@ public class CanalConnectorAutoConfiguration {
                     connectorProperties.getPassword());
             canalConnector.setSoTimeout(connectorProperties.getSoTimeout());
             canalConnector.setIdleTimeout(connectorProperties.getIdleTimeout());
-            return canalConnector;
+
+            return InstrumentedCanalConnectors.create(canalConnector, canalDisruptor);
         }
     }
 

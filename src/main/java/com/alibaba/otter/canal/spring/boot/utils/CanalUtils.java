@@ -18,7 +18,6 @@ package com.alibaba.otter.canal.spring.boot.utils;
 import com.alibaba.otter.canal.protocol.CanalEntry;
 import com.alibaba.otter.canal.protocol.CanalEntry.*;
 import com.alibaba.otter.canal.protocol.Message;
-import com.alibaba.otter.canal.spring.boot.CanalClient;
 import com.google.protobuf.InvalidProtocolBufferException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
@@ -36,7 +35,7 @@ import java.util.List;
  */
 public class CanalUtils {
 
-	protected final static Logger             logger             = LoggerFactory.getLogger(CanalClient.class);
+	protected final static Logger             logger             = LoggerFactory.getLogger(CanalUtils.class);
 	protected static final String             SEP                = SystemUtils.LINE_SEPARATOR;
 	protected static final String             DATE_FORMAT        = "yyyy-MM-dd HH:mm:ss";
     protected static String                   context_format     = null;

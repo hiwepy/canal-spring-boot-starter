@@ -27,8 +27,6 @@ public class CanalKafkaAutoConfiguration {
                 properties.getTopic(),  properties.getPartition(), properties.getGroupId(),
                 properties.getBatchSize(), properties.isFlatMessage());
         try {
-
-
         } catch (Throwable e) {
             log.error("## Something going wrong when starting up the rocketmq consumer:", e);
             System.exit(0);

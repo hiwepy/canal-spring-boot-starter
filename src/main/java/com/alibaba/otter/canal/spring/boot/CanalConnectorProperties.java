@@ -36,13 +36,19 @@ public class CanalConnectorProperties {
      * Canal地址。如果设置了该属性，则忽略host和port属性。
      */
     private String addresses;
-
     private String destination;
     private String username;
-
     private String password;
 
     private int soTimeout     = 60000;
     private int idleTimeout   = 60 * 60 * 1000;
-
+    /**
+     * 设置-1时可以subscribe阻塞等待时优雅停机
+     */
+    private int retryTimes    = 3;
+    /**
+     * 重试的时间间隔，默认5秒
+     */
+    private int retryInterval = 5000;
+    
 }

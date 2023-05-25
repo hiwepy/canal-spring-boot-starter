@@ -15,14 +15,14 @@
  */
 package com.alibaba.otter.canal.spring.boot.event.translator;
 
-import com.alibaba.otter.canal.protocol.FlatMessage;
-import com.alibaba.otter.canal.spring.boot.event.FlatMessageEvent;
-import com.lmax.disruptor.EventTranslatorOneArg;
+import com.alibaba.otter.canal.protocol.Message;
+import com.alibaba.otter.canal.spring.boot.event.MessageEvent;
+import com.lmax.disruptor.EventTranslatorTwoArg;
 
-public class FlatMessageEventOneArgTranslator implements EventTranslatorOneArg<FlatMessageEvent, FlatMessage> {
+public class MessageEventTwoArgTranslator implements EventTranslatorTwoArg<MessageEvent, Boolean, Message> {
 
 	@Override
-	public void translateTo(FlatMessageEvent event, long sequence, FlatMessage message) {
+	public void translateTo(MessageEvent event, long sequence, Boolean withoutAck, Message message) {
 		event.setMessage(message);
 	}
 

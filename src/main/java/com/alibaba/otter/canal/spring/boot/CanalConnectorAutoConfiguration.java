@@ -7,6 +7,7 @@ import com.alibaba.otter.canal.client.impl.SimpleCanalConnector;
 import com.alibaba.otter.canal.client.impl.SimpleNodeAccessStrategy;
 import com.alibaba.otter.canal.common.zookeeper.ZkClientx;
 import com.alibaba.otter.canal.spring.boot.event.MessageEvent;
+import com.alibaba.otter.canal.spring.boot.hooks.CanalShutdownHook;
 import com.lmax.disruptor.dsl.Disruptor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,12 +25,13 @@ import java.util.List;
 @Configuration
 @ConditionalOnClass({ SimpleCanalConnector.class, ClusterCanalConnector.class })
 @ConditionalOnProperty(prefix = CanalConnectorProperties.PREFIX, value = "enabled", havingValue = "true")
-@EnableConfigurationProperties(CanalConnectorProperties.class)
+@EnableConfigurationProperties({CanalProperties.class, CanalConnectorProperties.class})
 @Slf4j
 public class CanalConnectorAutoConfiguration {
 
     @Bean(initMethod = "connect", destroyMethod = "disconnect")
-    public CanalConnector canalConnector(CanalConnectorProperties connectorProperties,
+    public CanalConnector canalConnector(CanalProperties canalProperties,
+                                         CanalConnectorProperties connectorProperties,
                                          @Qualifier("canalDisruptor") Disruptor<MessageEvent> canalDisruptor){
 
         if (StringUtils.hasText(connectorProperties.getZkServers())) {
@@ -40,7 +42,9 @@ public class CanalConnectorAutoConfiguration {
                             ZkClientx.getZkClient(connectorProperties.getZkServers())));
             canalConnector.setSoTimeout(connectorProperties.getSoTimeout());
             canalConnector.setIdleTimeout(connectorProperties.getIdleTimeout());
-            return InstrumentedCanalConnectors.create(canalConnector, canalDisruptor);
+            canalConnector.setRetryTimes(connectorProperties.getRetryTimes());
+            canalConnector.setRetryInterval(connectorProperties.getRetryInterval());
+            return CanalConnectorConsumers.create(canalConnector, canalDisruptor);
         } else if (StringUtils.hasText(connectorProperties.getAddresses())) {
             ClusterCanalConnector canalConnector = new ClusterCanalConnector(
                     connectorProperties.getUsername(),
@@ -49,8 +53,12 @@ public class CanalConnectorAutoConfiguration {
                     new SimpleNodeAccessStrategy(parseAddresses(connectorProperties.getAddresses())));
             canalConnector.setSoTimeout(connectorProperties.getSoTimeout());
             canalConnector.setIdleTimeout(connectorProperties.getIdleTimeout());
+            canalConnector.setRetryTimes(connectorProperties.getRetryTimes());
+            canalConnector.setRetryInterval(connectorProperties.getRetryInterval());
 
-            return InstrumentedCanalConnectors.create(canalConnector, canalDisruptor);
+
+            return CanalConnectorConsumers.create(canalConnector, canalDisruptor, canalProperties.getBatchSize(),
+                    canalProperties.getTimeout(), canalProperties.getUnit());
         } else {
 
             InetSocketAddress address = new InetSocketAddress(connectorProperties.getHost(), connectorProperties.getPort());
@@ -60,9 +68,23 @@ public class CanalConnectorAutoConfiguration {
                     connectorProperties.getPassword());
             canalConnector.setSoTimeout(connectorProperties.getSoTimeout());
             canalConnector.setIdleTimeout(connectorProperties.getIdleTimeout());
+            canalConnector.subscribe();
+            canalConnector.subscribe();
 
-            return InstrumentedCanalConnectors.create(canalConnector, canalDisruptor);
+            return CanalConnectorConsumers.create(canalConnector, canalDisruptor);
         }
+    }
+
+    public CanalConnectorConsumer canalConnectorConsumer(CanalProperties canalProperties,
+                                         CanalConnectorProperties connectorProperties,
+                                         CanalConnector canalConnector,
+                                         @Qualifier("canalDisruptor") Disruptor<MessageEvent> canalDisruptor){
+
+        Runtime.getRuntime().addShutdownHook(new CanalShutdownHook(canalConnector));
+
+        return CanalConnectorConsumers.create(canalConnector, canalDisruptor, canalProperties.getBatchSize(),
+                canalProperties.getTimeout(), canalProperties.getUnit());
+
     }
 
     private List<InetSocketAddress> parseAddresses(String addresses) {

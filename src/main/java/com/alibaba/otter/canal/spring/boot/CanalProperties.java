@@ -20,6 +20,8 @@ import com.lmax.disruptor.dsl.ProducerType;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * 
  * @author ： <a href="https://github.com/hiwepy">hiwepy</a>
@@ -29,21 +31,15 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class CanalProperties {
 
 	public static final String PREFIX = "canal";
-	
+
 	/**
-	 * Allows to configure if the ensemble configuration changes will be watched.
-         * The default value is {@code true}.
+	 * 消费线程每次拉取消息的数量，默认 10
 	 */
-	private boolean withEnsembleTracker = true;
-	
-	/**
-	 * 会话超时时间（单位：毫秒），默认 30000
-	 */
-	private int sessionTimeoutMs = 30000;
-	/**
-	 * 连接超时时间（单位：毫秒），默认 3000
-	 */
-	private int connectionTimeoutMs = 3000;
+	private int batchSize = 10;
+	private Long timeout;
+	private TimeUnit unit;
+	private boolean withoutAck;
+	private String filter;
 
 	private DisruptorProperties disruptor;
 	

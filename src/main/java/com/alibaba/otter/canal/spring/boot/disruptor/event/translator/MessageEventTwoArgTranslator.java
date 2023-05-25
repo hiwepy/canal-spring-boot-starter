@@ -13,10 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.alibaba.otter.canal.spring.boot.event.translator;
+package com.alibaba.otter.canal.spring.boot.disruptor.event.translator;
 
 import com.alibaba.otter.canal.protocol.Message;
-import com.alibaba.otter.canal.spring.boot.event.MessageEvent;
+import com.alibaba.otter.canal.spring.boot.disruptor.event.MessageEvent;
 import com.lmax.disruptor.EventTranslatorTwoArg;
 
 public class MessageEventTwoArgTranslator implements EventTranslatorTwoArg<MessageEvent, Boolean, Message> {

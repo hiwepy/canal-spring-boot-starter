@@ -1,6 +1,7 @@
 package com.alibaba.otter.canal.spring.boot;
 
 import com.alibaba.otter.canal.client.rabbitmq.RabbitMQCanalConnector;
+import com.alibaba.otter.canal.spring.boot.hooks.CanalShutdownHook;
 import com.rabbitmq.client.DefaultConsumer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -18,18 +19,11 @@ public class CanalRabbitMQAutoConfiguration {
 
 	@Bean(initMethod = "connect", destroyMethod = "disconnect")
 	public RabbitMQCanalConnector rabbitMQCanalConnector(CanalRabbitMQProperties properties) {
-		final RabbitMQCanalConnector connector = new RabbitMQCanalConnector(properties.getNameServer(), properties.getVhost(),
+		RabbitMQCanalConnector connector = new RabbitMQCanalConnector(properties.getNameServer(), properties.getVhost(),
 				properties.getQueueName(), properties.getAccessKey(), properties.getSecretKey(),
 				properties.getUsername(), properties.getPassword(), properties.getResourceOwnerId(),
 				properties.isFlatMessage());
-		try {
-			
-			 
-        } catch (Throwable e) {
-            log.error("## Something going wrong when starting up the rocketmq consumer:", e);
-            System.exit(0);
-        }
-		
+		Runtime.getRuntime().addShutdownHook(new CanalShutdownHook(connector));
 		return connector;
 	}
 

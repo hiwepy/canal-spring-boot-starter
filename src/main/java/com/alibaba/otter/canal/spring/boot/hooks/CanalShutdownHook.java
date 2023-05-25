@@ -24,6 +24,7 @@ public class CanalShutdownHook extends Thread{
 	private CanalConnector connector;
 	
 	public CanalShutdownHook(CanalConnector connector) {
+		this.setName("canal-connector-shutdown-hook");
 		this.connector = connector;
 	}
 	

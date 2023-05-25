@@ -2,6 +2,7 @@ package com.alibaba.otter.canal.spring.boot;
 
 import com.alibaba.otter.canal.client.kafka.KafkaCanalConnector;
 import com.alibaba.otter.canal.client.kafka.KafkaOffsetCanalConnector;
+import com.alibaba.otter.canal.spring.boot.hooks.CanalShutdownHook;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -19,19 +20,12 @@ public class CanalKafkaAutoConfiguration {
 
     @Bean(initMethod = "connect", destroyMethod = "disconnect")
     public KafkaCanalConnector kafkaCanalConnector(CanalKafkaProperties properties) {
-
-
-        final KafkaCanalConnector connector = properties.isEarliest() ? new KafkaOffsetCanalConnector(properties.getServers(),
+        KafkaCanalConnector connector = properties.isEarliest() ? new KafkaOffsetCanalConnector(properties.getServers(),
                 properties.getTopic(),  properties.getPartition(), properties.getGroupId(),
                 properties.isFlatMessage()) : new KafkaCanalConnector(properties.getServers(),
                 properties.getTopic(),  properties.getPartition(), properties.getGroupId(),
                 properties.getBatchSize(), properties.isFlatMessage());
-        try {
-        } catch (Throwable e) {
-            log.error("## Something going wrong when starting up the rocketmq consumer:", e);
-            System.exit(0);
-        }
-
+        Runtime.getRuntime().addShutdownHook(new CanalShutdownHook(connector));
         return connector;
     }
 

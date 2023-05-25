@@ -1,6 +1,6 @@
 package com.alibaba.otter.canal.spring.boot.disruptor;
 
-import com.alibaba.otter.canal.spring.boot.event.MessageEvent;
+import com.alibaba.otter.canal.spring.boot.disruptor.event.MessageEvent;
 import com.lmax.disruptor.EventHandler;
 import com.lmax.disruptor.WorkHandler;
 import org.slf4j.Logger;

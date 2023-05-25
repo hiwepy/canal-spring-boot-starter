@@ -1,6 +1,6 @@
-package com.alibaba.otter.canal.spring.boot.event.factory;
+package com.alibaba.otter.canal.spring.boot.disruptor.factory;
 
-import com.alibaba.otter.canal.spring.boot.event.MessageEvent;
+import com.alibaba.otter.canal.spring.boot.disruptor.event.MessageEvent;
 import com.lmax.disruptor.EventFactory;
 
 public class CanalEventFactory implements EventFactory<MessageEvent> {

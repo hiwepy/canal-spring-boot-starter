@@ -1,12 +1,11 @@
-package com.alibaba.otter.canal.spring.boot;
+package com.alibaba.otter.canal.spring.boot.disruptor;
 
 import com.alibaba.otter.canal.client.CanalConnector;
 import com.alibaba.otter.canal.client.CanalMQConnector;
 import com.alibaba.otter.canal.protocol.Message;
-import com.alibaba.otter.canal.protocol.exception.CanalClientException;
-import com.alibaba.otter.canal.spring.boot.event.MessageEvent;
-import com.alibaba.otter.canal.spring.boot.event.translator.MessageEventTwoArgTranslator;
-import com.alibaba.otter.canal.spring.boot.event.translator.MessageListEventTwoArgTranslator;
+import com.alibaba.otter.canal.spring.boot.disruptor.event.MessageEvent;
+import com.alibaba.otter.canal.spring.boot.disruptor.event.translator.MessageEventTwoArgTranslator;
+import com.alibaba.otter.canal.spring.boot.disruptor.event.translator.MessageListEventTwoArgTranslator;
 import com.alibaba.otter.canal.spring.boot.utils.CanalUtils;
 import com.lmax.disruptor.EventTranslatorTwoArg;
 import com.lmax.disruptor.dsl.Disruptor;
@@ -19,7 +18,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
-public class CanalConnectorConsumer implements CanalConnector {
+public class CanalDisruptorConsumer {
 
     protected EventTranslatorTwoArg<MessageEvent, Boolean , Message> messageEventTranslator = new MessageEventTwoArgTranslator();
     protected EventTranslatorTwoArg<MessageEvent, Boolean, List<Message>> messageListEventTranslator = new MessageListEventTwoArgTranslator();
@@ -27,7 +26,7 @@ public class CanalConnectorConsumer implements CanalConnector {
     protected Thread.UncaughtExceptionHandler handler            = (t, e) -> log.error("parse events has an error", e);
     protected Thread                          thread             = null;
     protected volatile boolean                running            = false;
-    protected CanalConnector delegate;
+    protected CanalConnector connector;
     protected Disruptor<MessageEvent> disruptor;
 
     /**
@@ -39,18 +38,18 @@ public class CanalConnectorConsumer implements CanalConnector {
     protected boolean withoutAck;
     protected boolean requiredTimeout;
 
-    public CanalConnectorConsumer(CanalConnector connector, Disruptor<MessageEvent> disruptor){
+    public CanalDisruptorConsumer(CanalConnector connector, Disruptor<MessageEvent> disruptor){
         Assert.notNull(connector, "connector is null");
-        this.delegate = connector;
+        this.connector = connector;
         this.disruptor = disruptor;
     }
 
-    public CanalConnectorConsumer(CanalConnector connector, Disruptor<MessageEvent> disruptor, int batchSize){
+    public CanalDisruptorConsumer(CanalConnector connector, Disruptor<MessageEvent> disruptor, int batchSize){
         this(connector, disruptor);
         this.batchSize = batchSize;
     }
 
-    public CanalConnectorConsumer(CanalConnector connector, Disruptor<MessageEvent> disruptor, int batchSize, Long timeout, TimeUnit unit){
+    public CanalDisruptorConsumer(CanalConnector connector, Disruptor<MessageEvent> disruptor, int batchSize, Long timeout, TimeUnit unit){
         this(connector, disruptor);
         this.batchSize = batchSize;
         this.timeout = timeout;
@@ -58,7 +57,7 @@ public class CanalConnectorConsumer implements CanalConnector {
         this.requiredTimeout = Objects.nonNull(timeout) && Objects.nonNull(unit);
     }
 
-    public CanalConnectorConsumer(CanalConnector connector, Disruptor<MessageEvent> disruptor, int batchSize, Long timeout, TimeUnit unit, boolean withoutAck){
+    public CanalDisruptorConsumer(CanalConnector connector, Disruptor<MessageEvent> disruptor, int batchSize, Long timeout, TimeUnit unit, boolean withoutAck){
         this(connector, disruptor);
         this.batchSize = batchSize;
         this.timeout = timeout;
@@ -67,14 +66,8 @@ public class CanalConnectorConsumer implements CanalConnector {
         this.requiredTimeout = Objects.nonNull(timeout) && Objects.nonNull(unit);
     }
 
-    @Override
-    public void connect() throws CanalClientException {
-        this.delegate.connect();
-        this.start();
-    }
-
-    protected void start() {
-        Assert.notNull(this.delegate, "connector is null");
+    public void start() {
+        Assert.notNull(this.connector, "connector is null");
         this.thread = new Thread(this::process);
         this.thread.setUncaughtExceptionHandler(handler);
         this.running = true;
@@ -85,12 +78,12 @@ public class CanalConnectorConsumer implements CanalConnector {
         int batchSize = 5 * 1024;
         while (running) {
             try {
-                delegate.connect();
-                delegate.subscribe();
+                connector.connect();
+                connector.subscribe();
                 while (running) {
-                    
-                    if(this.delegate instanceof CanalMQConnector){
-                        CanalMQConnector mqConnector = (CanalMQConnector) delegate;
+
+                    if(this.connector instanceof CanalMQConnector){
+                        CanalMQConnector mqConnector = (CanalMQConnector) connector;
                         List<Message> messages = withoutAck ? mqConnector.getListWithoutAck(timeout, unit) : mqConnector.getList(timeout, unit);
                         disruptor.publishEvent(messageListEventTranslator, withoutAck, messages);
                         for (Message message : messages) {
@@ -107,15 +100,15 @@ public class CanalConnectorConsumer implements CanalConnector {
                                 // logger.info(message.toString());
                             }
                             if (batchId != -1) {
-                                delegate.ack(batchId); // 提交确认
+                                connector.ack(batchId); // 提交确认
                             }
                         }
                     } else {
                         Message message;
                         if(requiredTimeout){
-                            message = withoutAck ? delegate.getWithoutAck(batchSize, timeout, unit) : delegate.get(batchSize, timeout, unit);
+                            message = withoutAck ? connector.getWithoutAck(batchSize, timeout, unit) : connector.get(batchSize, timeout, unit);
                         } else {
-                            message = withoutAck ? delegate.getWithoutAck(batchSize) : delegate.get(batchSize);
+                            message = withoutAck ? connector.getWithoutAck(batchSize) : connector.get(batchSize);
                         }
                         disruptor.publishEvent(messageEventTranslator, withoutAck, message);
                         long batchId = message.getId();
@@ -130,7 +123,7 @@ public class CanalConnectorConsumer implements CanalConnector {
                             CanalUtils.printEntry(message.getEntries());
                         }
                         if (batchId != -1) {
-                            delegate.ack(batchId); // 提交确认
+                            connector.ack(batchId); // 提交确认
                         }
                     }
                 }
@@ -141,21 +134,15 @@ public class CanalConnectorConsumer implements CanalConnector {
                 } catch (InterruptedException e1) {
                     // ignore
                 }
-                delegate.rollback(); // 处理失败, 回滚数据
+                connector.rollback(); // 处理失败, 回滚数据
             } finally {
-                delegate.disconnect();
+                connector.disconnect();
                 MDC.remove("destination");
             }
         }
     }
 
-    @Override
-    public void disconnect() throws CanalClientException {
-        this.stop();
-        this.delegate.disconnect();
-    }
-
-    protected void stop() {
+    public void stop() {
         if (!running) {
             return;
         }
@@ -167,61 +154,6 @@ public class CanalConnectorConsumer implements CanalConnector {
                 // ignore
             }
         }
-    }
-
-    @Override
-    public boolean checkValid() throws CanalClientException {
-        return this.delegate.checkValid();
-    }
-
-    @Override
-    public void subscribe(String filter) throws CanalClientException {
-        this.delegate.subscribe(filter);
-    }
-
-    @Override
-    public void subscribe() throws CanalClientException {
-        this.delegate.subscribe();
-    }
-
-    @Override
-    public void unsubscribe() throws CanalClientException {
-        this.delegate.unsubscribe();
-    }
-
-    @Override
-    public Message get(int batchSize) throws CanalClientException {
-        return this.delegate.get(batchSize);
-    }
-
-    @Override
-    public Message get(int batchSize, Long timeout, TimeUnit unit) throws CanalClientException {
-        return this.delegate.get(batchSize, timeout, unit);
-    }
-
-    @Override
-    public Message getWithoutAck(int batchSize) throws CanalClientException {
-        return this.delegate.getWithoutAck(batchSize);
-    }
-
-    @Override
-    public Message getWithoutAck(int batchSize, Long timeout, TimeUnit unit) throws CanalClientException {
-        return this.delegate.getWithoutAck(batchSize, timeout, unit);
-    }
-
-    @Override
-    public void ack(long batchId) throws CanalClientException {
-        this.delegate.ack(batchId);
-    }
-
-    @Override
-    public void rollback(long batchId) throws CanalClientException {
-        this.delegate.rollback(batchId);
-    }
-
-    @Override
-    public void rollback() throws CanalClientException {
-        this.delegate.rollback();
     }
 
 }

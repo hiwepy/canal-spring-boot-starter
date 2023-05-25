@@ -13,9 +13,10 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.alibaba.otter.canal.spring.boot;
+package com.alibaba.otter.canal.spring.boot.message;
 
-import com.alibaba.otter.canal.protocol.FlatMessage;
+import com.alibaba.otter.canal.protocol.Message;
+import com.alibaba.otter.canal.spring.boot.Action;
 
 /**
  * 消息监听器，Consumer注册消息监听器来订阅消息.
@@ -24,7 +25,7 @@ import com.alibaba.otter.canal.protocol.FlatMessage;
  *     <strong>线程安全性要求: </strong> 该接口会被多个线程并发调用, 用户需要保证并发安全性.
  * </p>
  */
-public interface FlatMessageListener {
+public interface MessageListener {
 	
     /**
      * 消费消息接口，由应用来实现<br>
@@ -33,5 +34,5 @@ public interface FlatMessageListener {
      * @param message 消息
      * @return 消费结果，如果应用抛出异常或者返回Null等价于返回Action.ReconsumeLater
      */
-    Action consume(final FlatMessage message);
+    Action consume(final Message message);
 }

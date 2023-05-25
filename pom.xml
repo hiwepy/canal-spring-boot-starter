@@ -489,68 +489,17 @@
 		<dependency>
 		    <groupId>com.alibaba.otter</groupId>
 		    <artifactId>canal.protocol</artifactId>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/com.lmax/disruptor -->
-		<dependency>
-		    <groupId>com.lmax</groupId>
-		    <artifactId>disruptor</artifactId>
-		</dependency>
-		
-		<!-- <dependency>
-			<groupId>com.alibaba</groupId>
-			<artifactId>druid</artifactId>
-		</dependency> -->
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-		</dependency><!--
-		<dependency>
-			<groupId>org.apache.db.ddlutils</groupId>
-			<artifactId>ddlutils</artifactId>
 			<exclusions>
 				<exclusion>
-					<groupId>commons-beanutils</groupId>
-					<artifactId>commons-beanutils-core</artifactId>
+					<groupId>ch.qos.logback</groupId>
+					<artifactId>logback-core</artifactId>
 				</exclusion>
 				<exclusion>
-					<groupId>commons-lang</groupId>
-					<artifactId>commons-lang</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>commons-dbcp</groupId>
-					<artifactId>commons-dbcp</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>commons-pool</groupId>
-					<artifactId>commons-pool</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging-api</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>dom4j</groupId>
-					<artifactId>dom4j</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>stax</groupId>
-					<artifactId>stax-api</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>commons-collections</groupId>
-					<artifactId>commons-collections</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>commons-digester</groupId>
-					<artifactId>commons-digester</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>commons-betwixt</groupId>
-					<artifactId>commons-betwixt</artifactId>
+					<groupId>ch.qos.logback</groupId>
+					<artifactId>logback-classic</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>-->
-		
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.rabbitmq/amqp-client -->
 		<dependency>
 			<groupId>com.rabbitmq</groupId>
@@ -575,23 +524,11 @@
 			<artifactId>rocketmq-client</artifactId>
 			<scope>provided</scope>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.lmax/disruptor -->
 		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-pool2</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-beanutils</groupId>
-			<artifactId>commons-beanutils</artifactId>
-			<version>1.9.4</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.commons</groupId>
-			<artifactId>commons-lang3</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-collections</groupId>
-			<artifactId>commons-collections</artifactId>
-			<version>3.2.2</version>
+			<groupId>com.lmax</groupId>
+			<artifactId>disruptor</artifactId>
+			<scope>provided</scope>
 		</dependency>
 
 	</dependencies>

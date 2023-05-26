@@ -46,24 +46,24 @@ public class CanalConnectorConsumer {
         this.connector = connector;
         this.scheduledExecutorService = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryImpl("ConsumeMessageScheduledThread_"));
     }
-
+/*
     public void updateCorePoolSize(int corePoolSize) {
         if (corePoolSize > 0
                 && corePoolSize <= Short.MAX_VALUE
                 && corePoolSize < this.defaultMQPushConsumer.getConsumeThreadMax()) {
             this.consumeExecutor.setCorePoolSize(corePoolSize);
         }
-    }
+    }*/
 
     public void start() {
         this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
-                ConsumeMessageOrderlyService.this.lockMQPeriodically();
+                //ConsumeMessageOrderlyService.this.lockMQPeriodically();
             }
         }, 1000 * 1, ProcessQueue.REBALANCE_LOCK_INTERVAL, TimeUnit.MILLISECONDS);
     }
-
+/*
     public void shutdown(long awaitTerminateMillis) {
         this.stopped = true;
         this.scheduledExecutorService.shutdown();
@@ -71,9 +71,9 @@ public class CanalConnectorConsumer {
         if (MessageModel.CLUSTERING.equals(this.defaultMQPushConsumerImpl.messageModel())) {
             this.unlockAllMQ();
         }
-    }
+    }*/
 
-    public void start() {
+    public void start2() {
         Assert.notNull(this.connector, "connector is null");
         this.thread = new Thread(this::process);
         this.thread.setUncaughtExceptionHandler(handler);
@@ -92,7 +92,6 @@ public class CanalConnectorConsumer {
                     if(this.connector instanceof CanalMQConnector){
                         CanalMQConnector mqConnector = (CanalMQConnector) connector;
                         List<Message> messages = withoutAck ? mqConnector.getListWithoutAck(timeout, unit) : mqConnector.getList(timeout, unit);
-                        disruptor.publishEvent(messageListEventTranslator, withoutAck, messages);
                         for (Message message : messages) {
                             long batchId = message.getId();
                             int size = message.getEntries().size();
@@ -117,7 +116,6 @@ public class CanalConnectorConsumer {
                         } else {
                             message = withoutAck ? connector.getWithoutAck(batchSize) : connector.get(batchSize);
                         }
-                        disruptor.publishEvent(messageEventTranslator, withoutAck, message);
                         long batchId = message.getId();
                         int size = message.getEntries().size();
                         if (batchId == -1 || size == 0) {

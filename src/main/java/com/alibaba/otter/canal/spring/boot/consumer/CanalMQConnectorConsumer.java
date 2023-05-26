@@ -54,7 +54,6 @@ public class CanalMQConnectorConsumer {
                     if(this.connector instanceof CanalMQConnector){
                         CanalMQConnector mqConnector = (CanalMQConnector) connector;
                         List<Message> messages = withoutAck ? mqConnector.getListWithoutAck(timeout, unit) : mqConnector.getList(timeout, unit);
-                        disruptor.publishEvent(messageListEventTranslator, withoutAck, messages);
                         for (Message message : messages) {
                             long batchId = message.getId();
                             int size = message.getEntries().size();
@@ -79,7 +78,6 @@ public class CanalMQConnectorConsumer {
                         } else {
                             message = withoutAck ? connector.getWithoutAck(batchSize) : connector.get(batchSize);
                         }
-                        disruptor.publishEvent(messageEventTranslator, withoutAck, message);
                         long batchId = message.getId();
                         int size = message.getEntries().size();
                         if (batchId == -1 || size == 0) {

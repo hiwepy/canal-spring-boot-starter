@@ -68,6 +68,7 @@ public class CanalConnectorAutoConfiguration {
             return canalConnector;
         }
     }
+/*
 
     public CanalConnectorConsumer canalConnectorConsumer(
             CanalProperties canalProperties,
@@ -76,6 +77,7 @@ public class CanalConnectorAutoConfiguration {
             ObjectProvider<FlatMessageListener> flatMessageListenerProvider){
         new CanalMQConnectorConsumer();
     }
+*/
 
     private List<InetSocketAddress> parseAddresses(String addresses) {
         List<InetSocketAddress> parsedAddresses = new ArrayList<>();

@@ -2,8 +2,12 @@ package com.alibaba.otter.canal.spring.boot;
 
 import com.alibaba.otter.canal.client.CanalConnector;
 import com.alibaba.otter.canal.client.CanalConnectors;
+import com.alibaba.otter.canal.common.utils.AddressUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.InetSocketAddress;
+import java.util.Arrays;
 
 /**
  * From https://github.com/alibaba/canal/tree/master/example
@@ -18,14 +22,10 @@ public class ClusterCanalClientTest {
         String destination = "example";
 
         // 基于固定canal server的地址，建立链接，其中一台server发生crash，可以支持failover
-        // CanalConnector connector = CanalConnectors.newClusterConnector(
-        // Arrays.asList(new InetSocketAddress(
-        // AddressUtils.getHostIp(),
-        // 11111)),
-        // "stability_test", "", "");
+        CanalConnector connector = CanalConnectors.newClusterConnector(Arrays.asList(new InetSocketAddress( AddressUtils.getHostIp(), 11111)),destination, "canal", "canal");
 
         // 基于zookeeper动态获取canal server的地址，建立链接，其中一台server发生crash，可以支持failover
-        CanalConnector connector = CanalConnectors.newClusterConnector("127.0.0.1:2181", destination, "canal", "canal");
+        //CanalConnector connector = CanalConnectors.newClusterConnector("127.0.0.1:2181", destination, "canal", "canal");
         
         final CanalClient clientTest = new CanalClient(connector);
         clientTest.start();

@@ -7,11 +7,8 @@ import com.alibaba.otter.canal.spring.boot.message.FlatMessageListener;
 import com.alibaba.otter.canal.spring.boot.message.MessageListener;
 import com.alibaba.otter.canal.spring.boot.utils.CanalUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.rocketmq.client.impl.consumer.ConsumeMessageOrderlyService;
 import org.apache.rocketmq.client.impl.consumer.ProcessQueue;
 import org.apache.rocketmq.common.ThreadFactoryImpl;
-import org.apache.rocketmq.common.protocol.heartbeat.MessageModel;
-import org.apache.rocketmq.common.utils.ThreadUtils;
 import org.slf4j.MDC;
 import org.springframework.util.Assert;
 

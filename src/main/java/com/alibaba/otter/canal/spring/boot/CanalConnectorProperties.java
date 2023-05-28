@@ -1,11 +1,7 @@
 package com.alibaba.otter.canal.spring.boot;
 
 import lombok.Data;
-import org.apache.zookeeper.Watcher;
-import org.apache.zookeeper.ZooKeeper;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-
-import java.util.List;
 
 @ConfigurationProperties(CanalConnectorProperties.PREFIX)
 @Data

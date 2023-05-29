@@ -33,52 +33,30 @@ public class CanalConnectorConsumerImpl extends CanalConnectorConsumer<CanalConn
             connector.connect();
             connector.subscribe();
 
-            if( connector instanceof CanalMQConnector){
-                CanalMQConnector mqConnector = (CanalMQConnector) connector;
-                List<Message> messages = withoutAck ? mqConnector.getListWithoutAck(timeout, unit) : mqConnector.getList(timeout, unit);
-                for (Message message : messages) {
-                    long batchId = message.getId();
-                    int size = message.getEntries().size();
-                    if (batchId == -1 || size == 0) {
-                        // try {
-                        // Thread.sleep(1000);
-                        // } catch (InterruptedException e) {
-                        // }
-                    } else {
-                        CanalUtils.printSummary(message, batchId, size);
-                        CanalUtils.printEntry(message.getEntries());
-                        // logger.info(message.toString());
-                    }
-                    if (batchId != -1) {
-                        connector.ack(batchId); // 提交确认
-                    }
-                }
+            Message message;
+            if(Objects.nonNull(timeout) && Objects.nonNull(unit)){
+                message = withoutAck ? connector.getWithoutAck(consumeMessageBatchMaxSize, timeout, unit) : connector.get(consumeMessageBatchMaxSize, timeout, unit);
             } else {
-
-                Message message;
-                if(Objects.nonNull(timeout) && Objects.nonNull(unit)){
-                    message = withoutAck ? connector.getWithoutAck(consumeMessageBatchMaxSize, timeout, unit) : connector.get(consumeMessageBatchMaxSize, timeout, unit);
-                } else {
-                    message = withoutAck ? connector.getWithoutAck(consumeMessageBatchMaxSize) : connector.get(consumeMessageBatchMaxSize);
-                }
-
-                getConsumeMessageService().submitConsumeRequest(Arrays.asList(message), true);
-
-                long batchId = message.getId();
-                int size = message.getEntries().size();
-                if (batchId == -1 || size == 0) {
-                    // try {
-                    // Thread.sleep(1000);
-                    // } catch (InterruptedException e) {
-                    // }
-                } else {
-                    CanalUtils.printSummary(message, batchId, size);
-                    CanalUtils.printEntry(message.getEntries());
-                }
-                if (batchId != -1) {
-                    connector.ack(batchId); // 提交确认
-                }
+                message = withoutAck ? connector.getWithoutAck(consumeMessageBatchMaxSize) : connector.get(consumeMessageBatchMaxSize);
             }
+
+            getConsumeMessageService().submitConsumeRequest(Arrays.asList(message), true);
+
+            long batchId = message.getId();
+            int size = message.getEntries().size();
+            if (batchId == -1 || size == 0) {
+                // try {
+                // Thread.sleep(1000);
+                // } catch (InterruptedException e) {
+                // }
+            } else {
+                CanalUtils.printSummary(message, batchId, size);
+                CanalUtils.printEntry(message.getEntries());
+            }
+            if (batchId != -1) {
+                connector.ack(batchId); // 提交确认
+            }
+
         } catch (Throwable e) {
             log.error("process error!", e);
             try {

@@ -63,7 +63,7 @@ public abstract class CanalConnectorConsumer<C extends CanalConnector> {
         if(CollectionUtils.isEmpty(connectors)){
             return;
         }
-        for (CanalConnector connector: connectors) {
+        for (C connector: connectors) {
             this.threadPoolTaskScheduler.scheduleAtFixedRate(() ->{
                 try {
                     this.consumeMessage(connector);
@@ -78,7 +78,7 @@ public abstract class CanalConnectorConsumer<C extends CanalConnector> {
      * consume message
      * @param connector Canal Connector
      */
-    public abstract void consumeMessage(CanalConnector connector);
+    public abstract void consumeMessage(C connector);
 
     /**
      * shutdown method

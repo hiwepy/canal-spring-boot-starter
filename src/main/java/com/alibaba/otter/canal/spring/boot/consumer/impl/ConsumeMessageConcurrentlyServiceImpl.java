@@ -2,7 +2,7 @@ package com.alibaba.otter.canal.spring.boot.consumer.impl;
 
 import com.alibaba.otter.canal.client.CanalConnector;
 import com.alibaba.otter.canal.protocol.Message;
-import com.alibaba.otter.canal.spring.boot.consumer.CanalConnectorConsumer;
+import com.alibaba.otter.canal.spring.boot.CanalConsumerProperties;
 import com.alibaba.otter.canal.spring.boot.consumer.CanalConsumeMessageService;
 import com.alibaba.otter.canal.spring.boot.consumer.ThreadFactoryImpl;
 import com.alibaba.otter.canal.spring.boot.consumer.listener.ConsumeConcurrentlyStatus;
@@ -17,23 +17,22 @@ import java.util.List;
 import java.util.concurrent.*;
 
 @Slf4j
-public class ConsumeMessageConcurrentlyService  implements CanalConsumeMessageService {
+public class ConsumeMessageConcurrentlyServiceImpl implements CanalConsumeMessageService {
 
-    protected CanalConnector connector;
-    private final CanalConnectorConsumer defaultConsumer;
+    private final CanalConsumerProperties consumerProperties;
     private final MessageListenerConcurrently messageListener;
     private final BlockingQueue<Runnable> consumeRequestQueue;
     private final ThreadPoolExecutor consumeExecutor;
     private final ScheduledExecutorService scheduledExecutorService;
 
-    public ConsumeMessageConcurrentlyService(CanalConnectorConsumerImpl defaultConsumer, MessageListenerConcurrently messageListener) {
+    public ConsumeMessageConcurrentlyServiceImpl(CanalConsumerProperties consumerProperties, MessageListenerConcurrently messageListener) {
 
-        this.defaultConsumer = defaultConsumer;
+        this.consumerProperties = consumerProperties;
         this.messageListener = messageListener;
         this.consumeRequestQueue = new LinkedBlockingQueue<>();
         this.consumeExecutor = new ThreadPoolExecutor(
-                this.defaultConsumer.getConsumeThreadMin(),
-                this.defaultConsumer.getConsumeThreadMax(),
+                this.consumerProperties.getConsumeThreadMin(),
+                this.consumerProperties.getConsumeThreadMax(),
                 1000 * 60,
                 TimeUnit.MILLISECONDS,
                 this.consumeRequestQueue,
@@ -56,7 +55,7 @@ public class ConsumeMessageConcurrentlyService  implements CanalConsumeMessageSe
     public void updateCorePoolSize(int corePoolSize) {
         if (corePoolSize > 0
                 && corePoolSize <= Short.MAX_VALUE
-                && corePoolSize < this.defaultConsumer.getConsumeThreadMax()) {
+                && corePoolSize < this.consumerProperties.getConsumeThreadMax()) {
             this.consumeExecutor.setCorePoolSize(corePoolSize);
         }
     }
@@ -69,7 +68,7 @@ public class ConsumeMessageConcurrentlyService  implements CanalConsumeMessageSe
     @Override
     public void submitConsumeRequest(CanalConnector connector, List<Message> messages) {
         // get message consume batch size
-        int consumeBatchSize = this.defaultConsumer.getConsumeMessageBatchMaxSize();
+        int consumeBatchSize = this.consumerProperties.getConsumeMessageBatchMaxSize();
         if (messages.size() <= consumeBatchSize) {
             ConsumeRequest consumeRequest = new ConsumeRequest(connector, messages);
             try {
@@ -124,7 +123,7 @@ public class ConsumeMessageConcurrentlyService  implements CanalConsumeMessageSe
         @Override
         public void run() {
 
-            MessageListenerConcurrently listener = ConsumeMessageConcurrentlyService.this.messageListener;
+            MessageListenerConcurrently listener = ConsumeMessageConcurrentlyServiceImpl.this.messageListener;
             ConsumeConcurrentlyStatus status = null;
 
             long beginTimestamp = System.currentTimeMillis();
@@ -143,7 +142,7 @@ public class ConsumeMessageConcurrentlyService  implements CanalConsumeMessageSe
                 } else {
                     returnType = ConsumeReturnType.RETURNNULL;
                 }
-            } else if (consumeRT >= defaultConsumer.getConsumeTimeout() * 60 * 1000) {
+            } else if (consumeRT >= consumerProperties.getConsumeTimeout() * 60 * 1000) {
                 returnType = ConsumeReturnType.TIME_OUT;
             } else if (ConsumeConcurrentlyStatus.RECONSUME_LATER == status) {
                 returnType = ConsumeReturnType.FAILED;

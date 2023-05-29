@@ -7,7 +7,10 @@ import com.alibaba.otter.canal.protocol.CanalPacket;
 import com.alibaba.otter.canal.spring.boot.consumer.CanalConsumeMessageService;
 import com.alibaba.otter.canal.spring.boot.consumer.impl.CanalConnectorConsumerImpl;
 import com.alibaba.otter.canal.spring.boot.consumer.impl.CanalMQConnectorConsumerImpl;
+import com.alibaba.otter.canal.spring.boot.consumer.impl.ConsumeMessageConcurrentlyServiceImpl;
 import com.alibaba.otter.canal.spring.boot.consumer.listener.MessageListenerConcurrently;
+import com.alibaba.otter.canal.spring.boot.hooks.CanalConsumerHook;
+import com.alibaba.otter.canal.spring.boot.hooks.DisruptorShutdownHook;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -26,6 +29,15 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties({CanalProperties.class, CanalConsumerProperties.class})
 @Slf4j
 public class CanalConsumerAutoConfiguration {
+
+    @Bean(initMethod = "start")
+    public CanalConsumeMessageService canalConsumeMessageService(
+            CanalConsumerProperties consumerProperties,
+            ObjectProvider<MessageListenerConcurrently> messageListenerProvider){
+        ConsumeMessageConcurrentlyServiceImpl consumeMessageConcurrentlyService = new ConsumeMessageConcurrentlyServiceImpl(consumerProperties, messageListenerProvider.getIfAvailable());
+        Runtime.getRuntime().addShutdownHook(new CanalConsumerHook(consumeMessageConcurrentlyService, consumerProperties.getAwaitTerminateMillis()));
+        return consumeMessageConcurrentlyService;
+    }
 
     @Bean(initMethod = "start", destroyMethod = "shutdown")
     @ConditionalOnBean(MessageListenerConcurrently.class)

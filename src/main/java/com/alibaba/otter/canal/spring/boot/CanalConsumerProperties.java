@@ -31,7 +31,7 @@ public class CanalConsumerProperties {
 	/**
 	 * Batch consumption size
 	 */
-	protected int consumeMessageBatchMaxSize = 1;
+	private int consumeMessageBatchMaxSize = 1;
 	/**
 	 * Minimum consumer thread number
 	 */
@@ -43,7 +43,7 @@ public class CanalConsumerProperties {
 	/**
 	 * Maximum amount of time in minutes a message may block the consuming thread.
 	 */
-	protected long consumeTimeout = 15;
+	private long consumeTimeout = 15;
 	/**
 	 * The client subscribes to filter, and the corresponding filter information will be updated when the subscription is repeated
 	 * <pre>
@@ -56,14 +56,16 @@ public class CanalConsumerProperties {
 	/**
 	 * The number of messages read from the Canal service in each time
 	 */
-	protected Integer batchSize = 1000;
+	private Integer batchSize = 1000;
 	/**
 	 *  The timeout for reading batchSize records, If timeout=0, block until the batchSize record is obtained before returning
 	 */
-	protected Long readTimeout = 0L;
+	private Long readTimeout = 0L;
 	/**
 	 * If Ack required
 	 */
-	protected boolean requireAck;
+	private boolean requireAck;
+
+	private long awaitTerminateMillis;
 
 }

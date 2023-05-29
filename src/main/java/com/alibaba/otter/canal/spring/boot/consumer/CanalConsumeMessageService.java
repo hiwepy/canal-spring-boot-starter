@@ -1,5 +1,6 @@
 package com.alibaba.otter.canal.spring.boot.consumer;
 
+import com.alibaba.otter.canal.client.CanalConnector;
 import com.alibaba.otter.canal.protocol.Message;
 
 import java.util.List;
@@ -12,14 +13,8 @@ public interface CanalConsumeMessageService {
 
     void updateCorePoolSize(int corePoolSize);
 
-    void incCorePoolSize();
-
-    void decCorePoolSize();
-
     int getCorePoolSize();
 
-    void submitConsumeRequest(
-            final List<Message> msgs,
-            final boolean dispathToConsume);
+    void submitConsumeRequest( CanalConnector connector, List<Message> messages);
 
 }

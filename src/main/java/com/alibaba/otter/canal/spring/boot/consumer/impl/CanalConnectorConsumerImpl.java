@@ -40,7 +40,7 @@ public class CanalConnectorConsumerImpl extends CanalConnectorConsumer<CanalConn
                 message = withoutAck ? connector.getWithoutAck(consumeMessageBatchMaxSize) : connector.get(consumeMessageBatchMaxSize);
             }
 
-            getConsumeMessageService().submitConsumeRequest(Arrays.asList(message), true);
+            getConsumeMessageService().submitConsumeRequest(connector, Arrays.asList(message));
 
             long batchId = message.getId();
             int size = message.getEntries().size();

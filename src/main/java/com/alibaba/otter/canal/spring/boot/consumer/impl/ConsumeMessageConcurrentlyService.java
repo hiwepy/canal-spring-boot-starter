@@ -62,47 +62,37 @@ public class ConsumeMessageConcurrentlyService  implements CanalConsumeMessageSe
     }
 
     @Override
-    public void incCorePoolSize() {
-
-    }
-
-    @Override
-    public void decCorePoolSize() {
-
-    }
-
-    @Override
     public int getCorePoolSize() {
         return this.consumeExecutor.getCorePoolSize();
     }
 
     @Override
-    public void submitConsumeRequest(List<Message> msgs, boolean dispathToConsume) {
+    public void submitConsumeRequest(CanalConnector connector, List<Message> messages) {
         // get message consume batch size
         int consumeBatchSize = this.defaultConsumer.getConsumeMessageBatchMaxSize();
-        if (msgs.size() <= consumeBatchSize) {
-            ConsumeRequest consumeRequest = new ConsumeRequest(msgs);
+        if (messages.size() <= consumeBatchSize) {
+            ConsumeRequest consumeRequest = new ConsumeRequest(connector, messages);
             try {
                 this.consumeExecutor.submit(consumeRequest);
             } catch (RejectedExecutionException e) {
                 this.submitConsumeRequestLater(consumeRequest);
             }
         } else {
-            for (int total = 0; total < msgs.size(); ) {
+            for (int total = 0; total < messages.size(); ) {
                 List<Message> msgThis = new ArrayList<>(consumeBatchSize);
                 for (int i = 0; i < consumeBatchSize; i++, total++) {
-                    if (total < msgs.size()) {
-                        msgThis.add(msgs.get(total));
+                    if (total < messages.size()) {
+                        msgThis.add(messages.get(total));
                     } else {
                         break;
                     }
                 }
-                ConsumeRequest consumeRequest = new ConsumeRequest(msgThis);
+                ConsumeRequest consumeRequest = new ConsumeRequest(connector, msgThis);
                 try {
                     this.consumeExecutor.submit(consumeRequest);
                 } catch (RejectedExecutionException e) {
-                    for (; total < msgs.size(); total++) {
-                        msgThis.add(msgs.get(total));
+                    for (; total < messages.size(); total++) {
+                        msgThis.add(messages.get(total));
                     }
 
                     this.submitConsumeRequestLater(consumeRequest);
@@ -119,9 +109,11 @@ public class ConsumeMessageConcurrentlyService  implements CanalConsumeMessageSe
 
     class ConsumeRequest implements Runnable {
 
+        private final CanalConnector connector;
         private final List<Message> msgs;
 
-        public ConsumeRequest(List<Message> msgs) {
+        public ConsumeRequest(CanalConnector connector, List<Message> msgs) {
+            this.connector = connector;
             this.msgs = msgs;
         }
 

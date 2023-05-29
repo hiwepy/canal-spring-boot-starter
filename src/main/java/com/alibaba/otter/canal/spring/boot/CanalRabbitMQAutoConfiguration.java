@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
 public class CanalRabbitMQAutoConfiguration {
 
 	@Bean(initMethod = "connect", destroyMethod = "disconnect")
-	public RabbitMQCanalConnector rabbitMQCanalConnector(CanalRabbitMQProperties properties) {
+	public RabbitMQCanalConnector defaultRabbitMQCanalConnector(CanalRabbitMQProperties properties) {
 		RabbitMQCanalConnector connector = new RabbitMQCanalConnector(properties.getNameServer(), properties.getVhost(),
 				properties.getQueueName(), properties.getAccessKey(), properties.getSecretKey(),
 				properties.getUsername(), properties.getPassword(), properties.getResourceOwnerId(),

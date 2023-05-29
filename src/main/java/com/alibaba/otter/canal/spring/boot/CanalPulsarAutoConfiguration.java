@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
 public class CanalPulsarAutoConfiguration {
 
     @Bean(initMethod = "connect", destroyMethod = "disconnect")
-    public PulsarMQCanalConnector pulsarMQCanalConnector(CanalPulsarProperties properties) {
+    public PulsarMQCanalConnector defaultPulsarMQCanalConnector(CanalPulsarProperties properties) {
         PulsarMQCanalConnector connector = new PulsarMQCanalConnector(properties.isFlatMessage(),
                 properties.getServiceUrl(), properties.getRoleToken(), properties.getTopic(),
                 properties.getSubscriptName(), properties.getBatchSize(), properties.getBatchTimeoutSeconds(),

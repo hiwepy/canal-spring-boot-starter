@@ -60,10 +60,9 @@ public class CanalDisruptorAutoConfiguration {
          */
         BasicThreadFactory threadFactory = new BasicThreadFactory.Builder()
                 .namingPattern("canal-disruptor-%d")
-                .daemon(true)
                 .priority(Thread.MAX_PRIORITY)
                 .build();
-        /**
+        /**ThreadFactory threadFactory = new ThreadFactoryImpl("canal-disruptor-");
          * 3、初始化 Disruptor
          * http://blog.csdn.net/a314368439/article/details/72642653?utm_source=itdadao&utm_medium=referral
          */

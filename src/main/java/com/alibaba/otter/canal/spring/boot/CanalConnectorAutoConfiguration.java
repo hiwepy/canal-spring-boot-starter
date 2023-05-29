@@ -62,16 +62,6 @@ public class CanalConnectorAutoConfiguration {
             return canalConnector;
         }
     }
-/*
-
-    public CanalConnectorConsumer canalConnectorConsumer(
-            CanalProperties canalProperties,
-            ObjectProvider<RocketMQCanalConnector> rocketMQCanalConnectorProvider,
-            ObjectProvider<MessageListener> messageListenerProvider,
-            ObjectProvider<FlatMessageListener> flatMessageListenerProvider){
-        new CanalMQConnectorConsumer();
-    }
-*/
 
     private List<InetSocketAddress> parseAddresses(String addresses) {
         List<InetSocketAddress> parsedAddresses = new ArrayList<>();

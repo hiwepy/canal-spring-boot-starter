@@ -13,19 +13,19 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.alibaba.otter.canal.spring.boot;
+package com.alibaba.otter.canal.spring.boot.consumer.listener;
 
 
 /**
  * 消费消息的返回结果
  */
-public enum Action {
+public enum ConsumeConcurrentlyStatus {
     /**
      * 消费成功，继续消费下一条消息
      */
-    CommitMessage,
+    CONSUME_SUCCESS,
     /**
      * 消费失败，告知服务器稍后再投递这条消息，继续消费其他消息
      */
-    ReconsumeLater,
+    RECONSUME_LATER,
 }

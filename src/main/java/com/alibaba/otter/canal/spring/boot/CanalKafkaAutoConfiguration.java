@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Configuration;
 public class CanalKafkaAutoConfiguration {
 
     @Bean(initMethod = "connect", destroyMethod = "disconnect")
-    public KafkaCanalConnector kafkaCanalConnector(CanalKafkaProperties properties) {
+    public KafkaCanalConnector defaultKafkaCanalConnector(CanalKafkaProperties properties) {
         KafkaCanalConnector connector = properties.isEarliest() ? new KafkaOffsetCanalConnector(properties.getServers(),
                 properties.getTopic(),  properties.getPartition(), properties.getGroupId(),
                 properties.isFlatMessage()) : new KafkaCanalConnector(properties.getServers(),

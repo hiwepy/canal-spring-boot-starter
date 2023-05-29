@@ -1,17 +1,19 @@
 package com.alibaba.otter.canal.spring.boot.consumer;
 
 import com.alibaba.otter.canal.client.CanalConnector;
+import com.alibaba.otter.canal.spring.boot.CanalConsumerProperties;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.properties.PropertyMapper;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ErrorHandler;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public abstract class CanalConnectorConsumer<C extends CanalConnector> {
 
+    protected PropertyMapper map = PropertyMapper.get().alwaysApplyingWhenNonNull();
     /**
      * Error Handler
      */
@@ -19,7 +21,7 @@ public abstract class CanalConnectorConsumer<C extends CanalConnector> {
     /**
      * Batch consumption size
      */
-    protected int consumeMessageBatchMaxSize = 1;
+    private int consumeMessageBatchMaxSize = 1;
     /**
      * Minimum consumer thread number
      */
@@ -31,12 +33,36 @@ public abstract class CanalConnectorConsumer<C extends CanalConnector> {
     /**
      * Maximum amount of time in minutes a message may block the consuming thread.
      */
-    protected long consumeTimeout = 15;
-
-    protected Long timeout = 0L;
-    protected TimeUnit unit = TimeUnit.SECONDS;
-    protected boolean withoutAck;
+    private long consumeTimeout = 15;
+    /**
+     *  The timeout for reading batchSize records
+     */
+    private Integer batchSize = 1000;
+    /**
+     *  The timeout for reading batchSize records, If timeout=0, block until the batchSize record is obtained before returning
+     */
+    private Long readTimeout = 0L;
+    /**
+     * If Ack required
+     */
+    private boolean requireAck;
+    /**
+     * 客户端订阅，重复订阅时会更新对应的filter信息
+     *
+     * <pre>
+     * 说明：
+     * a. 如果本次订阅中filter信息为空，则直接使用canal server服务端配置的filter信息
+     * b. 如果本次订阅中filter信息不为空，目前会直接替换canal server服务端配置的filter信息，以本次提交的为准
+     * </pre>
+     */
+    private String consumeFilter;
+    /**
+     * The Canal Connector List
+     */
     private List<C> connectors;
+    /**
+     * Canal Message Consumer Scheduler
+     */
     private ThreadPoolTaskScheduler threadPoolTaskScheduler;
 
     public CanalConnectorConsumer(List<C> connectors){
@@ -50,7 +76,7 @@ public abstract class CanalConnectorConsumer<C extends CanalConnector> {
         }
         ThreadPoolTaskScheduler threadPoolTaskScheduler = new ThreadPoolTaskScheduler();
         threadPoolTaskScheduler.setErrorHandler(handler);
-        threadPoolTaskScheduler.setPoolSize(1);
+        threadPoolTaskScheduler.setPoolSize(Math.max(1, connectors.size()));
         threadPoolTaskScheduler.setThreadFactory(new ThreadFactoryImpl("ConsumeMessageScheduledThread_"));
         threadPoolTaskScheduler.initialize();
         return threadPoolTaskScheduler;
@@ -79,6 +105,17 @@ public abstract class CanalConnectorConsumer<C extends CanalConnector> {
      * @param connector Canal Connector
      */
     public abstract void consumeMessage(C connector);
+
+    public void initConsumer(CanalConsumerProperties consumerProperties){
+        map.from(consumerProperties.getConsumeMessageBatchMaxSize()).to(this::setConsumeMessageBatchMaxSize);
+        map.from(consumerProperties.getConsumeTimeout()).to(this::setConsumeTimeout);
+        map.from(consumerProperties.getConsumeThreadMax()).to(this::setConsumeThreadMax);
+        map.from(consumerProperties.getConsumeThreadMin()).to(this::setConsumeThreadMin);
+        map.from(consumerProperties.getConsumeFilter()).to(this::setConsumeFilter);
+        map.from(consumerProperties.getBatchSize()).to(this::setBatchSize);
+        map.from(consumerProperties.getReadTimeout()).to(this::setReadTimeout);
+        map.from(consumerProperties.isRequireAck()).to(this::setRequireAck);
+    }
 
     /**
      * shutdown method
@@ -111,30 +148,6 @@ public abstract class CanalConnectorConsumer<C extends CanalConnector> {
         this.consumeTimeout = consumeTimeout;
     }
 
-    public Long getTimeout() {
-        return timeout;
-    }
-
-    public void setTimeout(Long timeout) {
-        this.timeout = timeout;
-    }
-
-    public TimeUnit getUnit() {
-        return unit;
-    }
-
-    public void setUnit(TimeUnit unit) {
-        this.unit = unit;
-    }
-
-    public boolean isWithoutAck() {
-        return withoutAck;
-    }
-
-    public void setWithoutAck(boolean withoutAck) {
-        this.withoutAck = withoutAck;
-    }
-
     public int getConsumeMessageBatchMaxSize() {
         return consumeMessageBatchMaxSize;
     }
@@ -142,4 +155,37 @@ public abstract class CanalConnectorConsumer<C extends CanalConnector> {
     public void setConsumeMessageBatchMaxSize(int consumeMessageBatchMaxSize) {
         this.consumeMessageBatchMaxSize = consumeMessageBatchMaxSize;
     }
+
+    public Integer getBatchSize() {
+        return batchSize;
+    }
+
+    public void setBatchSize(Integer batchSize) {
+        this.batchSize = batchSize;
+    }
+
+    public Long getReadTimeout() {
+        return readTimeout;
+    }
+
+    public void setReadTimeout(Long readTimeout) {
+        this.readTimeout = readTimeout;
+    }
+
+    public boolean isRequireAck() {
+        return requireAck;
+    }
+
+    public void setRequireAck(boolean requireAck) {
+        this.requireAck = requireAck;
+    }
+
+    public String getConsumeFilter() {
+        return consumeFilter;
+    }
+
+    public void setConsumeFilter(String consumeFilter) {
+        this.consumeFilter = consumeFilter;
+    }
+
 }

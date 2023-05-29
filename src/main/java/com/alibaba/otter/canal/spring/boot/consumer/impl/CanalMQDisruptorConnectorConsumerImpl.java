@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class CanalMQDisruptorConnectorConsumerImpl extends CanalConnectorConsumer<CanalMQConnector> {
@@ -30,8 +31,8 @@ public class CanalMQDisruptorConnectorConsumerImpl extends CanalConnectorConsume
 
             connector.connect();
             connector.subscribe();
-            List<Message> messages = withoutAck ? connector.getListWithoutAck(timeout, unit) : connector.getList(timeout, unit);
-            disruptor.publishEvent(messageListEventTranslator, withoutAck, messages);
+            List<Message> messages = this.isRequireAck() ? connector.getListWithoutAck(this.getReadTimeout(), TimeUnit.SECONDS) : connector.getList(this.getReadTimeout(), TimeUnit.SECONDS);
+            disruptor.publishEvent(messageListEventTranslator, this.isRequireAck(), messages);
 
             for (Message message : messages) {
                 long batchId = message.getId();

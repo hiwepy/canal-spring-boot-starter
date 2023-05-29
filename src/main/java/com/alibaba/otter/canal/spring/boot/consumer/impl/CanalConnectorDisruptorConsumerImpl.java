@@ -13,6 +13,7 @@ import org.slf4j.MDC;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class CanalConnectorDisruptorConsumerImpl extends CanalConnectorConsumer<CanalConnector> {
@@ -33,13 +34,13 @@ public class CanalConnectorDisruptorConsumerImpl extends CanalConnectorConsumer<
             connector.subscribe();
 
             Message message;
-            if(Objects.nonNull(timeout) && Objects.nonNull(unit)){
-                message = withoutAck ? connector.getWithoutAck(consumeMessageBatchMaxSize, timeout, unit) : connector.get(consumeMessageBatchMaxSize, timeout, unit);
+            if(Objects.nonNull(this.getReadTimeout()) ){
+                message = this.isRequireAck() ? connector.getWithoutAck(this.getBatchSize(), this.getReadTimeout(), TimeUnit.SECONDS) : connector.get(this.getBatchSize(), this.getReadTimeout(), TimeUnit.SECONDS);
             } else {
-                message = withoutAck ? connector.getWithoutAck(consumeMessageBatchMaxSize) : connector.get(consumeMessageBatchMaxSize);
+                message = this.isRequireAck() ? connector.getWithoutAck(this.getBatchSize()) : connector.get(this.getBatchSize());
             }
 
-            disruptor.publishEvent(messageEventTranslator, withoutAck, message);
+            disruptor.publishEvent(messageEventTranslator, this.isRequireAck(), message);
 
             long batchId = message.getId();
             int size = message.getEntries().size();

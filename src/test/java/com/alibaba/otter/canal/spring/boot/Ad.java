@@ -11,17 +11,6 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import java.net.InetSocketAddress;
 import java.util.List;
 
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.otter.canal.client.CanalConnector;
-import com.alibaba.otter.canal.client.CanalConnectors;
-import com.alibaba.otter.canal.protocol.CanalEntry;
-import com.alibaba.otter.canal.protocol.Message;
-import com.google.protobuf.ByteString;
-import com.google.protobuf.InvalidProtocolBufferException;
-
-import java.net.InetSocketAddress;
-import java.util.List;
-
 /**
  * Description: TODO
  *

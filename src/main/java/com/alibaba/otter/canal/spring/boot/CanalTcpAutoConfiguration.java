@@ -20,13 +20,13 @@ import java.util.List;
 
 @Configuration
 @ConditionalOnClass({ SimpleCanalConnector.class, ClusterCanalConnector.class })
-@ConditionalOnProperty(prefix = CanalConnectorProperties.PREFIX, value = "enabled", havingValue = "true")
-@EnableConfigurationProperties({CanalProperties.class, CanalConnectorProperties.class})
+@ConditionalOnProperty(prefix = CanalProperties.PREFIX, value = "server-mode", havingValue = "TCP")
+@EnableConfigurationProperties({CanalProperties.class, CanalTcpProperties.class})
 @Slf4j
-public class CanalConnectorAutoConfiguration {
+public class CanalTcpAutoConfiguration {
 
     @Bean(initMethod = "connect", destroyMethod = "disconnect")
-    public CanalConnector canalConnector(CanalConnectorProperties connectorProperties){
+    public CanalConnector canalConnector(CanalTcpProperties connectorProperties){
 
         if (StringUtils.hasText(connectorProperties.getZkServers())) {
             ClusterCanalConnector canalConnector = new ClusterCanalConnector(connectorProperties.getUsername(),
@@ -68,7 +68,7 @@ public class CanalConnectorAutoConfiguration {
         for (String address : StringUtils.commaDelimitedListToStringArray(addresses)) {
             if (StringUtils.hasText(address)) {
                 String[] split = StringUtils.split(address, ":");
-                Integer port = split.length == 1 ? CanalConnectorProperties.DEFAULT_PORT : Integer.parseInt(split[1]);
+                Integer port = split.length == 1 ? CanalTcpProperties.DEFAULT_PORT : Integer.parseInt(split[1]);
                 parsedAddresses.add(new InetSocketAddress(split[0], port));
             }
         }

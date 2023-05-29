@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConditionalOnClass({ RabbitMQCanalConnector.class, DefaultConsumer.class })
-@ConditionalOnProperty(prefix = CanalRabbitMQProperties.PREFIX, value = "enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = CanalProperties.PREFIX, value = "server-mode", havingValue = "RABBIT_MQ")
 @EnableConfigurationProperties(CanalRabbitMQProperties.class)
 @Slf4j
 public class CanalRabbitMQAutoConfiguration {

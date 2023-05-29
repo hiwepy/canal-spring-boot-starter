@@ -21,7 +21,7 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * Canal 集成 Disruptor
+ * Canal 集成 Disruptor ， 作为消费者
  * @author ： <a href="https://github.com/hiwepy">hiwepy</a>
  */
 @ConfigurationProperties(CanalDisruptorProperties.PREFIX)
@@ -32,11 +32,6 @@ public class CanalDisruptorProperties {
     private static final int DEFAULT_MAX_SLEEP_MS = Integer.MAX_VALUE;
 
 	public static final String PREFIX = "canal.disruptor";
-
-	/**
-	 * Whether Enable Canal Disruptor.
-	 */
-	private boolean enabled = false;
 
 	/**
 	 * RingBuffer缓冲区大小, 默认 1024

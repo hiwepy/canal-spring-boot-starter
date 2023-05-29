@@ -28,10 +28,11 @@ import java.util.stream.Collectors;
 
 @Configuration
 @ConditionalOnClass({ CanalConnector.class, CanalLifeCycle.class, CanalPacket.class, Disruptor.class })
-@ConditionalOnProperty(prefix = CanalDisruptorProperties.PREFIX, value = "enabled", havingValue = "true")
-@EnableConfigurationProperties(CanalDisruptorProperties.class)
+@ConditionalOnProperty(prefix = CanalProperties.PREFIX, value = "consumer-mode", havingValue = "DISRUPTOR")
+@EnableConfigurationProperties({CanalProperties.class, CanalConsumerProperties.class, CanalDisruptorProperties.class})
 @Slf4j
 public class CanalDisruptorAutoConfiguration {
+
 
     @Bean
     @ConditionalOnMissingBean
@@ -47,6 +48,7 @@ public class CanalDisruptorAutoConfiguration {
      */
     @Bean(initMethod = "start", destroyMethod = "shutdown", name = "canalDisruptor")
     public Disruptor<MessageEvent> canalDisruptor(
+            CanalConsumerProperties consumerProperties,
             CanalDisruptorProperties disruptorProperties,
             ObjectProvider<CanalEventHandler> canalEventHandlerProvider) {
 
@@ -87,6 +89,7 @@ public class CanalDisruptorAutoConfiguration {
 
     @Bean(initMethod = "start", destroyMethod = "shutdown")
     public CanalConnectorDisruptorConsumerImpl canalConnectorDisruptorConsumer(
+            CanalConsumerProperties consumerProperties,
             ObjectProvider<CanalConnector> canalConnectorProvider,
             @Qualifier("canalDisruptor") Disruptor<MessageEvent> canalDisruptor){
 
@@ -94,11 +97,15 @@ public class CanalDisruptorAutoConfiguration {
                 .filter(connector -> !CanalMQConnector.class.isAssignableFrom(connector.getClass()))
                 .collect(Collectors.toList());
 
-        return new CanalConnectorDisruptorConsumerImpl(connectors, canalDisruptor);
+        CanalConnectorDisruptorConsumerImpl consumerImpl = new CanalConnectorDisruptorConsumerImpl(connectors, canalDisruptor);
+        consumerImpl.initConsumer(consumerProperties);
+
+        return consumerImpl;
     }
 
     @Bean(initMethod = "start", destroyMethod = "shutdown")
     public CanalMQDisruptorConnectorConsumerImpl canalMQCanalConnectorDisruptorConsumer(
+            CanalConsumerProperties consumerProperties,
             ObjectProvider<CanalMQConnector> rocketMQCanalConnectorProvider,
             @Qualifier("canalDisruptor") Disruptor<MessageEvent> canalDisruptor){
 
@@ -106,7 +113,9 @@ public class CanalDisruptorAutoConfiguration {
                 .filter(connector -> CanalMQConnector.class.isAssignableFrom(connector.getClass()))
                 .collect(Collectors.toList());
 
-        return new CanalMQDisruptorConnectorConsumerImpl(connectors, canalDisruptor);
+        CanalMQDisruptorConnectorConsumerImpl consumerImpl = new CanalMQDisruptorConnectorConsumerImpl(connectors, canalDisruptor);
+        consumerImpl.initConsumer(consumerProperties);
+        return consumerImpl;
     }
 
 }

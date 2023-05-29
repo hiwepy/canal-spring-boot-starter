@@ -11,6 +11,7 @@ import org.slf4j.MDC;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 /**
  * CanalConnector Consumer
@@ -33,10 +34,10 @@ public class CanalConnectorConsumerImpl extends CanalConnectorConsumer<CanalConn
             connector.subscribe();
 
             Message message;
-            if(Objects.nonNull(timeout) && Objects.nonNull(unit)){
-                message = withoutAck ? connector.getWithoutAck(consumeMessageBatchMaxSize, timeout, unit) : connector.get(consumeMessageBatchMaxSize, timeout, unit);
+            if(Objects.nonNull(this.getReadTimeout()) ){
+                message = this.isRequireAck() ? connector.getWithoutAck(this.getBatchSize(), this.getReadTimeout(), TimeUnit.SECONDS) : connector.get(this.getBatchSize(), this.getReadTimeout(), TimeUnit.SECONDS);
             } else {
-                message = withoutAck ? connector.getWithoutAck(consumeMessageBatchMaxSize) : connector.get(consumeMessageBatchMaxSize);
+                message = this.isRequireAck() ? connector.getWithoutAck(this.getBatchSize()) : connector.get(this.getBatchSize());
             }
 
             getConsumeMessageService().submitConsumeRequest(connector, Arrays.asList(message));

@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConditionalOnClass({ PulsarMQCanalConnector.class, PulsarClient.class })
-@ConditionalOnProperty(prefix = CanalPulsarProperties.PREFIX, value = "enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = CanalProperties.PREFIX, value = "server-mode", havingValue = "PULSAR_MQ")
 @EnableConfigurationProperties(CanalPulsarProperties.class)
 @Slf4j
 public class CanalPulsarAutoConfiguration {

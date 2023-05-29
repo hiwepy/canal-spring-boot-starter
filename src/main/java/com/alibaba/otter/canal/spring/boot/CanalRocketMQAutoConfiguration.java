@@ -13,7 +13,7 @@ import org.springframework.util.StringUtils;
 
 @Configuration
 @ConditionalOnClass({ RocketMQCanalConnector.class, DefaultMQPushConsumer.class })
-@ConditionalOnProperty(prefix = CanalRocketMQProperties.PREFIX, value = "enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = CanalProperties.PREFIX, value = "server-mode", havingValue = "ROCKET_MQ")
 @EnableConfigurationProperties(CanalRocketMQProperties.class)
 @Slf4j
 public class CanalRocketMQAutoConfiguration {

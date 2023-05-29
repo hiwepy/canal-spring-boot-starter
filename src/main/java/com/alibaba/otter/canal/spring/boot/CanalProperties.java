@@ -18,8 +18,6 @@ package com.alibaba.otter.canal.spring.boot;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * 
  * @author ： <a href="https://github.com/hiwepy">hiwepy</a>
@@ -31,12 +29,26 @@ public class CanalProperties {
 	public static final String PREFIX = "canal";
 
 	/**
-	 * 消费线程每次拉取消息的数量，默认 10
+	 * The consumerMode of the Canal Client.
 	 */
-	private int batchSize = 10;
-	private Long timeout;
-	private TimeUnit unit;
-	private boolean withoutAck;
-	private String filter;
+	private ConsumerMode consumerMode = ConsumerMode.THREAD_POOL;
+	/**
+	 * The serverMode of the Canal Client.
+	 */
+	private ServerMode serverMode = ServerMode.TCP;
+
+	/**
+	 * Canal Consumer Mode. threadPool, disruptor
+	 */
+	public enum ConsumerMode {
+		THREAD_POOL, DISRUPTOR
+	}
+
+	/**
+	 * Canal Server Mode. tcp, kafka, rocketMQ, rabbitMQ, pulsarMQ
+	 */
+	public enum ServerMode {
+		TCP, KAFKA, PULSAR_MQ, RABBIT_MQ, ROCKET_MQ
+	}
 
 }

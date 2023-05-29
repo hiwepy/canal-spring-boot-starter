@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ConditionalOnClass({ KafkaCanalConnector.class, KafkaConsumer.class })
-@ConditionalOnProperty(prefix = CanalKafkaProperties.PREFIX, value = "enabled", havingValue = "true")
+@ConditionalOnProperty(prefix = CanalProperties.PREFIX, value = "server-mode", havingValue = "KAFKA")
 @EnableConfigurationProperties(CanalKafkaProperties.class)
 @Slf4j
 public class CanalKafkaAutoConfiguration {

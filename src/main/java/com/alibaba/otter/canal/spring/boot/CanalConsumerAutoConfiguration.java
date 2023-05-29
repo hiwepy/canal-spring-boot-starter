@@ -4,7 +4,6 @@ import com.alibaba.otter.canal.client.CanalConnector;
 import com.alibaba.otter.canal.client.CanalMQConnector;
 import com.alibaba.otter.canal.common.CanalLifeCycle;
 import com.alibaba.otter.canal.protocol.CanalPacket;
-import com.alibaba.otter.canal.spring.boot.consumer.CanalConnectorConsumer;
 import com.alibaba.otter.canal.spring.boot.consumer.CanalConsumeMessageService;
 import com.alibaba.otter.canal.spring.boot.consumer.impl.CanalConnectorConsumerImpl;
 import com.alibaba.otter.canal.spring.boot.consumer.impl.CanalMQConnectorConsumerImpl;
@@ -23,14 +22,15 @@ import java.util.stream.Collectors;
 
 @Configuration
 @ConditionalOnClass({ CanalConnector.class, CanalLifeCycle.class, CanalPacket.class })
-@ConditionalOnProperty(prefix = CanalProperties.PREFIX, value = "enabled", havingValue = "true")
-@EnableConfigurationProperties(CanalProperties.class)
+@ConditionalOnProperty(prefix = CanalProperties.PREFIX, value = "consumer-mode", havingValue = "THREAD_POOL")
+@EnableConfigurationProperties({CanalProperties.class, CanalConsumerProperties.class})
 @Slf4j
-public class CanalAutoConfiguration {
+public class CanalConsumerAutoConfiguration {
 
     @Bean(initMethod = "start", destroyMethod = "shutdown")
     @ConditionalOnBean(MessageListenerConcurrently.class)
-    public CanalConnectorConsumer canalConnectorConsumer(
+    public CanalConnectorConsumerImpl canalConnectorConsumer(
+            CanalConsumerProperties consumerProperties,
             ObjectProvider<CanalConnector> canalConnectorProvider,
             ObjectProvider<CanalConsumeMessageService> consumeMessageServiceProvider){
 
@@ -38,12 +38,15 @@ public class CanalAutoConfiguration {
                 .filter(connector -> !CanalMQConnector.class.isAssignableFrom(connector.getClass()))
                 .collect(Collectors.toList());
 
-        return new CanalConnectorConsumerImpl(connectors, consumeMessageServiceProvider.getIfAvailable());
+        CanalConnectorConsumerImpl consumerImpl = new CanalConnectorConsumerImpl(connectors, consumeMessageServiceProvider.getIfAvailable());
+        consumerImpl.initConsumer(consumerProperties);
+        return consumerImpl;
     }
 
     @Bean(initMethod = "start", destroyMethod = "shutdown")
     @ConditionalOnBean(MessageListenerConcurrently.class)
     public CanalMQConnectorConsumerImpl canalMQCanalConnectorConsumer(
+            CanalConsumerProperties consumerProperties,
             ObjectProvider<CanalMQConnector> rocketMQCanalConnectorProvider,
             ObjectProvider<CanalConsumeMessageService> consumeMessageServiceProvider){
 
@@ -51,7 +54,10 @@ public class CanalAutoConfiguration {
                 .filter(connector -> CanalMQConnector.class.isAssignableFrom(connector.getClass()))
                 .collect(Collectors.toList());
 
-        return new CanalMQConnectorConsumerImpl(connectors, consumeMessageServiceProvider.getIfAvailable());
+        CanalMQConnectorConsumerImpl consumerImpl = new CanalMQConnectorConsumerImpl(connectors, consumeMessageServiceProvider.getIfAvailable());
+        consumerImpl.initConsumer(consumerProperties);
+        return consumerImpl;
+
     }
 
 

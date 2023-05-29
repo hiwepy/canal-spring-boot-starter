@@ -20,8 +20,6 @@ import com.lmax.disruptor.dsl.ProducerType;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * Canal 集成 Disruptor
  * @author ： <a href="https://github.com/hiwepy">hiwepy</a>
@@ -39,19 +37,6 @@ public class CanalDisruptorProperties {
 	 * Whether Enable Canal Disruptor.
 	 */
 	private boolean enabled = false;
-
-	/**
-	 * 消费线程每次拉取消息的数量，默认 10
-	 */
-	private int batchSize = 10;
-
-	private Long timeout;
-
-	private TimeUnit unit;
-
-	private boolean withoutAck;
-
-	private String filter;
 
 	/**
 	 * RingBuffer缓冲区大小, 默认 1024

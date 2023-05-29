@@ -3,26 +3,26 @@ package com.alibaba.otter.canal.spring.boot.consumer.impl;
 import com.alibaba.otter.canal.client.CanalConnector;
 import com.alibaba.otter.canal.protocol.Message;
 import com.alibaba.otter.canal.spring.boot.consumer.CanalConnectorConsumer;
-import com.alibaba.otter.canal.spring.boot.consumer.CanalConsumeMessageService;
+import com.alibaba.otter.canal.spring.boot.disruptor.event.MessageEvent;
+import com.alibaba.otter.canal.spring.boot.disruptor.event.translator.MessageEventTwoArgTranslator;
 import com.alibaba.otter.canal.spring.boot.utils.CanalUtils;
+import com.lmax.disruptor.EventTranslatorTwoArg;
+import com.lmax.disruptor.dsl.Disruptor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-/**
- * CanalConnector Consumer
- */
 @Slf4j
-public class CanalConnectorConsumerImpl extends CanalConnectorConsumer<CanalConnector> {
+public class CanalConnectorDisruptorConsumerImpl extends CanalConnectorConsumer<CanalConnector> {
 
-    private final CanalConsumeMessageService consumeMessageService;
+    protected EventTranslatorTwoArg<MessageEvent, Boolean , Message> messageEventTranslator = new MessageEventTwoArgTranslator();
+    protected final Disruptor<MessageEvent> disruptor;
 
-    public CanalConnectorConsumerImpl(List<CanalConnector> connectors, CanalConsumeMessageService consumeMessageService){
+    public CanalConnectorDisruptorConsumerImpl(List<CanalConnector> connectors, Disruptor<MessageEvent> disruptor){
         super(connectors);
-        this.consumeMessageService = consumeMessageService;
+        this.disruptor = disruptor;
     }
 
     @Override
@@ -39,7 +39,7 @@ public class CanalConnectorConsumerImpl extends CanalConnectorConsumer<CanalConn
                 message = withoutAck ? connector.getWithoutAck(consumeMessageBatchMaxSize) : connector.get(consumeMessageBatchMaxSize);
             }
 
-            getConsumeMessageService().submitConsumeRequest(connector, Arrays.asList(message));
+            disruptor.publishEvent(messageEventTranslator, withoutAck, message);
 
             long batchId = message.getId();
             int size = message.getEntries().size();
@@ -68,10 +68,6 @@ public class CanalConnectorConsumerImpl extends CanalConnectorConsumer<CanalConn
             connector.disconnect();
             MDC.remove("destination");
         }
-    }
-
-    public CanalConsumeMessageService getConsumeMessageService() {
-        return consumeMessageService;
     }
 
 }

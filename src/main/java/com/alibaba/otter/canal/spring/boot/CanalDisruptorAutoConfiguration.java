@@ -1,10 +1,11 @@
 package com.alibaba.otter.canal.spring.boot;
 
 import com.alibaba.otter.canal.client.CanalConnector;
+import com.alibaba.otter.canal.client.CanalMQConnector;
 import com.alibaba.otter.canal.common.CanalLifeCycle;
 import com.alibaba.otter.canal.protocol.CanalPacket;
-import com.alibaba.otter.canal.spring.boot.disruptor.CanalDisruptorConsumer;
-import com.alibaba.otter.canal.spring.boot.disruptor.CanalDisruptorConsumers;
+import com.alibaba.otter.canal.spring.boot.consumer.impl.CanalConnectorDisruptorConsumerImpl;
+import com.alibaba.otter.canal.spring.boot.consumer.impl.CanalMQDisruptorConnectorConsumerImpl;
 import com.alibaba.otter.canal.spring.boot.disruptor.CanalEventHandler;
 import com.alibaba.otter.canal.spring.boot.disruptor.event.MessageEvent;
 import com.alibaba.otter.canal.spring.boot.disruptor.factory.CanalEventFactory;
@@ -14,6 +15,7 @@ import com.lmax.disruptor.dsl.Disruptor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -21,8 +23,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Configuration
 @ConditionalOnClass({ CanalConnector.class, CanalLifeCycle.class, CanalPacket.class, Disruptor.class })
@@ -40,14 +42,12 @@ public class CanalDisruptorAutoConfiguration {
     /**
      * 创建Disruptor
      * @param disruptorProperties	: 配置参数
-     * @param canalConnectorProvider	    : CanalConnector 提供者
      * @param canalEventHandlerProvider	    : EventHandler 提供者
      * @return {@link Disruptor} instance
      */
-    @Bean(destroyMethod = "shutdown", name = "canalDisruptor")
+    @Bean(initMethod = "start", destroyMethod = "shutdown", name = "canalDisruptor")
     public Disruptor<MessageEvent> canalDisruptor(
             CanalDisruptorProperties disruptorProperties,
-            ObjectProvider<CanalConnector> canalConnectorProvider,
             ObjectProvider<CanalEventHandler> canalEventHandlerProvider) {
 
         /**
@@ -75,27 +75,38 @@ public class CanalDisruptorAutoConfiguration {
         disruptor.handleEventsWith(canalEventHandlerProvider.getIfAvailable());
         disruptor.handleExceptionsFor(canalEventHandlerProvider.getIfAvailable());
 
-        disruptor.start();
-
-
-        List<CanalDisruptorConsumer> disruptorConsumers = new ArrayList<>();
-        canalConnectorProvider.stream().forEach(connector -> {
-
-            CanalDisruptorConsumer consumer =  CanalDisruptorConsumers.create(connector, disruptor, disruptorProperties.getBatchSize(),
-                    disruptorProperties.getTimeout(), disruptorProperties.getUnit());
-            disruptorConsumers.add(consumer);
-            consumer.start();
-
-        });
-
         /**
          * 5、应用退出时，要调用shutdown来清理资源，关闭网络连接，从MetaQ服务器上注销自己
          * 注意：我们建议应用在JBOSS、Tomcat等容器的退出钩子里调用shutdown方法
          */
-        Runtime.getRuntime().addShutdownHook(new DisruptorShutdownHook(disruptor, disruptorConsumers));
+        Runtime.getRuntime().addShutdownHook(new DisruptorShutdownHook(disruptor));
 
         return disruptor;
 
+    }
+
+    @Bean(initMethod = "start", destroyMethod = "shutdown")
+    public CanalConnectorDisruptorConsumerImpl canalConnectorDisruptorConsumer(
+            ObjectProvider<CanalConnector> canalConnectorProvider,
+            @Qualifier("canalDisruptor") Disruptor<MessageEvent> canalDisruptor){
+
+        List<CanalConnector> connectors = canalConnectorProvider.stream()
+                .filter(connector -> !CanalMQConnector.class.isAssignableFrom(connector.getClass()))
+                .collect(Collectors.toList());
+
+        return new CanalConnectorDisruptorConsumerImpl(connectors, canalDisruptor);
+    }
+
+    @Bean(initMethod = "start", destroyMethod = "shutdown")
+    public CanalMQDisruptorConnectorConsumerImpl canalMQCanalConnectorDisruptorConsumer(
+            ObjectProvider<CanalMQConnector> rocketMQCanalConnectorProvider,
+            @Qualifier("canalDisruptor") Disruptor<MessageEvent> canalDisruptor){
+
+        List<CanalMQConnector> connectors = rocketMQCanalConnectorProvider.stream()
+                .filter(connector -> CanalMQConnector.class.isAssignableFrom(connector.getClass()))
+                .collect(Collectors.toList());
+
+        return new CanalMQDisruptorConnectorConsumerImpl(connectors, canalDisruptor);
     }
 
 }

@@ -8,8 +8,10 @@ import com.alibaba.otter.canal.spring.boot.consumer.CanalConnectorConsumer;
 import com.alibaba.otter.canal.spring.boot.consumer.CanalConsumeMessageService;
 import com.alibaba.otter.canal.spring.boot.consumer.impl.CanalConnectorConsumerImpl;
 import com.alibaba.otter.canal.spring.boot.consumer.impl.CanalMQConnectorConsumerImpl;
+import com.alibaba.otter.canal.spring.boot.consumer.listener.MessageListenerConcurrently;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -27,6 +29,7 @@ import java.util.stream.Collectors;
 public class CanalAutoConfiguration {
 
     @Bean(initMethod = "start", destroyMethod = "shutdown")
+    @ConditionalOnBean(MessageListenerConcurrently.class)
     public CanalConnectorConsumer canalConnectorConsumer(
             ObjectProvider<CanalConnector> canalConnectorProvider,
             ObjectProvider<CanalConsumeMessageService> consumeMessageServiceProvider){
@@ -39,6 +42,7 @@ public class CanalAutoConfiguration {
     }
 
     @Bean(initMethod = "start", destroyMethod = "shutdown")
+    @ConditionalOnBean(MessageListenerConcurrently.class)
     public CanalMQConnectorConsumerImpl canalMQCanalConnectorConsumer(
             ObjectProvider<CanalMQConnector> rocketMQCanalConnectorProvider,
             ObjectProvider<CanalConsumeMessageService> consumeMessageServiceProvider){
@@ -49,6 +53,9 @@ public class CanalAutoConfiguration {
 
         return new CanalMQConnectorConsumerImpl(connectors, consumeMessageServiceProvider.getIfAvailable());
     }
+
+
+
 
 
 }

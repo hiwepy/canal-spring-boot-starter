@@ -3,21 +3,25 @@ package com.alibaba.otter.canal.spring.boot.consumer.impl;
 import com.alibaba.otter.canal.client.CanalMQConnector;
 import com.alibaba.otter.canal.protocol.Message;
 import com.alibaba.otter.canal.spring.boot.consumer.CanalConnectorConsumer;
-import com.alibaba.otter.canal.spring.boot.consumer.CanalConsumeMessageService;
+import com.alibaba.otter.canal.spring.boot.disruptor.event.MessageEvent;
+import com.alibaba.otter.canal.spring.boot.disruptor.event.translator.MessageListEventTwoArgTranslator;
 import com.alibaba.otter.canal.spring.boot.utils.CanalUtils;
+import com.lmax.disruptor.EventTranslatorTwoArg;
+import com.lmax.disruptor.dsl.Disruptor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 
 import java.util.List;
 
 @Slf4j
-public class CanalMQConnectorConsumerImpl extends CanalConnectorConsumer<CanalMQConnector> {
+public class CanalMQDisruptorConnectorConsumerImpl extends CanalConnectorConsumer<CanalMQConnector> {
 
-    private final CanalConsumeMessageService consumeMessageService;
+    protected EventTranslatorTwoArg<MessageEvent, Boolean, List<Message>> messageListEventTranslator = new MessageListEventTwoArgTranslator();
+    protected final Disruptor<MessageEvent> disruptor;
 
-    public CanalMQConnectorConsumerImpl(List<CanalMQConnector> connectors, CanalConsumeMessageService consumeMessageService){
+    public CanalMQDisruptorConnectorConsumerImpl(List<CanalMQConnector> connectors, Disruptor<MessageEvent> disruptor){
         super(connectors);
-        this.consumeMessageService = consumeMessageService;
+        this.disruptor = disruptor;
     }
 
     @Override
@@ -27,6 +31,8 @@ public class CanalMQConnectorConsumerImpl extends CanalConnectorConsumer<CanalMQ
             connector.connect();
             connector.subscribe();
             List<Message> messages = withoutAck ? connector.getListWithoutAck(timeout, unit) : connector.getList(timeout, unit);
+            disruptor.publishEvent(messageListEventTranslator, withoutAck, messages);
+
             for (Message message : messages) {
                 long batchId = message.getId();
                 int size = message.getEntries().size();
@@ -56,10 +62,6 @@ public class CanalMQConnectorConsumerImpl extends CanalConnectorConsumer<CanalMQ
             connector.disconnect();
             MDC.remove("destination");
         }
-    }
-
-    public CanalConsumeMessageService getConsumeMessageService() {
-        return consumeMessageService;
     }
 
 }

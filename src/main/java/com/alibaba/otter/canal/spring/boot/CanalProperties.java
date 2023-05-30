@@ -45,7 +45,7 @@ public class CanalProperties {
 	}
 
 	/**
-	 * Canal Server Mode. tcp, kafka, rocketMQ, rabbitMQ, pulsarMQ
+	 * Canal Server Mode. TCP, KAFKA, ROCKETMQ, RABBITMQ, PULSARMQ
 	 */
 	public enum ServerMode {
 		TCP, KAFKA, PULSAR_MQ, RABBIT_MQ, ROCKET_MQ

@@ -19,11 +19,13 @@ import com.alibaba.otter.canal.protocol.Message;
 import com.alibaba.otter.canal.spring.boot.disruptor.event.MessageEvent;
 import com.lmax.disruptor.EventTranslatorTwoArg;
 
+import java.util.Arrays;
+
 public class MessageEventTwoArgTranslator implements EventTranslatorTwoArg<MessageEvent, Boolean, Message> {
 
 	@Override
 	public void translateTo(MessageEvent event, long sequence, Boolean withoutAck, Message message) {
-		event.setMessage(message);
+		event.setMessages(Arrays.asList(message));
 	}
 
 }

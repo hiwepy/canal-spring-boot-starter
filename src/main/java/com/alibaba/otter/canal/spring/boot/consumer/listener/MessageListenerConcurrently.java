@@ -1,6 +1,7 @@
 package com.alibaba.otter.canal.spring.boot.consumer.listener;
 
 import com.alibaba.otter.canal.protocol.Message;
+import com.google.protobuf.InvalidProtocolBufferException;
 
 import java.util.List;
 
@@ -13,9 +14,9 @@ public interface MessageListenerConcurrently extends MessageListener {
      * It is not recommend to throw exception,rather than returning ConsumeConcurrentlyStatus.RECONSUME_LATER if
      * consumption failure
      *
-     * @param msgs msgs.size() >= 1<br> DefaultConsumer.consumeMessageBatchMaxSize=1,you can modify here
+     * @param messages messages.size() >= 1<br> DefaultConsumer.consumeMessageBatchMaxSize=1,you can modify here
      * @return The consume status
      */
-    ConsumeConcurrentlyStatus consumeMessage(List<Message> msgs);
+    ConsumeConcurrentlyStatus consumeMessage(List<Message> messages) throws Exception;
 
 }

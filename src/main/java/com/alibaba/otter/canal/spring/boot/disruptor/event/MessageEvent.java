@@ -9,7 +9,6 @@ import java.util.List;
 public class MessageEvent {
 
     String uuid;
-    Message message;
     List<Message> messages;
 
 }

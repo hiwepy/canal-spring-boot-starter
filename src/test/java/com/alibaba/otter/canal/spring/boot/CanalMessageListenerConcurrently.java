@@ -1,42 +1,30 @@
 package com.alibaba.otter.canal.spring.boot;
 
 import com.alibaba.fastjson.JSONObject;
-import com.alibaba.otter.canal.client.CanalConnector;
-import com.alibaba.otter.canal.client.CanalConnectors;
 import com.alibaba.otter.canal.protocol.CanalEntry;
 import com.alibaba.otter.canal.protocol.Message;
+import com.alibaba.otter.canal.spring.boot.consumer.listener.ConsumeConcurrentlyStatus;
+import com.alibaba.otter.canal.spring.boot.consumer.listener.MessageListenerConcurrently;
+import com.alibaba.otter.canal.spring.boot.utils.CanalUtils;
 import com.google.protobuf.ByteString;
-import com.google.protobuf.InvalidProtocolBufferException;
 
-import java.net.InetSocketAddress;
 import java.util.List;
 
-/**
- * Description: TODO
- *
- * @author HUAWEI
- * @version 1.0
- * @date 2023/5/9 22:24
- */
-public class Ad {
+public class CanalMessageListenerConcurrently  implements MessageListenerConcurrently {
 
-    public static void main(String[] args) throws InterruptedException, InvalidProtocolBufferException {
-        //获取连接
-        CanalConnector canalConnector = CanalConnectors.newSingleConnector(new InetSocketAddress("192.168.0.20", 11111), "example", "", "");
-        while (true) {
-            //连接
-            canalConnector.connect();
-            //订阅数据库,数据库的监听，这里指监听world数据库下所有的表进行监听
-            canalConnector.subscribe("fmy.*");
-            //获取数据
-            Message message = canalConnector.get(100);
-            //获取Entry集合
+    @Override
+    public ConsumeConcurrentlyStatus consumeMessage(List<Message> messages) throws Exception {
+        // 循环所有消息
+        for (Message message: messages) {
+            // 1、获取 Entry集合
             List<CanalEntry.Entry> entries = message.getEntries();
-            if (entries.size() <= 0) {
+            long batchId = message.getId();
+            CanalUtils.printSummary(message, batchId, entries.size());
+            if (batchId == -1 || entries.size() == 0) {
                 System.out.println("休息一会吧，当前抓取没有数据");
-                Thread.sleep(1000);
             } else {
-                //便利entryes，单条解析
+                CanalUtils.printEntry(message.getEntries());
+                // 遍历 entryes，单条解析
                 for (CanalEntry.Entry entry : entries) {
                     //1，获取表名
                     String tableName = entry.getHeader().getTableName();
@@ -69,23 +57,15 @@ public class Ad {
                                     ",EventType:" + eventType +
                                     ",Before:" + beforeData +
                                     ",After:" + affterData);
-
-
                         }
 
                     } else {
                         System.out.println("当前操作类型为：" + entryType);
                     }
-
-
                 }
-
             }
-
-
         }
-
-
+        return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
     }
 
 }

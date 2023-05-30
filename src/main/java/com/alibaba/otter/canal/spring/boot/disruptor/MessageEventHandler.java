@@ -6,20 +6,15 @@ import com.lmax.disruptor.WorkHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public interface CanalEventHandler extends EventHandler<MessageEvent>, WorkHandler<MessageEvent> {
+public interface MessageEventHandler extends EventHandler<MessageEvent>, WorkHandler<MessageEvent> {
 
-    Logger log = LoggerFactory.getLogger(CanalEventHandler.class);
+    Logger log = LoggerFactory.getLogger(MessageEventHandler.class);
 
     @Override
     default void onEvent(MessageEvent event, long sequence, boolean endOfBatch) throws Exception {
         log.info("consumer: {} Event: uuid={},sequence={},endOfBatch={}",
                 Thread.currentThread().getName(), event.getUuid(), sequence, endOfBatch);
         this.onEvent(event);
-    }
-
-    @Override
-    default void onEvent(MessageEvent event) throws Exception {
-
     }
 
 }

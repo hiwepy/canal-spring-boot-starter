@@ -6,7 +6,7 @@ import com.alibaba.otter.canal.common.CanalLifeCycle;
 import com.alibaba.otter.canal.protocol.CanalPacket;
 import com.alibaba.otter.canal.spring.boot.consumer.impl.CanalConnectorDisruptorConsumerImpl;
 import com.alibaba.otter.canal.spring.boot.consumer.impl.CanalMQDisruptorConnectorConsumerImpl;
-import com.alibaba.otter.canal.spring.boot.disruptor.CanalEventHandler;
+import com.alibaba.otter.canal.spring.boot.disruptor.MessageEventHandler;
 import com.alibaba.otter.canal.spring.boot.disruptor.event.MessageEvent;
 import com.alibaba.otter.canal.spring.boot.disruptor.factory.CanalEventFactory;
 import com.alibaba.otter.canal.spring.boot.hooks.DisruptorShutdownHook;
@@ -36,8 +36,13 @@ public class CanalDisruptorAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public CanalEventHandler canalEventHandler(){
-        return new CanalEventHandler(){};
+    public MessageEventHandler canalEventHandler(){
+        return new MessageEventHandler(){
+            @Override
+            public void onEvent(MessageEvent event) throws Exception {
+
+            }
+        };
     }
 
     /**
@@ -50,7 +55,7 @@ public class CanalDisruptorAutoConfiguration {
     public Disruptor<MessageEvent> canalDisruptor(
             CanalConsumerProperties consumerProperties,
             CanalDisruptorProperties disruptorProperties,
-            ObjectProvider<CanalEventHandler> canalEventHandlerProvider) {
+            ObjectProvider<MessageEventHandler> canalEventHandlerProvider) {
 
         /**
          * 1、事件对象工厂

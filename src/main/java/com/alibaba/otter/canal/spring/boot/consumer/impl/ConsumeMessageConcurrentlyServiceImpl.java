@@ -109,15 +109,15 @@ public class ConsumeMessageConcurrentlyServiceImpl implements CanalConsumeMessag
     class ConsumeRequest implements Runnable {
 
         private final CanalConnector connector;
-        private final List<Message> msgs;
+        private final List<Message> messages;
 
-        public ConsumeRequest(CanalConnector connector, List<Message> msgs) {
+        public ConsumeRequest(CanalConnector connector, List<Message> messages) {
             this.connector = connector;
-            this.msgs = msgs;
+            this.messages = messages;
         }
 
-        public List<Message> getMsgs() {
-            return msgs;
+        public List<Message> getMessages() {
+            return messages;
         }
 
         @Override
@@ -130,9 +130,9 @@ public class ConsumeMessageConcurrentlyServiceImpl implements CanalConsumeMessag
             boolean hasException = false;
             ConsumeReturnType returnType = ConsumeReturnType.SUCCESS;
             try {
-                status = listener.consumeMessage(Collections.unmodifiableList(this.getMsgs()));
+                status = listener.consumeMessage(Collections.unmodifiableList(this.getMessages()));
             } catch (Throwable e) {
-                log.warn("consumeMessage exception: {} Msgs: {}", e.getLocalizedMessage(), this.getMsgs(), e);
+                log.warn("consumeMessage exception: {} Msgs: {}", e.getLocalizedMessage(), this.getMessages(), e);
                 hasException = true;
             }
             long consumeRT = System.currentTimeMillis() - beginTimestamp;
@@ -150,12 +150,52 @@ public class ConsumeMessageConcurrentlyServiceImpl implements CanalConsumeMessag
                 returnType = ConsumeReturnType.SUCCESS;
             }
             if (null == status) {
-                log.warn("consumeMessage return null, Msgs: {} ",  msgs );
+                log.warn("consumeMessage return null, Msgs: {} ",  this.getMessages() );
                 status = ConsumeConcurrentlyStatus.RECONSUME_LATER;
             }
 
+            ConsumeMessageConcurrentlyServiceImpl.this.processConsumeResult(connector, status, this);
 
         }
+
+    }
+
+    public void processConsumeResult(CanalConnector connector, ConsumeConcurrentlyStatus status, ConsumeRequest consumeRequest ) {
+
+        if (consumeRequest.getMessages().isEmpty()) {
+            return;
+        }
+
+        // 循环所有消息
+        for (Message message: consumeRequest.getMessages()) {
+            connector.ack(message.getId());
+        }
+
+        switch (status) {
+            case CONSUME_SUCCESS:
+
+                break;
+            case RECONSUME_LATER:
+                break;
+            default:
+                break;
+        }
+
+       /* List<Message> msgBackFailed = new ArrayList<>(consumeRequest.getMessages().size());
+        for (int i = ackIndex + 1; i < consumeRequest.getMessages().size(); i++) {
+            Message msg = consumeRequest.getMsgs().get(i);
+            boolean result = this.sendMessageBack(msg, context);
+            if (!result) {
+                msg.setReconsumeTimes(msg.getReconsumeTimes() + 1);
+                msgBackFailed.add(msg);
+            }
+        }
+
+        if (!msgBackFailed.isEmpty()) {
+            consumeRequest.getMessages().removeAll(msgBackFailed);
+
+            this.submitConsumeRequestLater(msgBackFailed);
+        }*/
 
     }
 

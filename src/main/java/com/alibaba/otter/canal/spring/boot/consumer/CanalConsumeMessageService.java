@@ -15,6 +15,6 @@ public interface CanalConsumeMessageService {
 
     int getCorePoolSize();
 
-    void submitConsumeRequest( CanalConnector connector, List<Message> messages);
+    void submitConsumeRequest( CanalConnector connector, boolean requireAck, List<Message> messages);
 
 }

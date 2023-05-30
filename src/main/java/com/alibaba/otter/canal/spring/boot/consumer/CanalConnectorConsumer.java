@@ -1,7 +1,9 @@
 package com.alibaba.otter.canal.spring.boot.consumer;
 
 import com.alibaba.otter.canal.client.CanalConnector;
+import com.alibaba.otter.canal.client.kafka.KafkaCanalConnector;
 import com.alibaba.otter.canal.spring.boot.CanalConsumerProperties;
+import com.alibaba.otter.canal.spring.boot.exception.CanalConsumeException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.PropertyMapper;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
@@ -18,6 +20,7 @@ public abstract class CanalConnectorConsumer<C extends CanalConnector> {
      * Error Handler
      */
     protected ErrorHandler handler         = (e) -> log.error("parse events has an error", e);
+    protected volatile boolean running     = false;
     /**
      * Batch consumption size
      */
@@ -34,6 +37,11 @@ public abstract class CanalConnectorConsumer<C extends CanalConnector> {
      * Maximum amount of time in minutes a message may block the consuming thread.
      */
     private long consumeTimeout = 15;
+
+    /**
+     * Period each consume
+     */
+    private long consumePeriod = 1000;
     /**
      *  The timeout for reading batchSize records
      */
@@ -89,14 +97,30 @@ public abstract class CanalConnectorConsumer<C extends CanalConnector> {
         if(CollectionUtils.isEmpty(connectors)){
             return;
         }
+        this.running = true;
         for (C connector: connectors) {
             this.threadPoolTaskScheduler.scheduleAtFixedRate(() ->{
                 try {
+                    if (!this.running) {
+                        return;
+                    }
+                    connector.connect();
+                    if(!(connector instanceof KafkaCanalConnector)){
+                        connector.subscribe(this.getConsumeFilter());
+                    }
                     this.consumeMessage(connector);
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
+                } catch (Throwable e) {
+                    log.error("process error!", e);
+                    // 处理失败, 回滚数据
+                    connector.rollback();
+                    if(CanalConsumeException.class.isAssignableFrom(e.getClass())){
+                        throw e;
+                    }
+                    throw new CanalConsumeException(e);
+                } finally {
+                    connector.disconnect();
                 }
-            }, 100);
+            }, this.getConsumePeriod());
         }
     }
 
@@ -108,6 +132,7 @@ public abstract class CanalConnectorConsumer<C extends CanalConnector> {
 
     public void initConsumer(CanalConsumerProperties consumerProperties){
         map.from(consumerProperties.getConsumeMessageBatchMaxSize()).to(this::setConsumeMessageBatchMaxSize);
+        map.from(consumerProperties.getConsumePeriod()).to(this::setConsumePeriod);
         map.from(consumerProperties.getConsumeTimeout()).to(this::setConsumeTimeout);
         map.from(consumerProperties.getConsumeThreadMax()).to(this::setConsumeThreadMax);
         map.from(consumerProperties.getConsumeThreadMin()).to(this::setConsumeThreadMin);
@@ -121,7 +146,19 @@ public abstract class CanalConnectorConsumer<C extends CanalConnector> {
      * shutdown method
      */
     public void shutdown() {
+        if (!this.running) {
+            return;
+        }
+        this.running = false;
         this.threadPoolTaskScheduler.shutdown();
+        for (C connector: connectors) {
+            try {
+                connector.unsubscribe();
+                connector.disconnect();
+            } catch (Exception e) {
+                log.error(e.getMessage());
+            }
+        }
     }
 
     public int getConsumeThreadMin() {
@@ -146,6 +183,14 @@ public abstract class CanalConnectorConsumer<C extends CanalConnector> {
 
     public void setConsumeTimeout(long consumeTimeout) {
         this.consumeTimeout = consumeTimeout;
+    }
+
+    public long getConsumePeriod() {
+        return consumePeriod;
+    }
+
+    public void setConsumePeriod(long consumePeriod) {
+        this.consumePeriod = consumePeriod;
     }
 
     public int getConsumeMessageBatchMaxSize() {

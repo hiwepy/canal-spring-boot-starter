@@ -17,14 +17,14 @@ package com.alibaba.otter.canal.spring.boot.disruptor.event.translator;
 
 import com.alibaba.otter.canal.protocol.Message;
 import com.alibaba.otter.canal.spring.boot.disruptor.event.MessageEvent;
-import com.lmax.disruptor.EventTranslatorTwoArg;
+import com.lmax.disruptor.EventTranslatorOneArg;
 
 import java.util.Arrays;
 
-public class MessageEventTwoArgTranslator implements EventTranslatorTwoArg<MessageEvent, Boolean, Message> {
+public class MessageEventTranslator implements EventTranslatorOneArg<MessageEvent, Message> {
 
 	@Override
-	public void translateTo(MessageEvent event, long sequence, Boolean withoutAck, Message message) {
+	public void translateTo(MessageEvent event, long sequence, Message message) {
 		event.setMessages(Arrays.asList(message));
 	}
 

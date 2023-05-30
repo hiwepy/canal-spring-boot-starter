@@ -45,6 +45,10 @@ public class CanalConsumerProperties {
 	 */
 	private long consumeTimeout = 15;
 	/**
+	 * Period each consume
+	 */
+	private long consumePeriod = 1000;
+	/**
 	 * The client subscribes to filter, and the corresponding filter information will be updated when the subscription is repeated
 	 * <pre>
 	 * 说明：

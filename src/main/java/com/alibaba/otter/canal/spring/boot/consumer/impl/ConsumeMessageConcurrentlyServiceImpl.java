@@ -70,7 +70,7 @@ public class ConsumeMessageConcurrentlyServiceImpl implements CanalConsumeMessag
         // get message consume batch size
         int consumeBatchSize = this.consumerProperties.getConsumeMessageBatchMaxSize();
         if (messages.size() <= consumeBatchSize) {
-            ConsumeRequest consumeRequest = new ConsumeRequest(connector, messages);
+            ConsumeRequest consumeRequest = new ConsumeRequest(connector, requireAck, messages);
             try {
                 this.consumeExecutor.submit(consumeRequest);
             } catch (RejectedExecutionException e) {
@@ -86,7 +86,7 @@ public class ConsumeMessageConcurrentlyServiceImpl implements CanalConsumeMessag
                         break;
                     }
                 }
-                ConsumeRequest consumeRequest = new ConsumeRequest(connector, msgThis);
+                ConsumeRequest consumeRequest = new ConsumeRequest(connector, requireAck, msgThis);
                 try {
                     this.consumeExecutor.submit(consumeRequest);
                 } catch (RejectedExecutionException e) {
@@ -108,11 +108,13 @@ public class ConsumeMessageConcurrentlyServiceImpl implements CanalConsumeMessag
 
     class ConsumeRequest implements Runnable {
 
-        private final CanalConnector connector;
-        private final List<Message> messages;
+        private CanalConnector connector;
+        private boolean requireAck;
+        private List<Message> messages;
 
-        public ConsumeRequest(CanalConnector connector, List<Message> messages) {
+        public ConsumeRequest(CanalConnector connector, boolean requireAck, List<Message> messages) {
             this.connector = connector;
+            this.requireAck = requireAck;
             this.messages = messages;
         }
 

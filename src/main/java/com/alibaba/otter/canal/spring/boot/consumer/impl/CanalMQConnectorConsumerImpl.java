@@ -25,13 +25,13 @@ public class CanalMQConnectorConsumerImpl extends CanalConnectorConsumer<CanalMQ
         // get messages
         List<Message> messages;
         if(this.isRequireAck()){
-            // get message with auto Ack
-            messages = Objects.nonNull(this.getReadTimeout()) ? connector.getList(this.getReadTimeout(), TimeUnit.SECONDS) :
-                    connector.getList(this.getReadTimeout(), TimeUnit.SECONDS);
-        } else {
             // get message without Ack
             messages = Objects.nonNull(this.getReadTimeout())  ?  connector.getListWithoutAck(this.getReadTimeout(), TimeUnit.SECONDS) :
                     connector.getListWithoutAck(this.getReadTimeout(), TimeUnit.SECONDS);
+        } else {
+            // get message with auto Ack
+            messages = Objects.nonNull(this.getReadTimeout()) ? connector.getList(this.getReadTimeout(), TimeUnit.SECONDS) :
+                    connector.getList(this.getReadTimeout(), TimeUnit.SECONDS);
         }
         // submit consume request
         getConsumeMessageService().submitConsumeRequest(connector, this.isRequireAck(), messages);

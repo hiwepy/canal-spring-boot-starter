@@ -10,7 +10,6 @@ import com.alibaba.otter.canal.spring.boot.consumer.impl.CanalMQConnectorConsume
 import com.alibaba.otter.canal.spring.boot.consumer.impl.ConsumeMessageConcurrentlyServiceImpl;
 import com.alibaba.otter.canal.spring.boot.consumer.listener.MessageListenerConcurrently;
 import com.alibaba.otter.canal.spring.boot.hooks.CanalConsumerHook;
-import com.alibaba.otter.canal.spring.boot.hooks.DisruptorShutdownHook;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;

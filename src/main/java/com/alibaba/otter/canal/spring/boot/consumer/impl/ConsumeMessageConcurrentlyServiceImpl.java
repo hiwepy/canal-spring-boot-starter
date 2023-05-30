@@ -67,6 +67,7 @@ public class ConsumeMessageConcurrentlyServiceImpl implements CanalConsumeMessag
 
     @Override
     public void submitConsumeRequest(CanalConnector connector, boolean requireAck, List<Message> messages) {
+
         // get message consume batch size
         int consumeBatchSize = this.consumerProperties.getConsumeMessageBatchMaxSize();
         if (messages.size() <= consumeBatchSize) {

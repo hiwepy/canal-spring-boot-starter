@@ -1,7 +1,6 @@
 package com.alibaba.otter.canal.spring.boot.consumer.listener;
 
 import com.alibaba.otter.canal.protocol.Message;
-import com.google.protobuf.InvalidProtocolBufferException;
 
 import java.util.List;
 

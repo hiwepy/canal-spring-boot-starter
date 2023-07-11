@@ -6,3 +6,9 @@ canal:
   rabbitmq:
     access-key:
     name-server:
+  connector:
+    host: 127.0.0.1
+    port: 11111
+    instance:
+      master: example
+      slave: example

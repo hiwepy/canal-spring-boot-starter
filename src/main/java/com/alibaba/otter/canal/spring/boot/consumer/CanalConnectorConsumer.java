@@ -118,6 +118,7 @@ public abstract class CanalConnectorConsumer<C extends CanalConnector> {
                     }
                     throw new CanalConsumeException(e);
                 } finally {
+                    connector.unsubscribe();
                     connector.disconnect();
                 }
             }, this.getConsumePeriod());

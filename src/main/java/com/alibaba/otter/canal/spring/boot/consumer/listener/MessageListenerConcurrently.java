@@ -17,7 +17,7 @@ public interface MessageListenerConcurrently extends MessageListener {
      * @param messages messages.size() >= 1<br> CanalConnectorConsumer.consumeMessageBatchMaxSize=1,you can modify here
      * @return The consume status
      */
-    default ConsumeConcurrentlyStatus consumeMessages(List<Message> messages) throws Exception {
+    default ConsumeConcurrentlyStatus consumeMessage(List<Message> messages) throws Exception {
         return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
     }
 
@@ -28,7 +28,7 @@ public interface MessageListenerConcurrently extends MessageListener {
      * @param messages messages.size() >= 1<br> CanalConnectorConsumer.consumeMessageBatchMaxSize=1,you can modify here
      * @return The consume status
      */
-    default ConsumeConcurrentlyStatus consumeFlatMessages(List<FlatMessage> messages) throws Exception {
+    default ConsumeConcurrentlyStatus consumeFlatMessage(List<FlatMessage> messages) throws Exception {
         return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
     }
 

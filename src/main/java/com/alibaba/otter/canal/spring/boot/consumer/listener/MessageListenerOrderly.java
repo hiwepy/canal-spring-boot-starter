@@ -18,7 +18,7 @@ public interface MessageListenerOrderly extends MessageListener {
      * @param messages msgs.size() >= 1<br> CanalConnectorConsumer.consumeMessageBatchMaxSize=1,you can modify here
      * @return The consume status
      */
-    default ConsumeOrderlyStatus consumeMessages(List<Message> messages) throws Exception {
+    default ConsumeOrderlyStatus consumeMessage(List<Message> messages) throws Exception {
         return ConsumeOrderlyStatus.SUCCESS;
     }
 
@@ -29,7 +29,7 @@ public interface MessageListenerOrderly extends MessageListener {
      * @param messages msgs.size() >= 1<br> CanalConnectorConsumer.consumeMessageBatchMaxSize=1,you can modify here
      * @return The consume status
      */
-    default ConsumeOrderlyStatus consumeFlatMessages(List<FlatMessage> messages) throws Exception {
+    default ConsumeOrderlyStatus consumeFlatMessage(List<FlatMessage> messages) throws Exception {
         return ConsumeOrderlyStatus.SUCCESS;
     }
 }

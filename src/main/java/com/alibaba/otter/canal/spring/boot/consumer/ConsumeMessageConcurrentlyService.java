@@ -134,7 +134,7 @@ public class ConsumeMessageConcurrentlyService implements ConsumeMessageService 
             boolean hasException = false;
             ConsumeReturnType returnType = ConsumeReturnType.SUCCESS;
             try {
-                status = listener.consumeMessages(Collections.unmodifiableList(this.getMessages()));
+                status = listener.consumeMessage(Collections.unmodifiableList(this.getMessages()));
             } catch (Throwable e) {
                 log.warn("consumeMessage exception: {} Msgs: {}", e.getLocalizedMessage(), this.getMessages(), e);
                 hasException = true;

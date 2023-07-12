@@ -3,7 +3,11 @@ package com.alibaba.otter.canal.spring.boot.consumer;
 import com.alibaba.otter.canal.client.CanalConnector;
 import com.alibaba.otter.canal.client.kafka.KafkaCanalConnector;
 import com.alibaba.otter.canal.spring.boot.CanalConsumerProperties;
+import com.alibaba.otter.canal.spring.boot.consumer.listener.MessageListener;
+import com.alibaba.otter.canal.spring.boot.consumer.listener.MessageListenerConcurrently;
+import com.alibaba.otter.canal.spring.boot.consumer.listener.MessageListenerOrderly;
 import com.alibaba.otter.canal.spring.boot.exception.CanalConsumeException;
+import com.alibaba.otter.canal.spring.boot.hooks.CanalConsumerHook;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.PropertyMapper;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
@@ -11,6 +15,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ErrorHandler;
 
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 public abstract class CanalConnectorConsumer<C extends CanalConnector> {
@@ -20,11 +25,17 @@ public abstract class CanalConnectorConsumer<C extends CanalConnector> {
      * Error Handler
      */
     protected ErrorHandler handler         = (e) -> log.error("parse events has an error", e);
-    protected volatile boolean running     = false;
+    private volatile boolean running     = false;
+
+    private long awaitTerminateMillis;
+
     /**
      * Batch consumption size
      */
     private int consumeMessageBatchMaxSize = 1;
+
+    private boolean consumeOrderly = false;
+
     /**
      * Minimum consumer thread number
      */
@@ -65,6 +76,10 @@ public abstract class CanalConnectorConsumer<C extends CanalConnector> {
      */
     private String consumeFilter;
     /**
+     * If user flat message model
+     */
+    private boolean flatMessage;
+    /**
      * The Canal Connector List
      */
     private List<C> connectors;
@@ -72,6 +87,9 @@ public abstract class CanalConnectorConsumer<C extends CanalConnector> {
      * Canal Message Consumer Scheduler
      */
     private ThreadPoolTaskScheduler threadPoolTaskScheduler;
+
+    private ConsumeMessageService consumeMessageService;
+    private MessageListener messageListenerInner;
 
     public CanalConnectorConsumer(List<C> connectors){
         this.connectors = connectors;
@@ -108,6 +126,9 @@ public abstract class CanalConnectorConsumer<C extends CanalConnector> {
                     if(!(connector instanceof KafkaCanalConnector)){
                         connector.subscribe(this.getConsumeFilter());
                     }
+                    if (!this.running) {
+                        return;
+                    }
                     this.consumeMessage(connector);
                 } catch (Throwable e) {
                     log.error("process error!", e);
@@ -123,6 +144,21 @@ public abstract class CanalConnectorConsumer<C extends CanalConnector> {
                 }
             }, this.getConsumePeriod());
         }
+
+        if (this.getMessageListenerInner() instanceof MessageListenerOrderly) {
+            this.consumeOrderly = true;
+            this.consumeMessageService =
+                    new ConsumeMessageOrderlyService(this, (MessageListenerOrderly) this.getMessageListenerInner());
+        } else if (this.getMessageListenerInner() instanceof MessageListenerConcurrently) {
+            this.consumeOrderly = false;
+            this.consumeMessageService =
+                    new ConsumeMessageConcurrentlyService(this, (MessageListenerConcurrently) this.getMessageListenerInner());
+        }
+
+        this.consumeMessageService.start();
+
+        Runtime.getRuntime().addShutdownHook(new CanalConsumerHook(this.consumeMessageService, this.getAwaitTerminateMillis()));
+
     }
 
     /**
@@ -132,6 +168,7 @@ public abstract class CanalConnectorConsumer<C extends CanalConnector> {
     public abstract void consumeMessage(C connector);
 
     public void initConsumer(CanalConsumerProperties consumerProperties){
+        map.from(consumerProperties.getAwaitTerminateMillis()).to(this::setAwaitTerminateMillis);
         map.from(consumerProperties.getConsumeMessageBatchMaxSize()).to(this::setConsumeMessageBatchMaxSize);
         map.from(consumerProperties.getConsumePeriod()).to(this::setConsumePeriod);
         map.from(consumerProperties.getConsumeTimeout()).to(this::setConsumeTimeout);
@@ -140,7 +177,9 @@ public abstract class CanalConnectorConsumer<C extends CanalConnector> {
         map.from(consumerProperties.getConsumeFilter()).to(this::setConsumeFilter);
         map.from(consumerProperties.getBatchSize()).to(this::setBatchSize);
         map.from(consumerProperties.getReadTimeout()).to(this::setReadTimeout);
+        map.from(consumerProperties.isConsumeOrderly()).to(this::setConsumeOrderly);
         map.from(consumerProperties.isRequireAck()).to(this::setRequireAck);
+        map.from(consumerProperties.isFlatMessage()).to(this::setFlatMessage);
     }
 
     /**
@@ -160,6 +199,37 @@ public abstract class CanalConnectorConsumer<C extends CanalConnector> {
                 log.error(e.getMessage());
             }
         }
+        if(Objects.nonNull( this.consumeMessageService)){
+            this.consumeMessageService.shutdown(awaitTerminateMillis);
+        }
+    }
+
+    public void registerMessageListener(MessageListener messageListener) {
+        this.messageListenerInner = messageListener;
+    }
+
+    public MessageListener getMessageListenerInner() {
+        return messageListenerInner;
+    }
+
+    public ConsumeMessageService getConsumeMessageService() {
+        return consumeMessageService;
+    }
+
+    public long getAwaitTerminateMillis() {
+        return awaitTerminateMillis;
+    }
+
+    public void setAwaitTerminateMillis(long awaitTerminateMillis) {
+        this.awaitTerminateMillis = awaitTerminateMillis;
+    }
+
+    public boolean isConsumeOrderly() {
+        return consumeOrderly;
+    }
+
+    public void setConsumeOrderly(boolean consumeOrderly) {
+        this.consumeOrderly = consumeOrderly;
     }
 
     public int getConsumeThreadMin() {
@@ -224,6 +294,14 @@ public abstract class CanalConnectorConsumer<C extends CanalConnector> {
 
     public void setRequireAck(boolean requireAck) {
         this.requireAck = requireAck;
+    }
+
+    public boolean isFlatMessage() {
+        return flatMessage;
+    }
+
+    public void setFlatMessage(boolean flatMessage) {
+        this.flatMessage = flatMessage;
     }
 
     public String getConsumeFilter() {

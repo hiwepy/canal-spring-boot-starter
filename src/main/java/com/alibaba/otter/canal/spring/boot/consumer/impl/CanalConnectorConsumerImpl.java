@@ -4,7 +4,6 @@ import com.alibaba.otter.canal.client.CanalConnector;
 import com.alibaba.otter.canal.client.CanalMQConnector;
 import com.alibaba.otter.canal.protocol.Message;
 import com.alibaba.otter.canal.spring.boot.consumer.CanalConnectorConsumer;
-import com.alibaba.otter.canal.spring.boot.consumer.CanalConsumeMessageService;
 import com.alibaba.otter.canal.spring.boot.exception.CanalConsumeException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -19,11 +18,8 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class CanalConnectorConsumerImpl extends CanalConnectorConsumer<CanalConnector> {
 
-    private final CanalConsumeMessageService consumeMessageService;
-
-    public CanalConnectorConsumerImpl(List<CanalConnector> connectors, CanalConsumeMessageService consumeMessageService){
+    public CanalConnectorConsumerImpl(List<CanalConnector> connectors){
         super(connectors);
-        this.consumeMessageService = consumeMessageService;
     }
 
     @Override
@@ -32,24 +28,20 @@ public class CanalConnectorConsumerImpl extends CanalConnectorConsumer<CanalConn
         if(CanalMQConnector.class.isAssignableFrom(connector.getClass())){
             throw new CanalConsumeException("consumer not support this connector");
         }
+        // get read timeout
+        Long readTimeout = Objects.nonNull(this.getReadTimeout())  ? this.getReadTimeout() : 0L;
         // get messages
         Message message;
         if(this.isRequireAck()){
             // get message without Ack
-            message = Objects.nonNull(this.getReadTimeout())  ?  connector.getWithoutAck(this.getBatchSize(), this.getReadTimeout(), TimeUnit.SECONDS) :
-                    connector.getWithoutAck(this.getBatchSize());
+            message = connector.getWithoutAck(this.getBatchSize(), readTimeout, TimeUnit.SECONDS);
         } else {
             // get message with auto Ack
-            message = Objects.nonNull(this.getReadTimeout()) ? connector.get(this.getBatchSize(), this.getReadTimeout(), TimeUnit.SECONDS) :
-                    connector.get(this.getBatchSize());
+            message = connector.get(this.getBatchSize(), readTimeout, TimeUnit.SECONDS);
         }
         // submit consume request
         getConsumeMessageService().submitConsumeRequest(connector, this.isRequireAck(), Arrays.asList(message));
 
-    }
-
-    public CanalConsumeMessageService getConsumeMessageService() {
-        return consumeMessageService;
     }
 
 }

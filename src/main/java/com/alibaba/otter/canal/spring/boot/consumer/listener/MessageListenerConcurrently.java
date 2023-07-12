@@ -1,5 +1,6 @@
 package com.alibaba.otter.canal.spring.boot.consumer.listener;
 
+import com.alibaba.otter.canal.protocol.FlatMessage;
 import com.alibaba.otter.canal.protocol.Message;
 
 import java.util.List;
@@ -13,9 +14,22 @@ public interface MessageListenerConcurrently extends MessageListener {
      * It is not recommend to throw exception,rather than returning ConsumeConcurrentlyStatus.RECONSUME_LATER if
      * consumption failure
      *
-     * @param messages messages.size() >= 1<br> DefaultConsumer.consumeMessageBatchMaxSize=1,you can modify here
+     * @param messages messages.size() >= 1<br> CanalConnectorConsumer.consumeMessageBatchMaxSize=1,you can modify here
      * @return The consume status
      */
-    ConsumeConcurrentlyStatus consumeMessage(List<Message> messages) throws Exception;
+    default ConsumeConcurrentlyStatus consumeMessages(List<Message> messages) throws Exception {
+        return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+    }
+
+    /**
+     * It is not recommend to throw exception,rather than returning ConsumeConcurrentlyStatus.RECONSUME_LATER if
+     * consumption failure
+     *
+     * @param messages messages.size() >= 1<br> CanalConnectorConsumer.consumeMessageBatchMaxSize=1,you can modify here
+     * @return The consume status
+     */
+    default ConsumeConcurrentlyStatus consumeFlatMessages(List<FlatMessage> messages) throws Exception {
+        return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+    }
 
 }

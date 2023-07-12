@@ -15,24 +15,24 @@
  */
 package com.alibaba.otter.canal.spring.boot.hooks;
 
-import com.alibaba.otter.canal.spring.boot.consumer.CanalConsumeMessageService;
+import com.alibaba.otter.canal.spring.boot.consumer.ConsumeMessageService;
 
 import java.util.Objects;
 
 public class CanalConsumerHook extends Thread{
 
-	private CanalConsumeMessageService canalConsumeMessageService;
+	private ConsumeMessageService consumeMessageService;
 	private long awaitTerminateMillis;
-	public CanalConsumerHook(CanalConsumeMessageService canalConsumeMessageService, long awaitTerminateMillis) {
+	public CanalConsumerHook(ConsumeMessageService consumeMessageService, long awaitTerminateMillis) {
 		this.setName("canal-ConsumeMessageService-shutdown-hook");
-		this.canalConsumeMessageService = canalConsumeMessageService;
+		this.consumeMessageService = consumeMessageService;
 		this.awaitTerminateMillis = awaitTerminateMillis;
 	}
 	
 	@Override
 	public void run() {
-		if(Objects.nonNull(canalConsumeMessageService)){
-			canalConsumeMessageService.shutdown(awaitTerminateMillis);
+		if(Objects.nonNull(consumeMessageService)){
+			consumeMessageService.shutdown(awaitTerminateMillis);
 		}
 	}
 	

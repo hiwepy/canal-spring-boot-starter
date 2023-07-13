@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
  * CanalConnector Consumer
  */
 @Slf4j
-public class CanalConnectorConsumerImpl extends CanalConnectorConsumer<CanalConnector> {
+public class CanalConnectorConsumerImpl extends CanalConnectorConsumer<CanalConnector, Message> {
 
     public CanalConnectorConsumerImpl(List<CanalConnector> connectors){
         super(connectors);

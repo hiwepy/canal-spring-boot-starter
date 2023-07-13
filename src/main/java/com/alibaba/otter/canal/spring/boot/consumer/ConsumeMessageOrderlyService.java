@@ -41,29 +41,16 @@ public class ConsumeMessageOrderlyService implements ConsumeMessageService  {
     }
 
     @Override
+    public void submitConsumeRequest(CanalConnector connector, boolean requireAck, List messages) {
+
+    }
+
+    @Override
     public void submitConsumeRequest(CanalConnector connector, boolean requireAck, List<Message> messages) {
-        // get message consume batch size
-        int consumeBatchSize = this.connectorConsumer.getConsumeMessageBatchMaxSize();
-        if (messages.size() <= consumeBatchSize) {
-            //messageListener.consumeMessage(messages);
-        } else {
-            for (int total = 0; total < messages.size(); ) {
-                List<Message> msgThis = new ArrayList<>(consumeBatchSize);
-                for (int i = 0; i < consumeBatchSize; i++, total++) {
-                    if (total < messages.size()) {
-                        msgThis.add(messages.get(total));
-                    } else {
-                        break;
-                    }
-                }
-                try {
-                } catch (RejectedExecutionException e) {
-                    // 如果队列满了，直接丢弃后面的消息
-                    for (; total < messages.size(); total++) {
-                        msgThis.add(messages.get(total));
-                    }
-                }
-            }
+        try {
+            messageListener.consumeMessage(messages);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

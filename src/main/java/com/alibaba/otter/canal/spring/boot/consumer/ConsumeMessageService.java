@@ -1,23 +1,19 @@
 package com.alibaba.otter.canal.spring.boot.consumer;
 
 import com.alibaba.otter.canal.client.CanalConnector;
-import com.alibaba.otter.canal.protocol.FlatMessage;
-import com.alibaba.otter.canal.protocol.Message;
 
 import java.util.List;
 
-public interface ConsumeMessageService {
+public interface ConsumeMessageService<T> {
 
-    void start();
+    default void start() {};
 
-    void shutdown(long awaitTerminateMillis);
+    default void shutdown(long awaitTerminateMillis) {}
 
-    void updateCorePoolSize(int corePoolSize);
+    default void updateCorePoolSize(int corePoolSize){}
 
-    int getCorePoolSize();
+    default int getCorePoolSize() { return 0;}
 
-    void submitConsumeRequest( CanalConnector connector, boolean requireAck, List<Message> messages);
-
-    void submitFlatConsumeRequest( CanalConnector connector, boolean requireAck, List<FlatMessage> messages);
+    void submitConsumeRequest( CanalConnector connector, boolean requireAck, List<T> messages);
 
 }

@@ -4,6 +4,8 @@ package com.alibaba.otter.canal.spring.boot.utils;
 import com.alibaba.otter.canal.spring.boot.annotation.CanalTable;
 import com.alibaba.otter.canal.spring.boot.enums.TableNameEnum;
 import com.alibaba.otter.canal.spring.boot.handler.EntryHandler;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -14,7 +16,6 @@ import java.util.concurrent.ConcurrentHashMap;
  * @date 2019/3/2713:33
  */
 public class HandlerUtil {
-
 
     public static EntryHandler getEntryHandler(List<? extends EntryHandler> entryHandlers, String tableName) {
         EntryHandler globalHandler = null;
@@ -37,18 +38,17 @@ public class HandlerUtil {
         return globalHandler;
     }
 
-
     public static Map<String, EntryHandler> getTableHandlerMap(List<? extends EntryHandler> entryHandlers) {
         Map<String, EntryHandler> map = new ConcurrentHashMap<>();
-        if (entryHandlers != null && entryHandlers.size() > 0) {
+        if (!CollectionUtils.isEmpty(entryHandlers)) {
             for (EntryHandler handler : entryHandlers) {
                 String canalTableName = getCanalTableName(handler);
-                if (canalTableName != null) {
+                if (StringUtils.hasText(canalTableName)) {
                     map.putIfAbsent(canalTableName.toLowerCase(), handler);
                 } else {
-                    String name = GenericUtil.getTableGenericProperties(handler);
-                    if (name != null) {
-                        map.putIfAbsent(name.toLowerCase(), handler);
+                    String tableName = GenericUtil.getTableGenericProperties(handler);
+                    if (StringUtils.hasText(tableName)) {
+                        map.putIfAbsent(tableName.toLowerCase(), handler);
                     }
                 }
             }
@@ -64,7 +64,6 @@ public class HandlerUtil {
         }
         return entryHandler;
     }
-
 
     public static String getCanalTableName(EntryHandler entryHandler) {
         CanalTable canalTable = entryHandler.getClass().getAnnotation(CanalTable.class);

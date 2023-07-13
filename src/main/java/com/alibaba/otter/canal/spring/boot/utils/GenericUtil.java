@@ -2,11 +2,13 @@ package com.alibaba.otter.canal.spring.boot.utils;
 
 
 import com.alibaba.otter.canal.spring.boot.handler.EntryHandler;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 
-import javax.persistence.Table;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -17,8 +19,22 @@ public class GenericUtil {
 
     private static Map<Class<? extends EntryHandler>, Class> cache = new ConcurrentHashMap<>();
 
+    static String getTableGenericProperties(EntryHandler entryHandler) {
+        Class<?> tableClass = getTableClass(entryHandler);
+        if (tableClass != null) {
+            // 3.2、获取 mybatis-plus 的注解信息
+            TableInfo tableInfo = TableInfoHelper.getTableInfo(tableClass);
+            if (Objects.nonNull(tableInfo)) {
+                return tableInfo.getTableName();
+            }
+        }
+        return null;
+    }
+
+
     @SuppressWarnings("unchecked")
     public static <T> Class<T> getTableClass(EntryHandler object) {
+        // 1、获取处理器的泛型类型
         Class<? extends EntryHandler> handlerClass = object.getClass();
         Class tableClass = cache.get(handlerClass);
         if (tableClass == null) {

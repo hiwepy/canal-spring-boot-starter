@@ -29,10 +29,6 @@ public class CanalConsumerProperties {
 	public static final String PREFIX = "canal.consumer";
 
 	/**
-	 * If consumer Orderly, default is false
-	 */
-	private boolean consumeOrderly = false;
-	/**
 	 * Batch consumption size
 	 */
 	private int consumeMessageBatchMaxSize = 1;

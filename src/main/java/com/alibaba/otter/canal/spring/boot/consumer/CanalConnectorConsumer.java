@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Slf4j
-public abstract class CanalConnectorConsumer<C extends CanalConnector> {
+public abstract class CanalConnectorConsumer<C extends CanalConnector, T> {
 
     protected PropertyMapper map = PropertyMapper.get().alwaysApplyingWhenNonNull();
     /**
@@ -33,9 +33,10 @@ public abstract class CanalConnectorConsumer<C extends CanalConnector> {
      * Batch consumption size
      */
     private int consumeMessageBatchMaxSize = 1;
-
+    /**
+     * If consumer Orderly, default is false
+     */
     private boolean consumeOrderly = false;
-
     /**
      * Minimum consumer thread number
      */
@@ -88,7 +89,7 @@ public abstract class CanalConnectorConsumer<C extends CanalConnector> {
      */
     private ThreadPoolTaskScheduler threadPoolTaskScheduler;
 
-    private ConsumeMessageService consumeMessageService;
+    private ConsumeMessageService<T> consumeMessageService;
     private MessageListener messageListenerInner;
 
     public CanalConnectorConsumer(List<C> connectors){
@@ -147,12 +148,12 @@ public abstract class CanalConnectorConsumer<C extends CanalConnector> {
 
         if (this.getMessageListenerInner() instanceof MessageListenerOrderly) {
             this.consumeOrderly = true;
-            this.consumeMessageService =
-                    new ConsumeMessageOrderlyService(this, (MessageListenerOrderly) this.getMessageListenerInner());
+            this.consumeMessageService = new ConsumeMessageOrderlyService(this,
+                    (MessageListenerOrderly) this.getMessageListenerInner());
         } else if (this.getMessageListenerInner() instanceof MessageListenerConcurrently) {
             this.consumeOrderly = false;
-            this.consumeMessageService =
-                    new ConsumeMessageConcurrentlyService(this, (MessageListenerConcurrently) this.getMessageListenerInner());
+            this.consumeMessageService = new ConsumeMessageConcurrentlyService(this,
+                    (MessageListenerConcurrently) this.getMessageListenerInner());
         }
 
         this.consumeMessageService.start();
@@ -177,7 +178,6 @@ public abstract class CanalConnectorConsumer<C extends CanalConnector> {
         map.from(consumerProperties.getConsumeFilter()).to(this::setConsumeFilter);
         map.from(consumerProperties.getBatchSize()).to(this::setBatchSize);
         map.from(consumerProperties.getReadTimeout()).to(this::setReadTimeout);
-        map.from(consumerProperties.isConsumeOrderly()).to(this::setConsumeOrderly);
         map.from(consumerProperties.isRequireAck()).to(this::setRequireAck);
         map.from(consumerProperties.isFlatMessage()).to(this::setFlatMessage);
     }

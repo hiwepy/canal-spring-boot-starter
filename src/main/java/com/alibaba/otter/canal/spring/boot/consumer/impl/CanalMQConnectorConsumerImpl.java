@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
  * CanalMQConnector Consumer
  */
 @Slf4j
-public class CanalMQConnectorConsumerImpl extends CanalConnectorConsumer<CanalMQConnector> {
+public class CanalMQConnectorConsumerImpl extends CanalConnectorConsumer<CanalMQConnector, FlatMessage> {
 
     public CanalMQConnectorConsumerImpl(List<CanalMQConnector> connectors){
         super(connectors);
@@ -36,7 +36,7 @@ public class CanalMQConnectorConsumerImpl extends CanalConnectorConsumer<CanalMQ
                 flatMessages = connector.getFlatList(readTimeout, TimeUnit.SECONDS);
             }
             // submit consume request
-            getConsumeMessageService().submitFlatConsumeRequest(connector, this.isRequireAck(), flatMessages);
+            getConsumeMessageService().submitConsumeRequest(connector, this.isRequireAck(), flatMessages);
         } else {
             // get messages
             List<Message> messages;

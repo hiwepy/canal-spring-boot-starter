@@ -2,14 +2,12 @@ package com.alibaba.otter.canal.spring.boot.factory;
 
 
 import com.alibaba.otter.canal.protocol.CanalEntry;
+import com.alibaba.otter.canal.spring.boot.enums.TableNameEnum;
 import com.alibaba.otter.canal.spring.boot.handler.EntryHandler;
+import com.alibaba.otter.canal.spring.boot.utils.GenericUtil;
+import com.baomidou.mybatisplus.core.metadata.TableInfo;
+import com.baomidou.mybatisplus.core.metadata.TableInfoHelper;
 import org.apache.commons.lang3.StringUtils;
-import top.javatool.canal.client.enums.TableNameEnum;
-import top.javatool.canal.client.handler.EntryHandler;
-import top.javatool.canal.client.util.EntryUtil;
-import top.javatool.canal.client.util.FieldUtil;
-import top.javatool.canal.client.util.GenericUtil;
-import top.javatool.canal.client.util.HandlerUtil;
 
 import java.util.List;
 import java.util.Map;
@@ -22,7 +20,6 @@ import java.util.stream.Collectors;
  */
 public class EntryColumnModelFactory extends AbstractModelFactory<List<CanalEntry.Column>> {
 
-
     @Override
     public <R> R newInstance(EntryHandler entryHandler, List<CanalEntry.Column> columns) throws Exception {
         String canalTableName = HandlerUtil.getCanalTableName(entryHandler);
@@ -34,6 +31,10 @@ public class EntryColumnModelFactory extends AbstractModelFactory<List<CanalEntr
         if (tableClass != null) {
             return newInstance(tableClass, columns);
         }
+        // 获取 mybatis-plus 的注解信息
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);
+
+
         return null;
     }
 

@@ -2,8 +2,12 @@
 ###Canal (CanalProperties、CanalKafkaProperties、CanalRabbitMQProperties、CanalRocketMQProperties、CanalPulsarProperties、CanalTcpProperties) 基本配置：
 #########################################################################################################################################################
 canal:
+  # Canal Message 消费模式。默认
+  consumer-mode: thread_single
+  consumer:
+    batch-size: 11
   # Canal Server 模式。默认为 TCP
-  server-mode: TCP
+  server-mode: tcp
   # Canal TCP 直连模式配置
   tcp:
     # Canal Server 主机地址。如果设置了address属性，则忽略。

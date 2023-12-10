@@ -31,7 +31,7 @@ public class CanalDisruptorProperties {
     private static final int DEFAULT_MAX_RETRIES = 3;
     private static final int DEFAULT_MAX_SLEEP_MS = Integer.MAX_VALUE;
 
-	public static final String PREFIX = "canal.disruptor";
+	public static final String PREFIX = "canal.consumer.disruptor";
 
 	/**
 	 * RingBuffer缓冲区大小, 默认 1024

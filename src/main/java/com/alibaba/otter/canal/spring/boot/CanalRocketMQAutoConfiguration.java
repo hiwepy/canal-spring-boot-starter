@@ -1,9 +1,11 @@
 package com.alibaba.otter.canal.spring.boot;
 
+import com.alibaba.otter.canal.client.rabbitmq.RabbitMQCanalConnector;
 import com.alibaba.otter.canal.client.rocketmq.RocketMQCanalConnector;
 import com.alibaba.otter.canal.spring.boot.hooks.CanalShutdownHook;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -19,6 +21,7 @@ import org.springframework.util.StringUtils;
 public class CanalRocketMQAutoConfiguration {
 
 	@Bean(initMethod = "connect", destroyMethod = "disconnect")
+	@ConditionalOnBean(RocketMQCanalConnector.class)
 	public RocketMQCanalConnector defaultRocketMQCanalConnector(CanalRocketMQProperties properties) {
 
 		// 1、创建连接实例

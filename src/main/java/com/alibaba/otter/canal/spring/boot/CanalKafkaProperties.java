@@ -39,7 +39,29 @@ public class CanalKafkaProperties {
 	 * 启动时从未消费的消息位置开始
 	 */
 	boolean earliest = true;
-	String servers; String topic; Integer partition; String groupId; Integer batchSize;
+	/**
+	 * 消息分区索引
+	 */
+	Integer partition;
+	/**
+	 * Kafka服务器地址
+	 */
+	String servers;
+	/**
+	 * 订阅的消息主题
+	 */
+	String topic;
+	/**
+	 * 消费者组ID
+	 */
+	String groupId;
+	/**
+	 * 批量获取数据的大小
+	 */
+	Integer batchSize;
+	/**
+	 * 是否扁平化Canal消息内容
+	 */
 	boolean flatMessage;
 
 }

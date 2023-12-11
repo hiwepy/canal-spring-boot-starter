@@ -1,15 +1,19 @@
 package com.alibaba.otter.canal.spring.boot.annotation;
 
+import com.alibaba.otter.canal.protocol.CanalEntry;
+
 import java.lang.annotation.*;
 
 /**
+ * 监听数据库的操作
+ *
  * @author lujun
- * @date 2023/11/24 10:25
  */
-@Target({ElementType.TYPE})
+
+@Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface CanalTable {
+public @interface OnCanalEvent {
 
     /**
      * canal 指令
@@ -30,5 +34,13 @@ public @interface CanalTable {
      *
      */
     String[] table() default {};
+
+    /**
+     * 监听操作的类型
+     * <p>
+     * default for all
+     *
+     */
+    CanalEntry.EventType[] eventType() default {};
 
 }

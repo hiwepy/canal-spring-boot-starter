@@ -4,6 +4,7 @@ import com.alibaba.otter.canal.client.pulsarmq.PulsarMQCanalConnector;
 import com.alibaba.otter.canal.spring.boot.hooks.CanalShutdownHook;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.PulsarClient;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -18,6 +19,7 @@ import org.springframework.context.annotation.Configuration;
 public class CanalPulsarAutoConfiguration {
 
     @Bean(initMethod = "connect", destroyMethod = "disconnect")
+    @ConditionalOnBean(PulsarMQCanalConnector.class)
     public PulsarMQCanalConnector defaultPulsarMQCanalConnector(CanalPulsarProperties properties) {
         PulsarMQCanalConnector connector = new PulsarMQCanalConnector(properties.isFlatMessage(),
                 properties.getServiceUrl(), properties.getRoleToken(), properties.getTopic(),

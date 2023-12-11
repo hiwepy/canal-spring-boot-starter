@@ -34,23 +34,18 @@ public class CanalPulsarProperties {
 	 * Whether Enable Canal PulsarMQ.
 	 */
 	private boolean enabled = false;
-
 	/**
-	 * 是否扁平化Canal消息内容
-	 */
-	private boolean isFlatMessage = false;
-	/**
-	 * 主题名称
-	 */
-	private String topic;
-	/**
-	 * 环境连接URL
+	 * PulsarMQ 服务地址
 	 */
 	private String serviceUrl;
 	/**
-	 * 角色认证token
+	 * 角色认证 token
 	 */
 	private String roleToken;
+	/**
+	 * 订阅的主题
+	 */
+	private String topic;
 	/**
 	 * 订阅客户端名称
 	 */
@@ -98,5 +93,9 @@ public class CanalPulsarProperties {
 	 * 最大重试次数
 	 */
 	private int maxRedeliveryCount = 128;
+	/**
+	 * 是否扁平化Canal消息内容
+	 */
+	private boolean flatMessage = false;
 
 }

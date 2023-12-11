@@ -31,7 +31,7 @@ public class CanalProperties {
 	/**
 	 * The consumerMode of the Canal Client.
 	 */
-	private ConsumerMode consumerMode = ConsumerMode.THREAD_POOL;
+	private ConsumerMode consumerMode = ConsumerMode.THREAD_SINGLE;
 	/**
 	 * The serverMode of the Canal Client.
 	 */
@@ -41,7 +41,7 @@ public class CanalProperties {
 	 * Canal Consumer Mode. threadPool, disruptor
 	 */
 	public enum ConsumerMode {
-		THREAD_POOL, DISRUPTOR
+		THREAD_SINGLE, THREAD_POOL, DISRUPTOR
 	}
 
 	/**

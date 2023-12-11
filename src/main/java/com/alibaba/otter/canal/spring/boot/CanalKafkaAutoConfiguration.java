@@ -5,6 +5,7 @@ import com.alibaba.otter.canal.client.kafka.KafkaOffsetCanalConnector;
 import com.alibaba.otter.canal.spring.boot.hooks.CanalShutdownHook;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -19,6 +20,7 @@ import org.springframework.context.annotation.Configuration;
 public class CanalKafkaAutoConfiguration {
 
     @Bean(initMethod = "connect", destroyMethod = "disconnect")
+    @ConditionalOnBean(KafkaCanalConnector.class)
     public KafkaCanalConnector defaultKafkaCanalConnector(CanalKafkaProperties properties) {
         KafkaCanalConnector connector = properties.isEarliest() ? new KafkaOffsetCanalConnector(properties.getServers(),
                 properties.getTopic(),  properties.getPartition(), properties.getGroupId(),

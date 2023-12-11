@@ -1,14 +1,130 @@
-################################################################################################################
-###Canal (CanalProperties、CanalPulsarProperties、) 基本配置：
-################################################################################################################
+#########################################################################################################################################################
+###Canal (CanalProperties、CanalKafkaProperties、CanalRabbitMQProperties、CanalRocketMQProperties、CanalPulsarProperties、CanalTcpProperties) 基本配置：
+#########################################################################################################################################################
 canal:
-  server-mode: TCP
-  rabbitmq:
-    access-key:
-    name-server:
-  connector:
+  # Canal Message 消费模式。默认
+  consumer-mode: thread_single
+  consumer:
+    batch-size: 11
+  # Canal Server 模式。默认为 TCP
+  server-mode: tcp
+  # Canal TCP 直连模式配置
+  tcp:
+    # Canal Server 主机地址。如果设置了address属性，则忽略。
     host: 127.0.0.1
+    # Canal Server 端口。如果设置了address属性，则忽略。默认为 5672
     port: 11111
+    # Canal Server 地址。如果设置了该属性，则忽略host和port属性。
+    address: xxx
+    #  Canal Zookeeper 地址
+    zk-address: xxx
+    # Canal Server 用户名
+    username: xxx
+    # Canal Server 密码
+    password: xxx
+    # Socket 连接超时时间，单位：毫秒。默认为 60000
+    so-timeout: 60000
+    # Socket 空闲超时时间，单位：毫秒。默认为 3600000
+    idle-timeout: 3600000
+    # 重试次数;设置-1时可以subscribe阻塞等待时优雅停机
+    retry-times: 3
+    # 重试间隔时间，单位：毫秒。默认为 1000
+    retry-interval: 1000
+    # 是否开启心跳检测
     instance:
       master: example
       slave: example
+  # Canal Kafka 消息队列配置
+  kafka:
+    # 是否开启kafka消息队列
+    enabled: false
+    # 启动时从未消费的消息位置开始
+    earliest: true
+    # 消息分区索引
+    partition: 0
+    # Kafka服务器地址
+    servers: xxx,xxx,xxx
+    # 订阅的消息主题
+    topic: xxx
+    # 消费者组ID
+    group-id: xxx
+    # 批量获取数据的大小
+    batch-size: 64
+    # 是否扁平化消息
+    flat-message: false
+  # Canal RabbitMQ 消息队列配置
+  rabbitmq:
+    # 是否开启RabbitMQ消息队列
+    enabled: false
+    # RabbitMQ服务器地址
+    addresses: xxx,xxx,xxx
+    # 虚拟主机
+    vhost: xxx
+    # 队列名称
+    queue-name: xxx
+    # 访问key
+    access-key: xxx
+    # 访问秘钥
+    secret-key: xxx
+    # 用户名
+    username: xxx
+    # 密码
+    password: xxx
+    #资源所有者的ID
+    resource-owner-id: 000000
+    # 是否扁平化消息
+    flat-message: false
+  # Canal RocketMQ 消息队列配置
+  rocketmq:
+    # 是否开启kafka消息队列
+    enabled: false
+    # RocketMQ NameServer 服务地址
+    name-server: xxx
+    # 订阅的消息主题
+    topic: xxx
+    # 消费者组名称
+    group-name: xxx
+    # 访问key
+    access-key: xxx
+    # 访问秘钥
+    secret-key: xxx
+    # 访问的通道
+    access-channel: LOCAL
+    # 是否开启消息轨迹
+    enable-message-trace: false
+    # 命名空间
+    namespace: xxx
+    # 自定义轨迹主题
+    customized-trace-topic: xxx
+    # 批量获取数据的大小
+    batch-size: 64
+    # 是否扁平化消息
+    flat-message: false
+  # Canal Pulsar 消息队列配置
+  pulsar:
+    # 是否开启Pulsar消息队列
+    enabled: false
+    # PulsarMQ 服务地址
+    service-url: xxx
+    # 角色认证 token
+    role-token: xxx
+    # 订阅的消息主题
+    topic: xxx
+    # 订阅客户端名称
+    subscript-name: xxx
+    # 每次批量获取数据的最大条目数，默认30
+    batch-size: 30
+    batch-timeout-seconds: 30
+    batch-process-timeout-seconds: 60
+    # 消费失败后的重试秒数，默认60秒
+    redelivery-delay-seconds: 60
+    # 当客户端接收到消息，30秒还没有返回ack给服务端时，ack超时，会重新消费该消息
+    ack-timeout-seconds: 30
+    # 是否开启消息失败重试功能，默认开启
+    retry: true
+    #  true重试(-RETRY)和死信队列(-DLQ)后缀为大写，有些地方创建的为小写，需确保正确
+    retry-d-l-q-upper-case: true
+    # 最大重试次数
+    max-redelivery-count: 10
+    # 是否扁平化消息
+    flat-message: false

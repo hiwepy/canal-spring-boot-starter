@@ -4,6 +4,7 @@ import com.alibaba.otter.canal.client.rabbitmq.RabbitMQCanalConnector;
 import com.alibaba.otter.canal.spring.boot.hooks.CanalShutdownHook;
 import com.rabbitmq.client.DefaultConsumer;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -18,8 +19,9 @@ import org.springframework.context.annotation.Configuration;
 public class CanalRabbitMQAutoConfiguration {
 
 	@Bean(initMethod = "connect", destroyMethod = "disconnect")
+	@ConditionalOnBean(RabbitMQCanalConnector.class)
 	public RabbitMQCanalConnector defaultRabbitMQCanalConnector(CanalRabbitMQProperties properties) {
-		RabbitMQCanalConnector connector = new RabbitMQCanalConnector(properties.getNameServer(), properties.getVhost(),
+		RabbitMQCanalConnector connector = new RabbitMQCanalConnector(properties.getAddresses(), properties.getVhost(),
 				properties.getQueueName(), properties.getAccessKey(), properties.getSecretKey(),
 				properties.getUsername(), properties.getPassword(), properties.getResourceOwnerId(),
 				properties.isFlatMessage());

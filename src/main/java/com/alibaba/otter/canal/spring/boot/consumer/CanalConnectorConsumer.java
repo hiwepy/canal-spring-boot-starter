@@ -131,7 +131,7 @@ public abstract class CanalConnectorConsumer<C extends CanalConnector> {
      */
     public abstract void consumeMessage(C connector);
 
-    public void initConsumer(CanalConsumerProperties consumerProperties){
+    public void init(CanalConsumerProperties consumerProperties){
         map.from(consumerProperties.getConsumeMessageBatchMaxSize()).to(this::setConsumeMessageBatchMaxSize);
         map.from(consumerProperties.getConsumePeriod()).to(this::setConsumePeriod);
         map.from(consumerProperties.getConsumeTimeout()).to(this::setConsumeTimeout);

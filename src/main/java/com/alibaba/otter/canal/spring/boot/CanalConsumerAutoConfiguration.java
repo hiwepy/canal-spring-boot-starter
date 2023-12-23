@@ -33,9 +33,9 @@ public class CanalConsumerAutoConfiguration {
     public CanalConsumeMessageService canalConsumeMessageService(
             CanalConsumerProperties consumerProperties,
             ObjectProvider<MessageListenerConcurrently> messageListenerProvider){
-        ConsumeMessageConcurrentlyServiceImpl consumeMessageConcurrentlyService = new ConsumeMessageConcurrentlyServiceImpl(consumerProperties, messageListenerProvider.getIfAvailable());
-        Runtime.getRuntime().addShutdownHook(new CanalConsumerHook(consumeMessageConcurrentlyService, consumerProperties.getAwaitTerminateMillis()));
-        return consumeMessageConcurrentlyService;
+        CanalConsumeMessageService consumeMessageService = new ConsumeMessageConcurrentlyServiceImpl(consumerProperties, messageListenerProvider.getIfAvailable());
+        Runtime.getRuntime().addShutdownHook(new CanalConsumerHook(consumeMessageService, consumerProperties.getAwaitTerminateMillis()));
+        return consumeMessageService;
     }
 
     @Bean(initMethod = "start", destroyMethod = "shutdown")
@@ -50,7 +50,7 @@ public class CanalConsumerAutoConfiguration {
                 .collect(Collectors.toList());
 
         CanalConnectorConsumerImpl consumerImpl = new CanalConnectorConsumerImpl(connectors, consumeMessageServiceProvider.getIfAvailable());
-        consumerImpl.initConsumer(consumerProperties);
+        consumerImpl.init(consumerProperties);
         return consumerImpl;
     }
 
@@ -66,7 +66,7 @@ public class CanalConsumerAutoConfiguration {
                 .collect(Collectors.toList());
 
         CanalMQConnectorConsumerImpl consumerImpl = new CanalMQConnectorConsumerImpl(connectors, consumeMessageServiceProvider.getIfAvailable());
-        consumerImpl.initConsumer(consumerProperties);
+        consumerImpl.init(consumerProperties);
         return consumerImpl;
 
     }

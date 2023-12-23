@@ -103,7 +103,7 @@ public class CanalDisruptorAutoConfiguration {
                 .collect(Collectors.toList());
 
         CanalConnectorDisruptorConsumerImpl consumerImpl = new CanalConnectorDisruptorConsumerImpl(connectors, canalDisruptor);
-        consumerImpl.initConsumer(consumerProperties);
+        consumerImpl.init(consumerProperties);
 
         return consumerImpl;
     }
@@ -119,7 +119,7 @@ public class CanalDisruptorAutoConfiguration {
                 .collect(Collectors.toList());
 
         CanalMQDisruptorConnectorConsumerImpl consumerImpl = new CanalMQDisruptorConnectorConsumerImpl(connectors, canalDisruptor);
-        consumerImpl.initConsumer(consumerProperties);
+        consumerImpl.init(consumerProperties);
         return consumerImpl;
     }
 

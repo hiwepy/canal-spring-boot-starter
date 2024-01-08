@@ -5,9 +5,7 @@ import com.alibaba.otter.canal.protocol.FlatMessage;
 import com.alibaba.otter.canal.protocol.Message;
 import com.alibaba.otter.canal.spring.boot.consumer.listener.MessageListenerOrderly;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.RejectedExecutionException;
 
 public class ConsumeMessageOrderlyService implements ConsumeMessageService  {
 

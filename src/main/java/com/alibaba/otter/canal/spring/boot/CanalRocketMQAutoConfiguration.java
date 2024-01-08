@@ -1,6 +1,5 @@
 package com.alibaba.otter.canal.spring.boot;
 
-import com.alibaba.otter.canal.client.rabbitmq.RabbitMQCanalConnector;
 import com.alibaba.otter.canal.client.rocketmq.RocketMQCanalConnector;
 import com.alibaba.otter.canal.spring.boot.hooks.CanalShutdownHook;
 import lombok.extern.slf4j.Slf4j;

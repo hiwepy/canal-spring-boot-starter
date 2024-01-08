@@ -6,7 +6,6 @@ import com.alibaba.otter.canal.spring.boot.factory.IModelFactory;
 import com.alibaba.otter.canal.spring.boot.handler.EntryHandler;
 import com.alibaba.otter.canal.spring.boot.handler.RowDataHandler;
 
-
 import java.util.List;
 import java.util.Map;
 

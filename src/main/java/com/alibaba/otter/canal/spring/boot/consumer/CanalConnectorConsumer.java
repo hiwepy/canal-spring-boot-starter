@@ -55,7 +55,7 @@ public abstract class CanalConnectorConsumer<C extends CanalConnector, T> {
      */
     private long consumePeriod = 1000;
     /**
-     *  The timeout for reading batchSize records
+     *  The amount for reading records
      */
     private Integer batchSize = 1000;
     /**

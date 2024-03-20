@@ -8,6 +8,7 @@ import com.alibaba.otter.canal.spring.boot.consumer.impl.CanalConnectorConsumerI
 import com.alibaba.otter.canal.spring.boot.consumer.impl.CanalMQConnectorConsumerImpl;
 import com.alibaba.otter.canal.spring.boot.consumer.listener.MessageListener;
 import com.alibaba.otter.canal.spring.boot.consumer.listener.MessageListenerConcurrently;
+import com.alibaba.otter.canal.spring.boot.consumer.listener.MessageListenerOrderly;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -31,7 +32,7 @@ public class CanalConsumerAutoConfiguration {
     public CanalConnectorConsumerImpl canalConnectorConsumer(
             CanalConsumerProperties consumerProperties,
             ObjectProvider<CanalConnector> canalConnectorProvider,
-            ObjectProvider<MessageListener> messageListenerrovider){
+            ObjectProvider<MessageListenerOrderly> messageListenerrovider){
 
         List<CanalConnector> connectors = canalConnectorProvider.stream()
                 .filter(connector -> !CanalMQConnector.class.isAssignableFrom(connector.getClass()))
@@ -48,7 +49,7 @@ public class CanalConsumerAutoConfiguration {
     public CanalMQConnectorConsumerImpl canalMQCanalConnectorConsumer(
             CanalConsumerProperties consumerProperties,
             ObjectProvider<CanalMQConnector> canalMQConnectorProvider,
-            ObjectProvider<MessageListener> messageListenerrovider){
+            ObjectProvider<MessageListenerConcurrently> messageListenerrovider){
 
         List<CanalMQConnector> connectors = canalMQConnectorProvider.stream()
                 .filter(connector -> CanalMQConnector.class.isAssignableFrom(connector.getClass()))

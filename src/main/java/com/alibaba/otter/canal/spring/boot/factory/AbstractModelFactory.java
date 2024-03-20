@@ -22,5 +22,5 @@ public abstract class AbstractModelFactory<T> implements IModelFactory<T> {
     }
 
 
-    abstract <R> R newInstance(Class<R> c, T t) throws Exception;
+    abstract <R> R newInstance(Class<R> tableClass, T t) throws Exception;
 }

@@ -6,6 +6,7 @@ import com.alibaba.otter.canal.client.impl.ClusterNodeAccessStrategy;
 import com.alibaba.otter.canal.client.impl.SimpleCanalConnector;
 import com.alibaba.otter.canal.client.impl.SimpleNodeAccessStrategy;
 import com.alibaba.otter.canal.common.zookeeper.ZkClientx;
+import com.alibaba.otter.canal.spring.boot.utils.AddressUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -23,7 +24,7 @@ import java.util.List;
 @ConditionalOnProperty(prefix = CanalProperties.PREFIX, value = "server-mode", havingValue = "TCP")
 @EnableConfigurationProperties({CanalProperties.class, CanalTcpProperties.class})
 @Slf4j
-public class CanalTcpAutoConfiguration {
+public class ClusterCanalClientAutoConfiguration {
 
     @Bean(initMethod = "connect", destroyMethod = "disconnect")
     public CanalConnector canalConnector(CanalTcpProperties connectorProperties){
@@ -44,7 +45,7 @@ public class CanalTcpAutoConfiguration {
                     connectorProperties.getUsername(),
                     connectorProperties.getPassword(),
                     connectorProperties.getDestination(),
-                    new SimpleNodeAccessStrategy(parseAddresses(connectorProperties.getAddresses())));
+                    new SimpleNodeAccessStrategy(AddressUtils.parseAddresses(connectorProperties.getAddresses())));
             canalConnector.setSoTimeout(connectorProperties.getSoTimeout());
             canalConnector.setIdleTimeout(connectorProperties.getIdleTimeout());
             canalConnector.setRetryTimes(connectorProperties.getRetryTimes());
@@ -63,16 +64,4 @@ public class CanalTcpAutoConfiguration {
         }
     }
 
-    private List<InetSocketAddress> parseAddresses(String addresses) {
-        List<InetSocketAddress> parsedAddresses = new ArrayList<>();
-        for (String address : StringUtils.commaDelimitedListToStringArray(addresses)) {
-            if (StringUtils.hasText(address)) {
-                String[] split = StringUtils.split(address, ":");
-                Integer port = split.length == 1 ? CanalTcpProperties.DEFAULT_PORT : Integer.parseInt(split[1]);
-                parsedAddresses.add(new InetSocketAddress(split[0], port));
-            }
-        }
-        return parsedAddresses;
-    }
-	
 }

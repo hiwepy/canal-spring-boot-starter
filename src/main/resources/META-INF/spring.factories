@@ -5,4 +5,4 @@ com.alibaba.otter.canal.spring.boot.CanalKafkaAutoConfiguration,\
 com.alibaba.otter.canal.spring.boot.CanalPulsarAutoConfiguration,\
 com.alibaba.otter.canal.spring.boot.CanalRabbitMQAutoConfiguration,\
 com.alibaba.otter.canal.spring.boot.CanalRocketMQAutoConfiguration,\
-com.alibaba.otter.canal.spring.boot.CanalTcpAutoConfiguration
+com.alibaba.otter.canal.spring.boot.SimpleCanalClientAutoConfiguration

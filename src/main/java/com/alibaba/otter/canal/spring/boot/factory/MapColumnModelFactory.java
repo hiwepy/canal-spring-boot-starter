@@ -11,10 +11,10 @@ import java.util.Map;
 public class MapColumnModelFactory extends AbstractModelFactory<Map<String, String>> {
 
     @Override
-    <R> R newInstance(Class<R> clazz, Map<String, String> valueMap) throws Exception {
-        R object =  org.springframework.beans.BeanUtils.instantiateClass(clazz);
+    <R> R newInstance(Class<R> tableClass, Map<String, String> valueMap) throws Exception {
+        R object =  org.springframework.beans.BeanUtils.instantiateClass(tableClass);
         // 获取 mybatis-plus 的注解信息
-        TableInfo tableInfo = TableInfoHelper.getTableInfo(clazz);
+        TableInfo tableInfo = TableInfoHelper.getTableInfo(tableClass);
         // 循环表数据
         for (TableFieldInfo tableFieldInfo:  tableInfo.getFieldList()) {
             // 获取实体对象属性映射字段对应的值

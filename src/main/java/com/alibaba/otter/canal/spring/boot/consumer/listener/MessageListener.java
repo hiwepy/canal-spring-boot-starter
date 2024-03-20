@@ -19,4 +19,5 @@ package com.alibaba.otter.canal.spring.boot.consumer.listener;
  * A MessageListener object is used to receive asynchronously delivered messages.
  */
 public interface MessageListener {
+
 }

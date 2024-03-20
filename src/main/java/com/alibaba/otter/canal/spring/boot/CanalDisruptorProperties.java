@@ -15,7 +15,7 @@
  */
 package com.alibaba.otter.canal.spring.boot;
 
-import com.alibaba.otter.canal.spring.boot.disruptor.WaitStrategy;
+import com.alibaba.otter.canal.client.disruptor.WaitStrategy;
 import com.lmax.disruptor.dsl.ProducerType;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

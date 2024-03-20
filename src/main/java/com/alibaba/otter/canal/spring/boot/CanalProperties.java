@@ -19,7 +19,7 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
- * 
+ *
  * @author ： <a href="https://github.com/hiwepy">hiwepy</a>
  */
 @ConfigurationProperties(CanalProperties.PREFIX)
@@ -27,6 +27,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class CanalProperties {
 
 	public static final String PREFIX = "canal";
+
+	public static final String CANAL_ASYNC = PREFIX + "." + "async";
+	public static final String CANAL_MODE = PREFIX + "." + "mode";
 
 	/**
 	 * The consumerMode of the Canal Client.

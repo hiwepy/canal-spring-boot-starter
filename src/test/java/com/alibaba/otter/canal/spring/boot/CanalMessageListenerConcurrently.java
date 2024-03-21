@@ -5,7 +5,7 @@ import com.alibaba.otter.canal.protocol.CanalEntry;
 import com.alibaba.otter.canal.protocol.Message;
 import com.alibaba.otter.canal.spring.boot.consumer.listener.ConsumeConcurrentlyStatus;
 import com.alibaba.otter.canal.spring.boot.consumer.listener.MessageListenerConcurrently;
-import com.alibaba.otter.canal.spring.boot.utils.CanalUtils;
+import com.alibaba.otter.canal.util.CanalUtils;
 import com.google.protobuf.ByteString;
 
 import java.util.List;

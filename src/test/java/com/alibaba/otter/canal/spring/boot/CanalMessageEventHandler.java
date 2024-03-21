@@ -3,9 +3,7 @@ package com.alibaba.otter.canal.spring.boot;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.otter.canal.protocol.CanalEntry;
 import com.alibaba.otter.canal.protocol.Message;
-import com.alibaba.otter.canal.spring.boot.disruptor.MessageEventHandler;
-import com.alibaba.otter.canal.spring.boot.disruptor.event.MessageEvent;
-import com.alibaba.otter.canal.spring.boot.utils.CanalUtils;
+import com.alibaba.otter.canal.util.CanalUtils;
 import com.google.protobuf.ByteString;
 
 import java.util.List;
@@ -26,13 +24,13 @@ public class CanalMessageEventHandler implements MessageEventHandler {
                 CanalUtils.printEntry(message.getEntries());
                 // 遍历 entryes，单条解析
                 for (CanalEntry.Entry entry : entries) {
-                    //1，获取表名
+                    // 1，获取表名
                     String tableName = entry.getHeader().getTableName();
-                    //2，获取类型
+                    // 2，获取类型
                     CanalEntry.EntryType entryType = entry.getEntryType();
-                    //3,获取序列化后的数据
+                    // 3,获取序列化后的数据
                     ByteString storeValue = entry.getStoreValue();
-                    //4,判断当前entryType类型是否为ROWDATA，既当前变化的数据是否行数据
+                    // 4,判断当前entryType类型是否为ROWDATA，既当前变化的数据是否行数据
                     if (CanalEntry.EntryType.ROWDATA.equals(entryType)) {
                         //5,反序列化数据
                         CanalEntry.RowChange rowChange = CanalEntry.RowChange.parseFrom(storeValue);

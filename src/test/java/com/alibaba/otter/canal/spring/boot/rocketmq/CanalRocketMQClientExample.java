@@ -2,7 +2,7 @@ package com.alibaba.otter.canal.spring.boot.rocketmq;
 
 import com.alibaba.otter.canal.client.rocketmq.RocketMQCanalConnector;
 import com.alibaba.otter.canal.protocol.Message;
-import com.alibaba.otter.canal.spring.boot.utils.CanalUtils;
+import com.alibaba.otter.canal.util.CanalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -91,7 +91,7 @@ public class CanalRocketMQClientExample extends AbstractRocektMQTest {
             }
         }
     }
-    
+
     private void process() {
         while (!running) {
             try {

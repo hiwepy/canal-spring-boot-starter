@@ -16,7 +16,10 @@
 package com.alibaba.otter.canal.spring.boot;
 
 import lombok.Data;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -32,26 +35,41 @@ public class CanalProperties {
 	public static final String CANAL_MODE = PREFIX + "." + "mode";
 
 	/**
-	 * The consumerMode of the Canal Client.
+	 * The mode of the Canal Client.
+	 * simple,cluster,kafka,rocketMQ
 	 */
-	private ConsumerMode consumerMode = ConsumerMode.THREAD_SINGLE;
+	private ClientMode mode = ClientMode.simple;
 	/**
-	 * The serverMode of the Canal Client.
+	 * 是否异步
 	 */
-	private ServerMode serverMode = ServerMode.TCP;
+	private boolean async = false;
+	/**
+	 * The client subscribes to filter, and the corresponding filter information will be updated when the subscription is repeated
+	 * <pre>
+	 * 说明：
+	 * a. 如果本次订阅中filter信息为空，则直接使用canal server服务端配置的filter信息
+	 * b. 如果本次订阅中filter信息不为空，目前会直接替换canal server服务端配置的filter信息，以本次提交的为准
+	 * </pre>
+	 */
+	private String filter = StringUtils.EMPTY;
+	/**
+	 * The number of messages read from the Canal service in each time
+	 */
+	private Integer batchSize = 1000;
+	/**
+	 *  The timeout for reading batchSize records, If timeout=0, block until the batchSize record is obtained before returning
+	 */
+	private Long timeout = 0L;
+	/**
+	 * 获取数据超时时间单位
+	 */
+	private TimeUnit unit = TimeUnit.SECONDS;
 
 	/**
-	 * Canal Consumer Mode. threadPool, disruptor
+	 * Canal Server Mode. simple, cluster, kafka, pulsarmq, rabbitmq, rocketmq
 	 */
-	public enum ConsumerMode {
-		THREAD_SINGLE, THREAD_POOL, DISRUPTOR
-	}
-
-	/**
-	 * Canal Server Mode. TCP, KAFKA, ROCKETMQ, RABBITMQ, PULSARMQ
-	 */
-	public enum ServerMode {
-		TCP, KAFKA, PULSAR_MQ, RABBIT_MQ, ROCKET_MQ
+	public enum ClientMode {
+		simple, cluster, kafka, pulsarmq, rabbitmq, rocketmq
 	}
 
 }

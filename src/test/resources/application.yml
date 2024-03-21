@@ -7,9 +7,9 @@ canal:
   consumer:
     batch-size: 11
   # Canal Server 模式。默认为 TCP
-  server-mode: tcp
-  # Canal TCP 直连模式配置
-  tcp:
+  mode: simple
+  # Simple 客户端模式配置
+  simple:
     # Canal Server 主机地址。如果设置了address属性，则忽略。
     host: 127.0.0.1
     # Canal Server 端口。如果设置了address属性，则忽略。默认为 5672

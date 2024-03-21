@@ -19,7 +19,7 @@ import com.alibaba.otter.canal.client.rabbitmq.RabbitMQCanalConnector;
 import com.alibaba.otter.canal.protocol.FlatMessage;
 import com.alibaba.otter.canal.protocol.Message;
 import com.alibaba.otter.canal.spring.boot.rocketmq.AbstractRocektMQTest;
-import com.alibaba.otter.canal.spring.boot.utils.CanalUtils;
+import com.alibaba.otter.canal.util.CanalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
@@ -108,9 +108,9 @@ public class CanalRabbitMQClientExample extends AbstractRocektMQTest {
                 connector.subscribe();
                 while (running) {
                 	connector.ack();
-                	 
+
                 	List<FlatMessage> messages1 = connector.getFlatListWithoutAck(1000L, TimeUnit.MILLISECONDS);
-                	
+
                     List<Message> messages = connector.getListWithoutAck(1000L, TimeUnit.MILLISECONDS); // 获取message
                     for (Message message : messages) {
                         long batchId = message.getId();

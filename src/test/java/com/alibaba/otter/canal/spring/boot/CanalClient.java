@@ -17,7 +17,7 @@ package com.alibaba.otter.canal.spring.boot;
 
 import com.alibaba.otter.canal.client.CanalConnector;
 import com.alibaba.otter.canal.protocol.Message;
-import com.alibaba.otter.canal.spring.boot.utils.CanalUtils;
+import com.alibaba.otter.canal.util.CanalUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -34,7 +34,7 @@ public class CanalClient {
                                                                      e);
     protected Thread                          thread             = null;
     protected CanalConnector                  connector;
-    
+
     public CanalClient(CanalConnector connector) {
     	this.connector = connector;
     }
@@ -61,7 +61,7 @@ public class CanalClient {
         }
 
     }
-    
+
     protected void process() {
         int batchSize = 5 * 1024;
         while (running) {
@@ -69,15 +69,15 @@ public class CanalClient {
                 connector.connect();
                 connector.subscribe();
                 while (running) {
-                	
+
                 	connector.get(batchSize);
                 	connector.get(batchSize, null, null);
-                	
+
                 	connector.getWithoutAck(batchSize);
                 	connector.getWithoutAck(batchSize, null, null);
-                	
+
                     Message message = connector.getWithoutAck(batchSize); // 获取指定数量的数据
-                    
+
                     long batchId = message.getId();
                     int size = message.getEntries().size();
                     if (batchId == -1 || size == 0) {
@@ -109,5 +109,5 @@ public class CanalClient {
             }
         }
     }
-    
+
 }

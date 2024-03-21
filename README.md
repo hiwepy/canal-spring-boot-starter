@@ -51,17 +51,17 @@ import com.alibaba.otter.canal.protocol.CanalEntry;
 import com.alibaba.otter.canal.protocol.Message;
 import com.alibaba.otter.canal.spring.boot.consumer.listener.ConsumeConcurrentlyStatus;
 import com.alibaba.otter.canal.spring.boot.consumer.listener.MessageListenerConcurrently;
-import com.alibaba.otter.canal.spring.boot.utils.CanalUtils;
+import com.alibaba.otter.canal.util.CanalUtils;
 import com.google.protobuf.ByteString;
 
 import java.util.List;
 
-public class CanalMessageListenerConcurrently  implements MessageListenerConcurrently {
+public class CanalMessageListenerConcurrently implements MessageListenerConcurrently {
 
     @Override
     public ConsumeConcurrentlyStatus consumeMessage(List<Message> messages) throws Exception {
         // 循环所有消息
-        for (Message message: messages) {
+        for (Message message : messages) {
             // 1、获取 Entry集合
             List<CanalEntry.Entry> entries = message.getEntries();
             long batchId = message.getId();
@@ -158,7 +158,7 @@ import com.alibaba.otter.canal.protocol.CanalEntry;
 import com.alibaba.otter.canal.protocol.Message;
 import com.alibaba.otter.canal.spring.boot.disruptor.MessageEventHandler;
 import com.alibaba.otter.canal.spring.boot.disruptor.event.MessageEvent;
-import com.alibaba.otter.canal.spring.boot.utils.CanalUtils;
+import com.alibaba.otter.canal.util.CanalUtils;
 import com.google.protobuf.ByteString;
 
 import java.util.List;
@@ -168,7 +168,7 @@ public class CanalMessageEventHandler implements MessageEventHandler {
     @Override
     public void onEvent(MessageEvent event) throws Exception {
         // 循环所有消息
-        for (Message message: event.getMessages()) {
+        for (Message message : event.getMessages()) {
             // 1、获取 Entry集合
             List<CanalEntry.Entry> entries = message.getEntries();
             long batchId = message.getId();

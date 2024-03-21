@@ -1,4 +1,4 @@
-package com.alibaba.otter.canal.annotation.table;
+package com.alibaba.otter.canal.annotation.event;
 
 import com.alibaba.otter.canal.protocol.CanalEntry;
 import com.alibaba.otter.canal.annotation.OnCanalEvent;
@@ -7,15 +7,17 @@ import org.springframework.core.annotation.AliasFor;
 import java.lang.annotation.*;
 
 /**
- * 刪除索引操作
+ * 重命名表
  *
  * @author lujun
  */
+
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@OnCanalEvent(eventType = CanalEntry.EventType.DINDEX)
-public @interface OnDropIndexEvent {
+@OnCanalEvent(eventType = CanalEntry.EventType.RENAME)
+public @interface OnRenameTableEvent {
+
     /**
      * canal 指令
      * default for all
@@ -28,11 +30,4 @@ public @interface OnDropIndexEvent {
      */
     @AliasFor(annotation = OnCanalEvent.class)
     String[] schema() default {};
-
-    /**
-     * 监听的表
-     * default for all
-     */
-    @AliasFor(annotation = OnCanalEvent.class)
-    String[] table() default {};
 }

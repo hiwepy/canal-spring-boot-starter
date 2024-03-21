@@ -1,4 +1,4 @@
-package com.alibaba.otter.canal.annotation.table;
+package com.alibaba.otter.canal.annotation.event;
 
 import com.alibaba.otter.canal.protocol.CanalEntry;
 import com.alibaba.otter.canal.annotation.OnCanalEvent;
@@ -7,14 +7,15 @@ import org.springframework.core.annotation.AliasFor;
 import java.lang.annotation.*;
 
 /**
- * 次改字段属性监听器
+ * 刪除索引操作
+ *
  * @author lujun
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@OnCanalEvent(eventType = CanalEntry.EventType.ALTER)
-public @interface OnAlertTableEvent {
+@OnCanalEvent(eventType = CanalEntry.EventType.DINDEX)
+public @interface OnDropIndexEvent {
     /**
      * canal 指令
      * default for all

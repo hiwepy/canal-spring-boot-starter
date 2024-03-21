@@ -1,11 +1,14 @@
 package com.alibaba.otter.canal.client;
 
 import com.alibaba.otter.canal.handler.MessageHandler;
+import com.alibaba.otter.canal.protocol.CanalEntry;
 import com.alibaba.otter.canal.protocol.Message;
 import com.alibaba.otter.canal.util.CanalUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -39,6 +42,10 @@ public abstract class AbstractCanalClient<C extends CanalConnector> implements C
      * 获取数据超时时间单位
      */
     protected TimeUnit unit = TimeUnit.SECONDS;
+    /**
+     * 指定订阅的事件类型，主要用于标识事务的开始，变更数据，结束
+     */
+    protected List<CanalEntry.EntryType> subscribeTypes = Arrays.asList(CanalEntry.EntryType.ROWDATA);
     /**
      * 消息处理器
      */
@@ -118,6 +125,10 @@ public abstract class AbstractCanalClient<C extends CanalConnector> implements C
 
     public void setUnit(TimeUnit unit) {
         this.unit = unit;
+    }
+
+    public void setSubscribeTypes(List<CanalEntry.EntryType> subscribeTypes) {
+        this.subscribeTypes = subscribeTypes;
     }
 
     public C getConnector() {

@@ -2,8 +2,11 @@ package com.alibaba.otter.canal.client;
 
 import com.alibaba.otter.canal.client.impl.ClusterCanalConnector;
 import com.alibaba.otter.canal.handler.MessageHandler;
+import com.alibaba.otter.canal.protocol.CanalEntry;
 import org.apache.commons.lang.StringUtils;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -21,6 +24,7 @@ public class ClusterCanalClient extends AbstractCanalClient<ClusterCanalConnecto
         private Integer batchSize = 1;
         private Long timeout = 1L;
         private TimeUnit unit = TimeUnit.SECONDS;
+        private List<CanalEntry.EntryType> subscribeTypes = Arrays.asList(CanalEntry.EntryType.ROWDATA);
         private MessageHandler messageHandler;
 
         private Builder() {
@@ -50,6 +54,11 @@ public class ClusterCanalClient extends AbstractCanalClient<ClusterCanalConnecto
             return this;
         }
 
+        public Builder setSubscribeTypes(List<CanalEntry.EntryType> subscribeTypes) {
+            this.subscribeTypes = subscribeTypes;
+            return this;
+        }
+
         public Builder messageHandler(MessageHandler messageHandler) {
             this.messageHandler = messageHandler;
             return this;
@@ -62,6 +71,7 @@ public class ClusterCanalClient extends AbstractCanalClient<ClusterCanalConnecto
             canalClient.setMessageHandler(messageHandler);
             canalClient.setTimeout(timeout);
             canalClient.setUnit(unit);
+            canalClient.setSubscribeTypes(subscribeTypes);
             return canalClient;
         }
     }

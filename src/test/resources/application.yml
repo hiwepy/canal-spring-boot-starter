@@ -128,3 +128,7 @@ canal:
     max-redelivery-count: 10
     # 是否扁平化消息
     flat-message: false
+  subscribe-types:
+    - ROWDATA
+    - TRANSACTIONEND
+    - HEARTBEAT

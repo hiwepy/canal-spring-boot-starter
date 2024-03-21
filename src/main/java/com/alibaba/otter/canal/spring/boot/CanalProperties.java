@@ -15,10 +15,13 @@
  */
 package com.alibaba.otter.canal.spring.boot;
 
+import com.alibaba.otter.canal.protocol.CanalEntry;
 import lombok.Data;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -64,7 +67,10 @@ public class CanalProperties {
 	 * 获取数据超时时间单位
 	 */
 	private TimeUnit unit = TimeUnit.SECONDS;
-
+	/**
+	 * 指定订阅的事件类型，主要用于标识事务的开始，变更数据，结束
+	 */
+	private List<CanalEntry.EntryType> subscribeTypes = Arrays.asList(CanalEntry.EntryType.ROWDATA);
 	/**
 	 * Canal Server Mode. simple, cluster, kafka, pulsarmq, rabbitmq, rocketmq
 	 */

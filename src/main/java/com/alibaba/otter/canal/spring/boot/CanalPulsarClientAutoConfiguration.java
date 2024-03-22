@@ -68,7 +68,7 @@ public class CanalPulsarClientAutoConfiguration {
     public PulsarMQCanalClient kafkaCanalClient(ObjectProvider<PulsarMQCanalConnector> connectorProvider,
                                                 ObjectProvider<MessageHandler> messageHandlerProvider,
                                                 CanalProperties canalProperties){
-        return PulsarMQCanalClient.Builder.builder()
+        return (PulsarMQCanalClient) new PulsarMQCanalClient.Builder()
                 .batchSize(canalProperties.getBatchSize())
                 .filter(canalProperties.getFilter())
                 .timeout(canalProperties.getTimeout())

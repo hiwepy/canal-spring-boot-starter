@@ -1,5 +1,6 @@
 package com.alibaba.otter.canal.spring.boot;
 
+import com.alibaba.otter.canal.client.ClusterCanalClient;
 import com.alibaba.otter.canal.client.KafkaCanalClient;
 import com.alibaba.otter.canal.client.kafka.KafkaCanalConnector;
 import com.alibaba.otter.canal.client.kafka.KafkaOffsetCanalConnector;
@@ -68,10 +69,9 @@ public class CanalKafkaClientAutoConfiguration {
     public KafkaCanalClient kafkaCanalClient(ObjectProvider<KafkaCanalConnector> connectorProvider,
                                              ObjectProvider<MessageHandler> messageHandlerProvider,
                                              CanalProperties canalProperties){
-        return KafkaCanalClient.Builder.builder()
+        return (KafkaCanalClient) new KafkaCanalClient.Builder()
                 .batchSize(canalProperties.getBatchSize())
                 .filter(canalProperties.getFilter())
-                .subscribeTypes(canalProperties.getSubscribeTypes())
                 .timeout(canalProperties.getTimeout())
                 .unit(canalProperties.getUnit())
                 .messageHandler(messageHandlerProvider.getIfAvailable())

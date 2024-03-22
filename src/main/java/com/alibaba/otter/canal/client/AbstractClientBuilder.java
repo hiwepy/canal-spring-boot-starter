@@ -1,6 +1,5 @@
 package com.alibaba.otter.canal.client;
 
-import com.alibaba.otter.canal.client.impl.SimpleCanalConnector;
 import com.alibaba.otter.canal.handler.MessageHandler;
 import com.alibaba.otter.canal.protocol.CanalEntry;
 import lombok.experimental.Accessors;

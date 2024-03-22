@@ -1,5 +1,6 @@
 package com.alibaba.otter.canal.spring.boot;
 
+import com.alibaba.otter.canal.client.RocketMQCanalClient;
 import com.alibaba.otter.canal.client.rocketmq.RocketMQCanalConnector;
 import com.alibaba.otter.canal.factory.MapColumnModelFactory;
 import com.alibaba.otter.canal.handler.EntryHandler;
@@ -79,6 +80,19 @@ public class CanalRocketmqClientAutoConfiguration {
 					properties.getGroupName(), properties.getBatchSize(), properties.isFlatMessage());
 		}
 		return connector;
+	}
+
+	@Bean(initMethod = "start", destroyMethod = "stop")
+	public RocketMQCanalClient rocketMQCanalClient(ObjectProvider<RocketMQCanalConnector> connectorProvider,
+								 ObjectProvider<MessageHandler> messageHandlerProvider,
+								 CanalProperties canalProperties){
+		return (RocketMQCanalClient) new RocketMQCanalClient.Builder()
+				.batchSize(canalProperties.getBatchSize())
+				.filter(canalProperties.getFilter())
+				.timeout(canalProperties.getTimeout())
+				.unit(canalProperties.getUnit())
+				.messageHandler(messageHandlerProvider.getIfAvailable())
+				.build(connectorProvider.getIfAvailable());
 	}
 
 }

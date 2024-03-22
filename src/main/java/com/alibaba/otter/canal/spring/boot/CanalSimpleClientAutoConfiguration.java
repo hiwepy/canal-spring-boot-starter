@@ -64,7 +64,7 @@ public class CanalSimpleClientAutoConfiguration {
     public SimpleCanalClient simpleCanalClient(ObjectProvider<SimpleCanalConnector> connectorProvider,
                                                ObjectProvider<MessageHandler> messageHandlerProvider,
                                                CanalProperties canalProperties){
-        return SimpleCanalClient.Builder.builder()
+        return (SimpleCanalClient) new SimpleCanalClient.Builder()
                 .batchSize(canalProperties.getBatchSize())
                 .filter(canalProperties.getFilter())
                 .timeout(canalProperties.getTimeout())

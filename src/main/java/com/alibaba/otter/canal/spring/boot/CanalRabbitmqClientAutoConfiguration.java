@@ -1,5 +1,6 @@
 package com.alibaba.otter.canal.spring.boot;
 
+import com.alibaba.otter.canal.client.RabbitMQCanalClient;
 import com.alibaba.otter.canal.client.rabbitmq.RabbitMQCanalConnector;
 import com.alibaba.otter.canal.factory.MapColumnModelFactory;
 import com.alibaba.otter.canal.handler.EntryHandler;
@@ -59,6 +60,19 @@ public class CanalRabbitmqClientAutoConfiguration {
 				properties.getUsername(), properties.getPassword(), properties.getResourceOwnerId(),
 				properties.isFlatMessage());
 		return connector;
+	}
+
+	@Bean(initMethod = "start", destroyMethod = "stop")
+	public RabbitMQCanalClient rabbitMQCanalClient(ObjectProvider<RabbitMQCanalConnector> connectorProvider,
+												ObjectProvider<MessageHandler> messageHandlerProvider,
+												CanalProperties canalProperties){
+		return (RabbitMQCanalClient) new RabbitMQCanalClient.Builder()
+				.batchSize(canalProperties.getBatchSize())
+				.filter(canalProperties.getFilter())
+				.timeout(canalProperties.getTimeout())
+				.unit(canalProperties.getUnit())
+				.messageHandler(messageHandlerProvider.getIfAvailable())
+				.build(connectorProvider.getIfAvailable());
 	}
 
 }

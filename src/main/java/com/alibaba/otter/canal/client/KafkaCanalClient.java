@@ -22,13 +22,14 @@ public class KafkaCanalClient extends AbstractMQCanalClient<KafkaCanalConnector>
 
         @Override
         public KafkaCanalClient build(KafkaCanalConnector connector) {
-            KafkaCanalClient simpleCanalClient = new KafkaCanalClient(connector);
-            simpleCanalClient.setBatchSize(batchSize);
-            simpleCanalClient.setFilter(filter);
-            simpleCanalClient.setMessageHandler(messageHandler);
-            simpleCanalClient.setTimeout(timeout);
-            simpleCanalClient.setUnit(unit);
-            return simpleCanalClient;
+            KafkaCanalClient canalClient = new KafkaCanalClient(connector);
+            canalClient.setBatchSize(batchSize);
+            canalClient.setFilter(filter);
+            canalClient.setMessageHandler(messageHandler);
+            canalClient.setTimeout(timeout);
+            canalClient.setUnit(unit);
+            canalClient.setSubscribeTypes(subscribeTypes);
+            return canalClient;
         }
     }
 

@@ -82,7 +82,7 @@ public class CanalClusterClientAutoConfiguration {
     public ClusterCanalClient clusterCanalClient(ObjectProvider<ClusterCanalConnector> connectorProvider,
                                                 ObjectProvider<MessageHandler> messageHandlerProvider,
                                                 CanalProperties canalProperties){
-        return ClusterCanalClient.Builder.builder()
+        return (ClusterCanalClient) new ClusterCanalClient.Builder()
                 .batchSize(canalProperties.getBatchSize())
                 .filter(canalProperties.getFilter())
                 .timeout(canalProperties.getTimeout())

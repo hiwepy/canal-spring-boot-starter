@@ -71,6 +71,7 @@ public class CanalKafkaClientAutoConfiguration {
         return KafkaCanalClient.Builder.builder()
                 .batchSize(canalProperties.getBatchSize())
                 .filter(canalProperties.getFilter())
+                .subscribeTypes(canalProperties.getSubscribeTypes())
                 .timeout(canalProperties.getTimeout())
                 .unit(canalProperties.getUnit())
                 .messageHandler(messageHandlerProvider.getIfAvailable())

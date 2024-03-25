@@ -6,13 +6,13 @@ import org.springframework.stereotype.Component;
 import java.lang.annotation.*;
 
 /**
- * Canal 监听器注解，继承 @Component
+ * Canal 处理器注解，继承 @Component
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Component
-public @interface CanalEventListener {
+public @interface CanalEventHandler {
 
     @AliasFor(annotation = Component.class)
     String value() default "";

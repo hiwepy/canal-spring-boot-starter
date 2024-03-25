@@ -1,8 +1,9 @@
 # Auto Configure
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-com.alibaba.otter.canal.spring.boot.CanalThreadPoolAutoConfiguration,\
+com.alibaba.otter.canal.spring.boot.CanalClusterClientAutoConfiguration,\
 com.alibaba.otter.canal.spring.boot.CanalKafkaClientAutoConfiguration,\
 com.alibaba.otter.canal.spring.boot.CanalPulsarClientAutoConfiguration,\
 com.alibaba.otter.canal.spring.boot.CanalRabbitmqClientAutoConfiguration,\
 com.alibaba.otter.canal.spring.boot.CanalRocketmqClientAutoConfiguration,\
-com.alibaba.otter.canal.spring.boot.CanalSimpleClientAutoConfiguration
+com.alibaba.otter.canal.spring.boot.CanalSimpleClientAutoConfiguration,\
+com.alibaba.otter.canal.spring.boot.CanalThreadPoolAutoConfiguration

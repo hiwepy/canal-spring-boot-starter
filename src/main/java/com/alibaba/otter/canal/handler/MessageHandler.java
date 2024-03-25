@@ -4,6 +4,7 @@ package com.alibaba.otter.canal.handler;
  * @author yang peng
  * @date 2019/3/2622:06
  */
+@FunctionalInterface
 public interface MessageHandler<T> {
 
     /**

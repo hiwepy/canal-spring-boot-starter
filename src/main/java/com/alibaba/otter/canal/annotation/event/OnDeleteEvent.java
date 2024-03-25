@@ -30,13 +30,13 @@ public @interface OnDeleteEvent {
      * 数据库实例
      */
     @AliasFor(annotation = OnCanalEvent.class)
-    String[] schema() default {};
+    String schema();
 
     /**
      * 监听的表
      * default for all
      */
     @AliasFor(annotation = OnCanalEvent.class)
-    String[] table() default {};
+    String table();
 
 }

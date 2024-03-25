@@ -34,7 +34,7 @@ public @interface OnUpdateEvent {
      * @return canal destination
      */
     @AliasFor(annotation = OnCanalEvent.class)
-    String[] schema() default {};
+    String schema();
 
     /**
      * 监听的表
@@ -43,6 +43,6 @@ public @interface OnUpdateEvent {
      * @return canal destination
      */
     @AliasFor(annotation = OnCanalEvent.class)
-    String[] table() default {};
+    String table();
 
 }

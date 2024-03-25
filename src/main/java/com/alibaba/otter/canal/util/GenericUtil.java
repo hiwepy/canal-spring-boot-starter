@@ -11,6 +11,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,6 +27,12 @@ public class GenericUtil {
     public static Object[] getInvokeArgs(Method method, CanalModel canalModel, CanalEntry.RowChange rowChange) {
         return Arrays.stream(method.getParameterTypes())
                 .map(pClass -> CanalModel.class.isAssignableFrom(pClass) ? canalModel : CanalEntry.RowChange.class.isAssignableFrom(pClass) ? rowChange : null)
+                .toArray();
+    }
+
+    public static Object[] getInvokeArgs(Method method, CanalModel canalModel, List<Map<String, String>> rowData) {
+        return Arrays.stream(method.getParameterTypes())
+                .map(pClass -> CanalModel.class.isAssignableFrom(pClass) ? canalModel : List.class.isAssignableFrom(pClass) ? rowData : null)
                 .toArray();
     }
 

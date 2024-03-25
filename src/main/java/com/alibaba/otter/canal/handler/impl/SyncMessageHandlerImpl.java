@@ -16,8 +16,15 @@ import java.util.List;
 public class SyncMessageHandlerImpl extends AbstractMessageHandler {
 
 
-    public SyncMessageHandlerImpl(List<? extends EntryHandler> entryHandlers, RowDataHandler<CanalEntry.RowData> rowDataHandler) {
-        super(entryHandlers, rowDataHandler);
+    public SyncMessageHandlerImpl(List<? extends EntryHandler> entryHandlers,
+                                  RowDataHandler<CanalEntry.RowData> rowDataHandler) {
+        super(null, entryHandlers, rowDataHandler);
+    }
+
+    public SyncMessageHandlerImpl(List<CanalEntry.EntryType> subscribeTypes,
+                                  List<? extends EntryHandler> entryHandlers,
+                                  RowDataHandler<CanalEntry.RowData> rowDataHandler) {
+        super(subscribeTypes, entryHandlers, rowDataHandler);
     }
 
     @Override

@@ -9,7 +9,6 @@ import com.alibaba.otter.canal.protocol.Message;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 
 /**
  * @author yang peng
@@ -19,8 +18,18 @@ public class AsyncMessageHandlerImpl extends AbstractMessageHandler {
 
     private ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
-    public AsyncMessageHandlerImpl(List<? extends EntryHandler> entryHandlers, RowDataHandler<CanalEntry.RowData> rowDataHandler, ThreadPoolTaskExecutor threadPoolTaskExecutor) {
-        super(entryHandlers, rowDataHandler);
+    public AsyncMessageHandlerImpl(List<? extends EntryHandler> entryHandlers,
+                                   RowDataHandler<CanalEntry.RowData> rowDataHandler,
+                                   ThreadPoolTaskExecutor threadPoolTaskExecutor) {
+        super(null, entryHandlers, rowDataHandler);
+        this.threadPoolTaskExecutor = threadPoolTaskExecutor;
+    }
+
+    public AsyncMessageHandlerImpl(List<CanalEntry.EntryType> subscribeTypes,
+                                   List<? extends EntryHandler> entryHandlers,
+                                   RowDataHandler<CanalEntry.RowData> rowDataHandler,
+                                   ThreadPoolTaskExecutor threadPoolTaskExecutor) {
+        super(subscribeTypes, entryHandlers, rowDataHandler);
         this.threadPoolTaskExecutor = threadPoolTaskExecutor;
     }
 

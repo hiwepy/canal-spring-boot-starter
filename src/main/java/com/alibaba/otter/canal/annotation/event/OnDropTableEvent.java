@@ -28,5 +28,5 @@ public @interface OnDropTableEvent {
      * 数据库实例
      */
     @AliasFor(annotation = OnCanalEvent.class)
-    String[] schema() default {};
+    String schema();
 }

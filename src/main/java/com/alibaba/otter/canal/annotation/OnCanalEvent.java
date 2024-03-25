@@ -26,14 +26,14 @@ public @interface OnCanalEvent {
      * 数据库实例
      *
      */
-    String[] schema() default {};
+    String schema() default "*";
 
     /**
      * 监听的表
      * default for all
      *
      */
-    String[] table() default {};
+    String table() default "*";
 
     /**
      * 监听操作的类型

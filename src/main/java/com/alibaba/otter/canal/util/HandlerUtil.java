@@ -1,12 +1,18 @@
 package com.alibaba.otter.canal.util;
 
 
+import com.alibaba.otter.canal.annotation.CanalEventHolder;
+import com.alibaba.otter.canal.annotation.CanalTable;
+import com.alibaba.otter.canal.annotation.OnCanalEvent;
 import com.alibaba.otter.canal.enums.TableNameEnum;
 import com.alibaba.otter.canal.handler.EntryHandler;
-import com.alibaba.otter.canal.annotation.CanalTable;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.StringJoiner;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -15,15 +21,19 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class HandlerUtil {
 
-    public static EntryHandler getEntryHandler(List<? extends EntryHandler> entryHandlers, String tableName) {
+    public static EntryHandler getEntryHandler(List<? extends EntryHandler> entryHandlers, String schemaName, String tableName) {
+        StringJoiner joiner = new StringJoiner(".").add(schemaName).add(tableName);
         EntryHandler globalHandler = null;
         for (EntryHandler handler : entryHandlers) {
-            String canalTableName = getCanalTableName(handler);
-            if (TableNameEnum.ALL.name().toLowerCase().equals(canalTableName)) {
+            String canalTableNameCombination = getCanalTableNameCombination(handler);
+            if (! StringUtils.hasText(canalTableNameCombination)) {
+                continue;
+            }
+            if (TableNameEnum.ALL.name().toLowerCase().equals(canalTableNameCombination)) {
                 globalHandler = handler;
                 continue;
             }
-            if (tableName.equals(canalTableName)) {
+            if (canalTableNameCombination.equals(joiner.toString().toLowerCase())) {
                 return handler;
             }
             String name = GenericUtil.getTableGenericProperties(handler);
@@ -39,25 +49,49 @@ public class HandlerUtil {
 
     public static Map<String, EntryHandler> getTableHandlerMap(List<? extends EntryHandler> entryHandlers) {
         Map<String, EntryHandler> map = new ConcurrentHashMap<>();
-        if (entryHandlers != null && entryHandlers.size() > 0) {
-            for (EntryHandler handler : entryHandlers) {
-                String canalTableName = getCanalTableName(handler);
-                if (canalTableName != null) {
-                    map.putIfAbsent(canalTableName.toLowerCase(), handler);
-                } else {
-                    String name = GenericUtil.getTableGenericProperties(handler);
-                    if (name != null) {
-                        map.putIfAbsent(name.toLowerCase(), handler);
-                    }
+        if (CollectionUtils.isEmpty(entryHandlers)) {
+            return map;
+        }
+        for (EntryHandler handler : entryHandlers) {
+            String canalTableNameCombination = getCanalTableNameCombination(handler);
+            if (StringUtils.hasText(canalTableNameCombination) {
+                map.putIfAbsent(canalTableNameCombination.toLowerCase(), handler);
+            } else {
+                String name = GenericUtil.getTableGenericProperties(handler);
+                if (name != null) {
+                    map.putIfAbsent(name.toLowerCase(), handler);
                 }
             }
         }
         return map;
     }
 
+    public static Map<String, CanalEventHolder> getEventHolderMap(List<CanalEventHolder> eventHolders) {
+        Map<String, CanalEventHolder> map = new ConcurrentHashMap<>();
+        if (CollectionUtils.isEmpty(eventHolders)) {
+            return map;
+        }
+        for (CanalEventHolder holder : eventHolders) {
+            String canalTableNameCombination = getCanalTableNameCombination(holder);
+            if (StringUtils.hasText(canalTableNameCombination) {
+                map.putIfAbsent(canalTableNameCombination.toLowerCase(), holder);
+            }
+        }
+        return map;
+    }
 
-    public static EntryHandler getEntryHandler(Map<String, EntryHandler> map, String tableName) {
-        EntryHandler entryHandler = map.get(tableName);
+    public static CanalEventHolder getEventHolder(Map<String, CanalEventHolder> map, String schemaName, String tableName) {
+        StringJoiner joiner = new StringJoiner(".").add(schemaName).add(tableName);
+        CanalEventHolder eventHolder = map.get(joiner.toString().toLowerCase());
+        if (eventHolder == null) {
+            return map.get(TableNameEnum.ALL.name().toLowerCase());
+        }
+        return eventHolder;
+    }
+
+    public static EntryHandler getEntryHandler(Map<String, EntryHandler> map, String schemaName, String tableName) {
+        StringJoiner joiner = new StringJoiner(".").add(schemaName).add(tableName);
+        EntryHandler entryHandler = map.get(joiner.toString().toLowerCase());
         if (entryHandler == null) {
             return map.get(TableNameEnum.ALL.name().toLowerCase());
         }
@@ -65,10 +99,20 @@ public class HandlerUtil {
     }
 
 
-    public static String getCanalTableName(EntryHandler entryHandler) {
+    public static String getCanalTableNameCombination(CanalEventHolder eventHolder) {
+        OnCanalEvent canalEvent = eventHolder.getEvent();
+        if (Objects.nonNull(canalEvent)) {
+            StringJoiner joiner = new StringJoiner(".").add(canalEvent.schema()).add(canalEvent.table());
+            return joiner.toString().toLowerCase();
+        }
+        return null;
+    }
+
+    public static String getCanalTableNameCombination(EntryHandler entryHandler) {
         CanalTable canalTable = entryHandler.getClass().getAnnotation(CanalTable.class);
-        if (canalTable != null) {
-            return canalTable.value();
+        if (Objects.nonNull(canalTable)) {
+            StringJoiner joiner = new StringJoiner(".").add(canalTable.schema()).add(canalTable.table());
+            return joiner.toString().toLowerCase();
         }
         return null;
     }

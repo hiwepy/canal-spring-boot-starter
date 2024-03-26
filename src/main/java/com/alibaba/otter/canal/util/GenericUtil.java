@@ -24,15 +24,15 @@ public class GenericUtil {
 
     private static Map<Class<? extends EntryHandler>, Class> cache = new ConcurrentHashMap<>();
 
-    public static Object[] getInvokeArgs(Method method, CanalModel canalModel, CanalEntry.RowChange rowChange) {
+    public static Object[] getInvokeArgs(Method method, CanalModel model, CanalEntry.RowChange rowChange) {
         return Arrays.stream(method.getParameterTypes())
-                .map(pClass -> CanalModel.class.isAssignableFrom(pClass) ? canalModel : CanalEntry.RowChange.class.isAssignableFrom(pClass) ? rowChange : null)
+                .map(pClass -> CanalModel.class.isAssignableFrom(pClass) ? model : CanalEntry.RowChange.class.isAssignableFrom(pClass) ? rowChange : null)
                 .toArray();
     }
 
-    public static Object[] getInvokeArgs(Method method, CanalModel canalModel, List<Map<String, String>> rowData) {
+    public static Object[] getInvokeArgs(Method method, CanalModel model, List<Map<String, String>> rowData) {
         return Arrays.stream(method.getParameterTypes())
-                .map(pClass -> CanalModel.class.isAssignableFrom(pClass) ? canalModel : List.class.isAssignableFrom(pClass) ? rowData : null)
+                .map(pClass -> CanalModel.class.isAssignableFrom(pClass) ? model : List.class.isAssignableFrom(pClass) ? rowData : null)
                 .toArray();
     }
 

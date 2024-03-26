@@ -23,9 +23,9 @@ public abstract class AbstractCanalClient<C extends CanalConnector> implements C
      */
     protected volatile boolean running;
     /**
-     * Canal 连接器
+     * Canal 连接器集合
      */
-    private C connector;
+    private List<C> connectors;
     /**
      * 消息过滤
      */
@@ -53,16 +53,16 @@ public abstract class AbstractCanalClient<C extends CanalConnector> implements C
     /**
      * 工作线程
      */
-    private Thread workThread;
+    private Thread[] workThreads;
 
-    public AbstractCanalClient(C connector) {
-        this.connector = connector;
+    public AbstractCanalClient(List<C> connectors) {
+        this.connectors = connectors;
     }
 
     @Override
     public void start() {
         log.info("start canal client");
-        workThread = new Thread(this::process);
+        Thread workThread = new Thread(this::process3);
         workThread.setName("canal-client-thread");
         running = true;
         workThread.start();
@@ -79,6 +79,33 @@ public abstract class AbstractCanalClient<C extends CanalConnector> implements C
 
     @Override
     public void process() {
+        while (running) {
+            for (C connector : connectors) {
+                process(connector);
+            }
+            try {
+                connector.connect();
+                connector.subscribe(filter);
+                while (running) {
+                    Message message = connector.getWithoutAck(batchSize, timeout, unit);
+                    log.info("获取消息 {}", message);
+                    long batchId = message.getId();
+                    if (message.getId() != -1 && message.getEntries().size() != 0) {
+                        CanalUtils.printSummary(message, batchId, message.getEntries().size());
+                        CanalUtils.printEntry(message.getEntries());
+                        messageHandler.handleMessage(message);
+                    }
+                    connector.ack(batchId);
+                }
+            } catch (Exception e) {
+                log.error("canal client 异常", e);
+            } finally {
+                connector.disconnect();
+            }
+        }
+    }
+
+    public void process3(C connector) {
         while (running) {
             try {
                 connector.connect();

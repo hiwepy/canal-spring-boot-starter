@@ -67,6 +67,6 @@ public abstract class AbstractClientBuilder<R extends CanalClient, C extends Can
         return this;
     }
 
-    public abstract R build(C connector);
+    public abstract R build(List<C> connectors);
 
 }

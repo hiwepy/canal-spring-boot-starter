@@ -15,6 +15,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -100,9 +101,6 @@ public abstract class AbstractFlatMessageHandler implements MessageHandler<FlatM
                 }
             } catch (Exception e) {
                 throw new RuntimeException("parse event has an error , data:" + maps.toString(), e);
-            } finally {
-                // 移除上下文
-                CanalContext.removeModel();
             }
         }
     }
@@ -111,22 +109,25 @@ public abstract class AbstractFlatMessageHandler implements MessageHandler<FlatM
         Method method = eventHolder.getMethod();
         try {
             CanalContext.setModel(model);
-            method.setAccessible(true);
+            ReflectionUtils.makeAccessible(method);
             Object[] args = GenericUtil.getInvokeArgs(method, model, rowData);
             method.invoke(eventHolder.getTarget(), args);
-        } catch (Exception e) {
-            log.error("", e);
-            log.error("{}: entrust canal listeners occurs error! error object name :{}, method name :{}",
-                    Thread.currentThread().getName(),
-                    eventHolder.getTarget().getClass().getName(), method.getName());
+        } finally {
+            // 移除上下文
+            CanalContext.removeModel();
         }
     }
 
     public void handlerRowData(CanalModel model, List<Map<String, String>> rowData, EntryHandler entryHandler, CanalEntry.EventType eventType) throws Exception {
-        // 设置上下文
-        CanalContext.setModel(model);
-        // 逐行调用Handler处理
-        rowDataHandler.handlerRowData(rowData, entryHandler, eventType);
+        try {
+            // 设置上下文
+            CanalContext.setModel(model);
+            // 逐行调用Handler处理
+            rowDataHandler.handlerRowData(rowData, entryHandler, eventType);
+        } finally {
+            // 移除上下文
+            CanalContext.removeModel();
+        }
     }
 
     @Override
@@ -141,8 +142,8 @@ public abstract class AbstractFlatMessageHandler implements MessageHandler<FlatM
         // 注解处理器对象
         List<CanalEventHolder> eventHolders = new ArrayList<>();
         for (Object target : eventHandlerMap.values()) {
-            // 获取方法
-            Method[] methods = target.getClass().getDeclaredMethods();
+            // 获取对象声明的方法
+            Method[] methods = ReflectionUtils.getDeclaredMethods(target.getClass());
             for (Method method : methods) {
                 OnCanalEvent canalEvent = AnnotatedElementUtils.findMergedAnnotation(method, OnCanalEvent.class);
                 if (Objects.nonNull(canalEvent)) {
@@ -153,4 +154,5 @@ public abstract class AbstractFlatMessageHandler implements MessageHandler<FlatM
         this.tableEventHolderMap = HandlerUtil.getEventHolderMap(eventHolders);
         log.info("{}: annotation event handler initialized finish.", Thread.currentThread().getName());
     }
+
 }

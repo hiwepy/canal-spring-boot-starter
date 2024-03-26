@@ -102,7 +102,8 @@ public class HandlerUtil {
     public static String getCanalTableNameCombination(CanalEventHolder eventHolder) {
         OnCanalEvent canalEvent = eventHolder.getEvent();
         if (Objects.nonNull(canalEvent)) {
-            StringJoiner joiner = new StringJoiner(".").add(canalEvent.schema()).add(canalEvent.table());
+            canalEvent.eventType()
+            StringJoiner joiner = new StringJoiner(".").add(canalEvent.destination()).add(canalEvent.schema()).add(canalEvent.table());
             return joiner.toString().toLowerCase();
         }
         return null;
@@ -111,7 +112,7 @@ public class HandlerUtil {
     public static String getCanalTableNameCombination(EntryHandler entryHandler) {
         CanalTable canalTable = entryHandler.getClass().getAnnotation(CanalTable.class);
         if (Objects.nonNull(canalTable)) {
-            StringJoiner joiner = new StringJoiner(".").add(canalTable.schema()).add(canalTable.table());
+            StringJoiner joiner = new StringJoiner(".").add(canalTable.destination()).add(canalTable.schema()).add(canalTable.table());
             return joiner.toString().toLowerCase();
         }
         return null;

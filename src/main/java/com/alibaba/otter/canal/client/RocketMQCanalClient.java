@@ -2,20 +2,22 @@ package com.alibaba.otter.canal.client;
 
 import com.alibaba.otter.canal.client.rocketmq.RocketMQCanalConnector;
 
+import java.util.List;
+
 /**
  * RocketMQ 模式 Canal 客户端
  */
 public class RocketMQCanalClient extends AbstractMQCanalClient<RocketMQCanalConnector> {
 
-    public RocketMQCanalClient(RocketMQCanalConnector connector) {
-        super(connector);
+    public RocketMQCanalClient(List<RocketMQCanalConnector> connectors) {
+        super(connectors);
     }
 
     public static final class Builder extends AbstractClientBuilder<RocketMQCanalClient, RocketMQCanalConnector> {
 
         @Override
-        public RocketMQCanalClient build(RocketMQCanalConnector connector) {
-            RocketMQCanalClient canalClient = new RocketMQCanalClient(connector);
+        public RocketMQCanalClient build(List<RocketMQCanalConnector> connectors) {
+            RocketMQCanalClient canalClient = new RocketMQCanalClient(connectors);
             canalClient.setBatchSize(batchSize);
             canalClient.setFilter(filter);
             canalClient.setMessageHandler(messageHandler);

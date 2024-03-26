@@ -9,17 +9,18 @@ import com.alibaba.otter.canal.handler.RowDataHandler;
 import com.alibaba.otter.canal.handler.impl.AsyncFlatMessageHandlerImpl;
 import com.alibaba.otter.canal.handler.impl.MapRowDataHandlerImpl;
 import com.alibaba.otter.canal.handler.impl.SyncFlatMessageHandlerImpl;
+import com.alibaba.otter.canal.util.ConnectorUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.Map;
@@ -52,16 +53,12 @@ public class CanalPulsarClientAutoConfiguration {
         return new SyncFlatMessageHandlerImpl(entryHandlerProvider.stream().collect(Collectors.toList()), rowDataHandler);
     }
 
-    @Bean(initMethod = "connect", destroyMethod = "disconnect")
-    @ConditionalOnBean(PulsarMQCanalConnector.class)
-    public PulsarMQCanalConnector defaultPulsarMQCanalConnector(CanalPulsarClientProperties properties) {
-        PulsarMQCanalConnector connector = new PulsarMQCanalConnector(properties.isFlatMessage(),
-                properties.getServiceUrl(), properties.getRoleToken(), properties.getTopic(),
-                properties.getSubscriptName(), properties.getBatchSize(), properties.getBatchTimeoutSeconds(),
-                properties.getBatchProcessTimeoutSeconds(), properties.getRedeliveryDelaySeconds(),
-                properties.getAckTimeoutSeconds(),
-                properties.isRetry(), properties.isRetryDLQUpperCase(), properties.getMaxRedeliveryCount());
-        return connector;
+    @Bean
+    public List<PulsarMQCanalConnector> pulsarMQCanalConnectors(CanalPulsarClientProperties connectorProperties){
+        Assert.notEmpty(connectorProperties.getInstances(), "No pulsarMQ canal instance configured");
+        return connectorProperties.getInstances().stream()
+                .map(instance -> ConnectorUtil.createPulsarMQCanalConnector(instance))
+                .collect(Collectors.toList());
     }
 
     @Bean(initMethod = "start", destroyMethod = "stop")
@@ -74,7 +71,7 @@ public class CanalPulsarClientAutoConfiguration {
                 .timeout(canalProperties.getTimeout())
                 .unit(canalProperties.getUnit())
                 .messageHandler(messageHandlerProvider.getIfAvailable())
-                .build(connectorProvider.getIfAvailable());
+                .build(connectorProvider.stream().collect(Collectors.toList()));
     }
 
 }

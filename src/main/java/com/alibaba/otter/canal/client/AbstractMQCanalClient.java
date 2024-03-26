@@ -9,8 +9,8 @@ import java.util.List;
 @Slf4j
 public abstract class AbstractMQCanalClient<C extends CanalMQConnector> extends AbstractCanalClient<C> {
 
-    public AbstractMQCanalClient(C connector) {
-        super(connector);
+    public AbstractMQCanalClient(List<C> connectors) {
+        super(connectors);
     }
 
     @Override

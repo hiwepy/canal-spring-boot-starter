@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Bean;
 public class CanalApplication_Test {
 
     @Bean
-    public CanalMessageListenerConcurrently canalMessageListener(){
-        return new CanalMessageListenerConcurrently();
+    public CanalMessageEntryHandler canalMessageListener(){
+        return new CanalMessageEntryHandler();
     }
 
     public static void main(String[] args) throws Exception {

@@ -36,6 +36,7 @@ public class CanalProperties {
 
 	public static final String CANAL_ASYNC = PREFIX + "." + "async";
 	public static final String CANAL_MODE = PREFIX + "." + "mode";
+	public static final String CANAL_INSTANCES = PREFIX + "." + "instances";
 
 	/**
 	 * The mode of the Canal Client.
@@ -71,6 +72,7 @@ public class CanalProperties {
 	 * 指定订阅的事件类型，主要用于标识事务的开始，变更数据，结束
 	 */
 	private List<CanalEntry.EntryType> subscribeTypes = Arrays.asList(CanalEntry.EntryType.ROWDATA);
+
 	/**
 	 * Canal Server Mode. simple, cluster, kafka, pulsarmq, rabbitmq, rocketmq
 	 */

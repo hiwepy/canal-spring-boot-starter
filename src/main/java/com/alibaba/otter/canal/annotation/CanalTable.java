@@ -8,7 +8,15 @@ import java.lang.annotation.*;
 public @interface CanalTable {
 
     /**
+     * canal 指令
+     * default for all
+     *
+     */
+    String destination() default "";
+
+    /**
      * 数据库实例
+     *
      */
     String schema() default "*";
 

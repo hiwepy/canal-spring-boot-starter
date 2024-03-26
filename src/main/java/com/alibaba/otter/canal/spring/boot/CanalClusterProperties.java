@@ -9,21 +9,21 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import java.util.ArrayList;
 import java.util.List;
 
-@ConfigurationProperties(CanalSimpleProperties.PREFIX)
+@ConfigurationProperties(CanalClusterProperties.PREFIX)
 @Getter
 @Setter
 @ToString
-public class CanalSimpleProperties {
+public class CanalClusterProperties {
 
     public static final int DEFAULT_PORT = 5672;
     private static final int DEFAULT_MAX_RETRIES = 3;
     private static final int DEFAULT_MAX_SLEEP_MS = Integer.MAX_VALUE;
-    public static final String PREFIX = "canal.simple";
+    public static final String PREFIX = "canal.cluster";
 
     /**
      * 配置信息
      */
-    private List<CanalSimpleProperties.Instance> instances = new ArrayList<>();
+    private List<CanalClusterProperties.Instance> instances = new ArrayList<>();
 
     @Data
     public static class Instance {
@@ -40,6 +40,10 @@ public class CanalSimpleProperties {
          * Canal Server 地址。如果设置了该属性，则忽略host和port属性。
          */
         private String addresses;
+        /**
+         * Canal Zookeeper 地址
+         */
+        private String zkServers;
         /**
          * Canal Destination 地址
          */

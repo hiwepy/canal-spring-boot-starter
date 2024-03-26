@@ -1,7 +1,7 @@
 package com.alibaba.otter.canal.annotation.event;
 
-import com.alibaba.otter.canal.protocol.CanalEntry;
 import com.alibaba.otter.canal.annotation.OnCanalEvent;
+import com.alibaba.otter.canal.protocol.CanalEntry;
 import org.springframework.core.annotation.AliasFor;
 
 import java.lang.annotation.*;

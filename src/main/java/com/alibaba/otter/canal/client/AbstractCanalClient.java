@@ -6,6 +6,7 @@ import com.alibaba.otter.canal.protocol.Message;
 import com.alibaba.otter.canal.util.CanalUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.MDC;
 
 import java.util.Arrays;
 import java.util.List;
@@ -93,25 +94,30 @@ public abstract class AbstractCanalClient<C extends CanalConnector> implements C
         String destination = this.getDestination(connector);
         while (running) {
             try {
+                MDC.put("destination", destination);
                 connector.connect();
                 connector.subscribe(filter);
                 while (running) {
                     Message message = connector.getWithoutAck(batchSize, timeout, unit);
-                    log.info("获取消息 {}", message);
                     long batchId = message.getId();
-                    if (message.getId() != -1 && message.getEntries().size() != 0) {
-                        CanalUtils.printSummary(message, batchId, message.getEntries().size());
+                    int size = message.getEntries().size();
+                    if (batchId != -1 && size != 0) {
+                        CanalUtils.printSummary(message, batchId, size);
                         CanalUtils.printEntry(message.getEntries());
                         messageHandler.handleMessage(destination, message);
                     }
-                    connector.ack(batchId);
+                    if (batchId != -1) {
+                        connector.ack(batchId); // 提交确认
+                    }
                 }
             } catch (Exception e) {
-                log.error("canal client 异常", e);
+                log.error("process error!", e);
                 try {
-                    Thread.sleep(2000);
-                } catch (InterruptedException ex) {
+                    Thread.sleep(2000L);
+                } catch (InterruptedException e1) {
+                    // ignore
                 }
+                connector.rollback(); // 处理失败, 回滚数据
             } finally {
                 connector.disconnect();
             }

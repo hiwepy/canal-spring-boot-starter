@@ -3,6 +3,7 @@ package com.alibaba.otter.canal.client;
 import com.alibaba.otter.canal.handler.MessageHandler;
 import com.alibaba.otter.canal.protocol.FlatMessage;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -25,11 +26,11 @@ public abstract class AbstractMQCanalClient<C extends CanalMQConnector> extends 
                 while (running) {
                     try {
                         List<FlatMessage> messages = connector.getFlatListWithoutAck(timeout, unit);
-                        log.info("获取消息 {}", messages);
-                        if (messages != null) {
-                            for (FlatMessage flatMessage : messages) {
-                                messageHandler.handleMessage(destination, flatMessage);
-                            }
+                        if (CollectionUtils.isEmpty(messages)) {
+                            continue;
+                        }
+                        for (FlatMessage flatMessage : messages) {
+                            messageHandler.handleMessage(destination, flatMessage);
                         }
                         connector.ack();
                     } catch (Exception e) {

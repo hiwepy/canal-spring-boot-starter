@@ -15,7 +15,7 @@ import java.util.List;
 @ToString
 public class CanalClusterProperties {
 
-    public static final int DEFAULT_PORT = 5672;
+    public static final int DEFAULT_PORT = 11111;
     private static final int DEFAULT_MAX_RETRIES = 3;
     private static final int DEFAULT_MAX_SLEEP_MS = Integer.MAX_VALUE;
     public static final String PREFIX = "canal.cluster";
@@ -29,11 +29,11 @@ public class CanalClusterProperties {
     public static class Instance {
 
         /**
-         * Canal Server 主机地址。如果设置了address属性，则忽略。
+         * Canal Server 主机地址
          */
         private String host;
         /**
-         * Canal Server 端口。如果设置了address属性，则忽略。默认为 11111
+         * Canal Server 端口。默认为 11111
          */
         private Integer port = DEFAULT_PORT;
         /**

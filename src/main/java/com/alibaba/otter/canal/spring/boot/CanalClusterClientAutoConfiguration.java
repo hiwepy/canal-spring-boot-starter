@@ -42,15 +42,16 @@ public class CanalClusterClientAutoConfiguration {
     @Bean
     @ConditionalOnProperty(value = CanalProperties.CANAL_ASYNC, havingValue = "true", matchIfMissing = true)
     public MessageHandler messageHandler(RowDataHandler<CanalEntry.RowData> rowDataHandler,
-                                         List<EntryHandler> entryHandlers,
+                                         ObjectProvider<EntryHandler> entryHandlerProvider,
                                          ThreadPoolTaskExecutor threadPoolTaskExecutor) {
-        return new AsyncMessageHandlerImpl(entryHandlers, rowDataHandler, threadPoolTaskExecutor);
+        return new AsyncMessageHandlerImpl(entryHandlerProvider.stream().collect(Collectors.toList()), rowDataHandler, threadPoolTaskExecutor);
     }
 
     @Bean
     @ConditionalOnProperty(value = CanalProperties.CANAL_ASYNC, havingValue = "false")
-    public MessageHandler messageHandler(RowDataHandler<CanalEntry.RowData> rowDataHandler, List<EntryHandler> entryHandlers) {
-        return new SyncMessageHandlerImpl(entryHandlers, rowDataHandler);
+    public MessageHandler messageHandler(RowDataHandler<CanalEntry.RowData> rowDataHandler,
+                                         ObjectProvider<EntryHandler> entryHandlerProvider) {
+        return new SyncMessageHandlerImpl(entryHandlerProvider.stream().collect(Collectors.toList()), rowDataHandler);
     }
 
     @Bean

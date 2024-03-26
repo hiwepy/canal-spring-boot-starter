@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -16,7 +17,7 @@ import java.util.concurrent.TimeUnit;
  * @param <C> CanalConnector 实现类
  */
 @Slf4j
-public abstract class AbstractCanalClient<C extends CanalConnector> implements CanalClient {
+public abstract class AbstractCanalClient<C extends CanalConnector> implements CanalClient<C> {
 
     /**
      * 是否运行中
@@ -62,50 +63,30 @@ public abstract class AbstractCanalClient<C extends CanalConnector> implements C
     @Override
     public void start() {
         log.info("start canal client");
-        Thread workThread = new Thread(this::process3);
-        workThread.setName("canal-client-thread");
+        workThreads = new Thread[connectors.size()];
+        for (int i = 0; i < connectors.size(); i++) {
+            C connector = connectors.get(i);
+            Thread workThread = new Thread(() -> process(connector));
+            workThread.setName("canal-client-thread-" + i);
+            workThreads[i] = workThread;
+            workThread.start();
+        }
         running = true;
-        workThread.start();
     }
 
     @Override
     public void stop() {
         log.info("stop canal client");
         running = false;
-        if (null != workThread) {
-            workThread.interrupt();
+        for (Thread workThread : workThreads) {
+            if (Objects.nonNull(workThread) && workThread.isAlive(){
+                workThread.interrupt();
+            }
         }
     }
 
     @Override
-    public void process() {
-        while (running) {
-            for (C connector : connectors) {
-                process(connector);
-            }
-            try {
-                connector.connect();
-                connector.subscribe(filter);
-                while (running) {
-                    Message message = connector.getWithoutAck(batchSize, timeout, unit);
-                    log.info("获取消息 {}", message);
-                    long batchId = message.getId();
-                    if (message.getId() != -1 && message.getEntries().size() != 0) {
-                        CanalUtils.printSummary(message, batchId, message.getEntries().size());
-                        CanalUtils.printEntry(message.getEntries());
-                        messageHandler.handleMessage(message);
-                    }
-                    connector.ack(batchId);
-                }
-            } catch (Exception e) {
-                log.error("canal client 异常", e);
-            } finally {
-                connector.disconnect();
-            }
-        }
-    }
-
-    public void process3(C connector) {
+    public void process(C connector) {
         while (running) {
             try {
                 connector.connect();
@@ -156,10 +137,6 @@ public abstract class AbstractCanalClient<C extends CanalConnector> implements C
 
     public void setSubscribeTypes(List<CanalEntry.EntryType> subscribeTypes) {
         this.subscribeTypes = subscribeTypes;
-    }
-
-    public C getConnector() {
-        return connector;
     }
 
     public MessageHandler getMessageHandler() {

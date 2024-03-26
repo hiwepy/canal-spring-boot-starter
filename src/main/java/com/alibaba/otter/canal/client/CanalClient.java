@@ -5,7 +5,7 @@ import org.springframework.beans.factory.DisposableBean;
 /**
  * Canal Client 接口
  */
-public interface CanalClient extends DisposableBean {
+public interface CanalClient<C extends CanalConnector> extends DisposableBean {
 
     /**
      * 启动客户端
@@ -20,6 +20,6 @@ public interface CanalClient extends DisposableBean {
     /**
      * 处理
      */
-    void process();
+    void process(C connector);
 
 }

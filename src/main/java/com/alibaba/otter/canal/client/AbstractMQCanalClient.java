@@ -14,8 +14,7 @@ public abstract class AbstractMQCanalClient<C extends CanalMQConnector> extends 
     }
 
     @Override
-    public void process() {
-        CanalMQConnector connector = super.getConnector();
+    public void process(C connector) {
         MessageHandler messageHandler = super.getMessageHandler();
         while (running) {
             try {

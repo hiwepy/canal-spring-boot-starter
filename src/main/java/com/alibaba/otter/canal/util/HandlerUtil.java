@@ -54,7 +54,7 @@ public class HandlerUtil {
         }
         for (EntryHandler handler : entryHandlers) {
             String canalTableNameCombination = getCanalTableNameCombination(handler);
-            if (StringUtils.hasText(canalTableNameCombination) {
+            if (StringUtils.hasText(canalTableNameCombination)) {
                 map.putIfAbsent(canalTableNameCombination.toLowerCase(), handler);
             } else {
                 String name = GenericUtil.getTableGenericProperties(handler);
@@ -73,7 +73,7 @@ public class HandlerUtil {
         }
         for (CanalEventHolder holder : eventHolders) {
             String canalTableNameCombination = getCanalTableNameCombination(holder);
-            if (StringUtils.hasText(canalTableNameCombination) {
+            if (StringUtils.hasText(canalTableNameCombination)) {
                 map.putIfAbsent(canalTableNameCombination.toLowerCase(), holder);
             }
         }

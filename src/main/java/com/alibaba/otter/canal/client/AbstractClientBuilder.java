@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Accessors(chain = true)
-public class AbstractClientBuilder<R extends CanalClient, C extends CanalConnector> {
+public abstract class AbstractClientBuilder<R extends CanalClient, C extends CanalConnector> {
 
     /**
      * 消息过滤
@@ -67,6 +67,6 @@ public class AbstractClientBuilder<R extends CanalClient, C extends CanalConnect
         return this;
     }
 
-    public abstract R build(C connector)
+    public abstract R build(C connector);
 
 }

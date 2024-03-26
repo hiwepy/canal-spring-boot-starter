@@ -83,7 +83,7 @@ public abstract class AbstractMessageHandler implements MessageHandler<Message>,
                     CanalEntry.EventType eventType = rowChange.getEventType();
                     // 获取表对应的注解处理器
                     CanalEventHolder eventHolder = HandlerUtil.getEventHolder(tableEventHolderMap, schemaName, tableName);
-                    if(Objects.nonNull(eventHolder) && eventHolder.isMatch(eventType){
+                    if(Objects.nonNull(eventHolder) && eventHolder.isMatch(eventType)){
                         this.handlerRowData(model, rowChange, eventHolder);
                         continue;
                     }

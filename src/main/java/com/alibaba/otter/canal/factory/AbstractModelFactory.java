@@ -10,7 +10,7 @@ public abstract class AbstractModelFactory<T> implements IModelFactory<T> {
 
     @Override
     public <R> R newInstance(EntryHandler entryHandler, T t) throws Exception {
-        String canalTableName = HandlerUtil.getCanalTableName(entryHandler);
+        String canalTableName = HandlerUtil.getCanalTableNameCombination(entryHandler);
         if (TableNameEnum.ALL.name().toLowerCase().equals(canalTableName)) {
             return (R) t;
         }

@@ -127,9 +127,9 @@ public class ConnectorUtil {
     public static SimpleCanalConnector createSimpleCanalConnector(CanalSimpleProperties.Instance instance) {
         InetSocketAddress address = new InetSocketAddress(instance.getHost(), instance.getPort());
         SimpleCanalConnector canalConnector = new SimpleCanalConnector(address,
-                instance.getDestination(),
                 instance.getUsername(),
-                instance.getPassword());
+                instance.getPassword(),
+                instance.getDestination());
         canalConnector.setSoTimeout(instance.getSoTimeout());
         canalConnector.setIdleTimeout(instance.getIdleTimeout());
         return canalConnector;

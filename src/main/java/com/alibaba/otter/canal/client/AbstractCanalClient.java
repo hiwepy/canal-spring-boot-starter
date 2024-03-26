@@ -108,6 +108,10 @@ public abstract class AbstractCanalClient<C extends CanalConnector> implements C
                 }
             } catch (Exception e) {
                 log.error("canal client 异常", e);
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException ex) {
+                }
             } finally {
                 connector.disconnect();
             }

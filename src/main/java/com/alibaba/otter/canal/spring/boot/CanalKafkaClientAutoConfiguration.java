@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.util.Assert;
+import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -55,25 +55,27 @@ public class CanalKafkaClientAutoConfiguration {
         return new SyncFlatMessageHandlerImpl(entryHandlerProvider.stream().collect(Collectors.toList()), rowDataHandler);
     }
 
-    @Bean
-    public List<KafkaCanalConnector> kafkaCanalConnectors(CanalKafkaClientProperties connectorProperties){
-        Assert.notEmpty(connectorProperties.getInstances(), "No kafka canal instance configured");
-        return connectorProperties.getInstances().stream()
-                .map(instance -> ConnectorUtil.createKafkaCanalConnector(instance))
-                .collect(Collectors.toList());
-    }
-
     @Bean(initMethod = "start", destroyMethod = "stop")
     public KafkaCanalClient kafkaCanalClient(ObjectProvider<KafkaCanalConnector> connectorProvider,
                                              ObjectProvider<MessageHandler> messageHandlerProvider,
-                                             CanalProperties canalProperties){
+                                             CanalProperties canalProperties,
+                                             CanalKafkaClientProperties connectorProperties){
+        // 1. 获取Spring 上下文中所有的 PulsarMQCanalConnector
+        List<KafkaCanalConnector> kafkaCanalConnectors = connectorProvider.stream().collect(Collectors.toList());
+        // 2. 初始化配置文件中配置的 SimpleCanalConnector
+        if(!CollectionUtils.isEmpty(connectorProperties.getInstances())){
+            kafkaCanalConnectors.addAll(connectorProperties.getInstances().stream()
+                    .map(instance -> ConnectorUtil.createKafkaCanalConnector(instance))
+                    .collect(Collectors.toList()));
+        }
+        // 3. 返回 KafkaCanalClient
         return (KafkaCanalClient) new KafkaCanalClient.Builder()
                 .batchSize(canalProperties.getBatchSize())
                 .filter(canalProperties.getFilter())
                 .timeout(canalProperties.getTimeout())
                 .unit(canalProperties.getUnit())
                 .messageHandler(messageHandlerProvider.getIfAvailable())
-                .build(connectorProvider.stream().collect(Collectors.toList()));
+                .build(kafkaCanalConnectors);
     }
 
 }

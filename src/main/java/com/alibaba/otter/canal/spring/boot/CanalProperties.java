@@ -61,9 +61,9 @@ public class CanalProperties {
 	 */
 	private Integer batchSize = 1000;
 	/**
-	 *  The timeout for reading batchSize records, If timeout=0, block until the batchSize record is obtained before returning
+	 *  -1代表不做timeout控制
 	 */
-	private Long timeout = 0L;
+	private Long timeout = -1L;
 	/**
 	 * 获取数据超时时间单位
 	 */

@@ -21,6 +21,8 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public abstract class AbstractCanalClient<C extends CanalConnector> implements CanalClient<C> {
 
+    protected Thread.UncaughtExceptionHandler handler            = (t, e) -> log.error("parse events has an error",
+            e);
     /**
      * 是否运行中
      */
@@ -70,6 +72,7 @@ public abstract class AbstractCanalClient<C extends CanalConnector> implements C
             C connector = connectors.get(i);
             Thread workThread = new Thread(() -> process(connector));
             workThread.setName("canal-client-thread-" + i);
+            workThread.setUncaughtExceptionHandler(handler);
             workThreads[i] = workThread;
             workThread.start();
         }
@@ -101,14 +104,21 @@ public abstract class AbstractCanalClient<C extends CanalConnector> implements C
                     Message message = connector.getWithoutAck(batchSize, timeout, unit);
                     long batchId = message.getId();
                     int size = message.getEntries().size();
-                    if (batchId != -1 && size != 0) {
+                    if (batchId == -1 || size == 0) {
+                         try {
+                            Thread.sleep(1000);
+                         } catch (InterruptedException e) {
+                         }
+                    } else {
                         CanalUtils.printSummary(message, batchId, size);
                         CanalUtils.printEntry(message.getEntries());
                         messageHandler.handleMessage(destination, message);
                     }
+
                     if (batchId != -1) {
                         connector.ack(batchId); // 提交确认
                     }
+
                 }
             } catch (Exception e) {
                 log.error("process error!", e);

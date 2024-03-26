@@ -80,7 +80,7 @@ public abstract class AbstractCanalClient<C extends CanalConnector> implements C
         log.info("stop canal client");
         running = false;
         for (Thread workThread : workThreads) {
-            if (Objects.nonNull(workThread) && workThread.isAlive(){
+            if (Objects.nonNull(workThread) && workThread.isAlive()){
                 workThread.interrupt();
             }
         }

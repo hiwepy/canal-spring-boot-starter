@@ -20,6 +20,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.util.Assert;
 
@@ -30,6 +31,7 @@ import java.util.stream.Collectors;
 @ConditionalOnClass({ SimpleCanalConnector.class, ClusterCanalConnector.class })
 @ConditionalOnProperty(value = CanalProperties.CANAL_MODE, havingValue = "simple", matchIfMissing = true)
 @EnableConfigurationProperties({CanalProperties.class, CanalSimpleProperties.class})
+@Import(CanalThreadPoolAutoConfiguration.class)
 @Slf4j
 public class CanalSimpleClientAutoConfiguration {
 

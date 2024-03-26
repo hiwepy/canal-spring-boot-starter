@@ -1,7 +1,9 @@
 package com.alibaba.otter.canal.client;
 
 import com.alibaba.otter.canal.client.impl.ClusterCanalConnector;
+import org.springframework.util.ReflectionUtils;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 /**
@@ -11,6 +13,13 @@ public class ClusterCanalClient extends AbstractCanalClient<ClusterCanalConnecto
 
     private ClusterCanalClient(List<ClusterCanalConnector> connectors) {
         super(connectors);
+    }
+
+    @Override
+    protected String getDestination(ClusterCanalConnector connector) {
+        Field destinationField =  ReflectionUtils.findField(ClusterCanalConnector.class, "destination");
+        ReflectionUtils.makeAccessible(destinationField);
+        return (String) ReflectionUtils.getField(destinationField, connector);
     }
 
     public static final class Builder extends AbstractClientBuilder<ClusterCanalClient, ClusterCanalConnector> {

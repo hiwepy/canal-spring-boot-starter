@@ -32,224 +32,261 @@
 
 ##### 2、使用示例
 
-###### 2.1、THREAD_POOL 消费者模式
+###### 2.1、根据实际业务需求选择不同的客户端模式
 
 在`application.yml`文件中增加如下配置
 
 ```yaml
+#########################################################################################################################################################
+###Canal (CanalProperties、CanalKafkaProperties、CanalRabbitMQProperties、CanalRocketMQProperties、CanalPulsarProperties、CanalTcpProperties) 基本配置：
+#########################################################################################################################################################
 canal:
-  # 消费者模式；THREAD_POOL, DISRUPTOR
-  consumer-mode: THREAD_POOL
-  server-mode: TCP
+  # Canal Server 模式。默认为 simple
+  mode: simple
+  # 是否异步处理消息。默认为 false
+  async: true
+  batch-size: 1000
+  filter: xxx
+  subscribe-types:
+    - ROWDATA
+    - TRANSACTIONEND
+    - HEARTBEAT
+  timeout: 60
+  unit: SECONDS
+  # 是否开启消息队列。默认为 false
+  # Canal 异步消费线程池配置
+  thread-pool:
+    # 线程池核心线程数。默认为 1
+    core-pool-size: 1
+    # 线程池最大线程数。默认为 1
+    max-pool-size: 1
+    # 线程池队列容量。默认为 1000
+    queue-capacity: 1000
+    # 线程池线程存活时间。默认为 60s
+    keep-alive: 60s
+  # Simple 客户端模式配置
+  simple:
+    instances:
+      - # Canal Server 主机地址。如果设置了address属性，则忽略。
+        host: 127.0.0.1
+        # Canal Server 端口。如果设置了address属性，则忽略。默认为 5672
+        port: 11111
+        # Canal Server 地址。如果设置了该属性，则忽略host和port属性。
+        addresses: xxx
+        # Canal Server 用户名
+        username: xxx
+        # Canal Server 密码
+        password: xxx
+        # Socket 连接超时时间，单位：毫秒。默认为 60000
+        so-timeout: 60000
+        # Socket 空闲超时时间，单位：毫秒。默认为 3600000
+        idle-timeout: 3600000
+        # 重试次数;设置-1时可以subscribe阻塞等待时优雅停机
+        retry-times: 3
+        # 重试间隔时间，单位：毫秒。默认为 1000
+        retry-interval: 1000
+  # Cluster 客户端模式配置
+  cluster:
+    instances:
+      - # Canal Server 主机地址。如果设置了address属性，则忽略。
+        host: 127.0.0.1
+        # Canal Server 端口。如果设置了address属性，则忽略。默认为 5672
+        port: 11111
+        # Canal Server 地址。如果设置了该属性，则忽略host和port属性。
+        addresses: xxx
+        #  Canal Zookeeper 地址
+        zk-servers: : xxx
+        # Canal Server 用户名
+        username: xxx
+        # Canal Server 密码
+        password: xxx
+        # Socket 连接超时时间，单位：毫秒。默认为 60000
+        so-timeout: 60000
+        # Socket 空闲超时时间，单位：毫秒。默认为 3600000
+        idle-timeout: 3600000
+        # 重试次数;设置-1时可以subscribe阻塞等待时优雅停机
+        retry-times: 3
+        # 重试间隔时间，单位：毫秒。默认为 1000
+        retry-interval: 1000
+  # Canal Kafka 消息队列配置
+  kafka:
+    instances:
+      - # 启动时从未消费的消息位置开始
+        earliest: true
+        # 消息分区索引
+        partition: 0
+        # Kafka服务器地址
+        servers: xxx,xxx,xxx
+        # 订阅的消息主题
+        topic: xxx
+        # 消费者组ID
+        group-id: xxx
+        # 批量获取数据的大小
+        batch-size: 64
+  # Canal RabbitMQ 消息队列配置
+  rabbitmq:
+    instances:
+      - # RabbitMQ服务器地址
+        addresses: xxx,xxx,xxx
+        # 虚拟主机
+        vhost: xxx
+        # 队列名称
+        queue-name: xxx
+        # 访问key
+        access-key: xxx
+        # 访问秘钥
+        secret-key: xxx
+        # 用户名
+        username: xxx
+        # 密码
+        password: xxx
+        #资源所有者的ID
+        resource-owner-id: 000000
+  # Canal RocketMQ 消息队列配置
+  rocketmq:
+    instances:
+      - # RocketMQ NameServer 服务地址
+        name-server: xxx
+        # 订阅的消息主题
+        topic: xxx
+        # 消费者组名称
+        group-name: xxx
+        # 访问key
+        access-key: xxx
+        # 访问秘钥
+        secret-key: xxx
+        # 访问的通道
+        access-channel: LOCAL
+        # 是否开启消息轨迹
+        enable-message-trace: false
+        # 命名空间
+        namespace: xxx
+        # 自定义轨迹主题
+        customized-trace-topic: xxx
+        # 批量获取数据的大小
+        batch-size: 64
+  # Canal Pulsar 消息队列配置
+  pulsar:
+    instances:
+      - # PulsarMQ 服务地址
+        service-url: xxx
+        # 角色认证 token
+        role-token: xxx
+        # 订阅的消息主题
+        topic: xxx
+        # 订阅客户端名称
+        subscript-name: xxx
+        # 每次批量获取数据的最大条目数，默认30
+        batch-size: 30
+        batch-timeout-seconds: 30
+        batch-process-timeout-seconds: 60
+        # 消费失败后的重试秒数，默认60秒
+        redelivery-delay-seconds: 60
+        # 当客户端接收到消息，30秒还没有返回ack给服务端时，ack超时，会重新消费该消息
+        ack-timeout-seconds: 30
+        # 是否开启消息失败重试功能，默认开启
+        retry: true
+        #  true重试(-RETRY)和死信队列(-DLQ)后缀为大写，有些地方创建的为小写，需确保正确
+        retry-d-l-q-upper-case: true
+        # 最大重试次数
+        max-redelivery-count: 10
 ```
 
-创建Java对象 CanalMessageListenerConcurrently，实现消费者监听器 MessageListenerConcurrently 接口
+###### 2.1、@CanalEventHandler 注解事件监听消费模式
+
+创建Java对象 CanalMessageEventHandler，适用 @CanalEventHandler 注解标注在消费者监听器上
 
 ```java
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.otter.canal.annotation.CanalEventHandler;
+import com.alibaba.otter.canal.annotation.event.*;
+import com.alibaba.otter.canal.model.CanalModel;
 import com.alibaba.otter.canal.protocol.CanalEntry;
-import com.alibaba.otter.canal.protocol.Message;
-import com.alibaba.otter.canal.spring.boot.consumer.listener.ConsumeConcurrentlyStatus;
-import com.alibaba.otter.canal.spring.boot.consumer.listener.MessageListenerConcurrently;
-import com.alibaba.otter.canal.util.CanalUtils;
-import com.google.protobuf.ByteString;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
-public class CanalMessageListenerConcurrently implements MessageListenerConcurrently {
+@CanalEventHandler
+@Slf4j
+public class CanalMessageEventHandler {
+
+    @OnCreateTableEvent(schema = "my_auth")
+    public void onCreateTableEvent(CanalModel model, CanalEntry.RowChange rowChange) {
+        log.info("onCreateTableEvent");
+    }
+
+    @OnCreateIndexEvent(schema = "my_auth", table = "user_info")
+    public void onCreateIndexEvent(CanalModel model, CanalEntry.RowChange rowChange) {
+        log.info("OnCreateIndexEvent");
+    }
+
+    @OnInsertEvent(schema = "my_auth", table = "user_info")
+    public void onEventInsertData(CanalModel model, CanalEntry.RowChange rowChange) {
+
+        // 1，获取当前事件的操作类型
+        CanalEntry.EventType eventType = rowChange.getEventType();
+        // 2,获取数据集
+        List<CanalEntry.RowData> rowDatasList = rowChange.getRowDatasList();
+        // 3,遍历RowDataList，并打印数据集
+        for (CanalEntry.RowData rowData : rowDatasList) {
+            JSONObject beforeData = new JSONObject();
+            List<CanalEntry.Column> beforeColumnsList = rowData.getBeforeColumnsList();
+            for (CanalEntry.Column column : beforeColumnsList) {
+                beforeData.put(column.getName(), column.getValue());
+            }
+            JSONObject affterData = new JSONObject();
+            List<CanalEntry.Column> afterColumnsList = rowData.getAfterColumnsList();
+            for (CanalEntry.Column column : afterColumnsList) {
+                affterData.put(column.getName(), column.getValue());
+            }
+
+            System.out.println("Table:" + model.getTable() +
+                    ",EventType:" + eventType +
+                    ",Before:" + beforeData +
+                    ",After:" + affterData);
+        }
+
+    }
+
+    @OnUpdateEvent(schema = "my_auth", table = "user_info")
+    public void onEventUpdateData(CanalModel model, CanalEntry.RowChange rowChange) {
+        log.info("onEventUpdateData");
+    }
+
+    @OnDeleteEvent(schema = "my_auth", table = "user_info")
+    public void onEventDeleteData(CanalEntry.RowChange rowChange, CanalModel model) {
+        log.info("onEventDeleteData");
+    }
+
+}
+```
+ 
+
+###### 2.2、EntryHandler 消费者模式
+
+创建Java对象 CanalMessageEntryHandler，实现实体处理器 EntryHandler 接口
+
+```java
+import com.alibaba.otter.canal.handler.EntryHandler;
+import org.springframework.stereotype.Component;
+
+@Component
+public class CanalMessageEntryHandler implements EntryHandler<UserInfo> {
 
     @Override
-    public ConsumeConcurrentlyStatus consumeMessage(List<Message> messages) throws Exception {
-        // 循环所有消息
-        for (Message message : messages) {
-            // 1、获取 Entry集合
-            List<CanalEntry.Entry> entries = message.getEntries();
-            long batchId = message.getId();
-            CanalUtils.printSummary(message, batchId, entries.size());
-            if (batchId == -1 || entries.size() == 0) {
-                System.out.println("休息一会吧，当前抓取没有数据");
-            } else {
-                CanalUtils.printEntry(message.getEntries());
-                // 遍历 entryes，单条解析
-                for (CanalEntry.Entry entry : entries) {
-                    //1，获取表名
-                    String tableName = entry.getHeader().getTableName();
-                    //2，获取类型
-                    CanalEntry.EntryType entryType = entry.getEntryType();
-                    //3,获取序列化后的数据
-                    ByteString storeValue = entry.getStoreValue();
-                    //4,判断当前entryType类型是否为ROWDATA，既当前变化的数据是否行数据
-                    if (CanalEntry.EntryType.ROWDATA.equals(entryType)) {
-                        //5,反序列化数据
-                        CanalEntry.RowChange rowChange = CanalEntry.RowChange.parseFrom(storeValue);
-                        //6，获取当前事件的操作类型
-                        CanalEntry.EventType eventType = rowChange.getEventType();
-                        //7,获取数据集
-                        List<CanalEntry.RowData> rowDatasList = rowChange.getRowDatasList();
-                        //8,遍历RowDataList，并打印数据集
-                        for (CanalEntry.RowData rowData : rowDatasList) {
-                            JSONObject beforeData = new JSONObject();
-                            List<CanalEntry.Column> beforeColumnsList = rowData.getBeforeColumnsList();
-                            for (CanalEntry.Column column : beforeColumnsList) {
-                                beforeData.put(column.getName(), column.getValue());
-                            }
-                            JSONObject affterData = new JSONObject();
-                            List<CanalEntry.Column> afterColumnsList = rowData.getAfterColumnsList();
-                            for (CanalEntry.Column column : afterColumnsList) {
-                                affterData.put(column.getName(), column.getValue());
-                            }
-
-                            System.out.println("Table:" + tableName +
-                                    ",EventType:" + eventType +
-                                    ",Before:" + beforeData +
-                                    ",After:" + affterData);
-                        }
-
-                    } else {
-                        System.out.println("当前操作类型为：" + entryType);
-                    }
-                }
-            }
-        }
-        return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
+    public void insert(UserInfo t) {
     }
-
-}
-```
-
-Spring Boot 启动入口：
-
-```java
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-
-@SpringBootApplication
-public class CanalApplication_Test {
-
-    @Bean
-    public CanalMessageListenerConcurrently canalMessageListener(){
-        return new CanalMessageListenerConcurrently();
-    }
-
-    public static void main(String[] args) throws Exception {
-        SpringApplication.run(CanalApplication_Test.class, args);
-    }
-
-}
-```
-
-###### 2.2、DISRUPTOR 消费者模式
-
-在`application.yml`文件中增加如下配置
-
-```yaml
-canal:
-  # 消费者模式；THREAD_POOL, DISRUPTOR
-  consumer-mode: DISRUPTOR
-  server-mode: TCP
-```
-
-创建Java对象 CanalMessageEventHandler，实现disruptor的事件处理器 MessageEventHandler 接口
-
-```java
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.otter.canal.protocol.CanalEntry;
-import com.alibaba.otter.canal.protocol.Message;
-import com.alibaba.otter.canal.spring.boot.disruptor.MessageEventHandler;
-import com.alibaba.otter.canal.spring.boot.disruptor.event.MessageEvent;
-import com.alibaba.otter.canal.util.CanalUtils;
-import com.google.protobuf.ByteString;
-
-import java.util.List;
-
-public class CanalMessageEventHandler implements MessageEventHandler {
 
     @Override
-    public void onEvent(MessageEvent event) throws Exception {
-        // 循环所有消息
-        for (Message message : event.getMessages()) {
-            // 1、获取 Entry集合
-            List<CanalEntry.Entry> entries = message.getEntries();
-            long batchId = message.getId();
-            CanalUtils.printSummary(message, batchId, entries.size());
-            if (batchId == -1 || entries.size() == 0) {
-                System.out.println("休息一会吧，当前抓取没有数据");
-            } else {
-                CanalUtils.printEntry(message.getEntries());
-                // 遍历 entryes，单条解析
-                for (CanalEntry.Entry entry : entries) {
-                    //1，获取表名
-                    String tableName = entry.getHeader().getTableName();
-                    //2，获取类型
-                    CanalEntry.EntryType entryType = entry.getEntryType();
-                    //3,获取序列化后的数据
-                    ByteString storeValue = entry.getStoreValue();
-                    //4,判断当前entryType类型是否为ROWDATA，既当前变化的数据是否行数据
-                    if (CanalEntry.EntryType.ROWDATA.equals(entryType)) {
-                        //5,反序列化数据
-                        CanalEntry.RowChange rowChange = CanalEntry.RowChange.parseFrom(storeValue);
-                        //6，获取当前事件的操作类型
-                        CanalEntry.EventType eventType = rowChange.getEventType();
-                        //7,获取数据集
-                        List<CanalEntry.RowData> rowDatasList = rowChange.getRowDatasList();
-                        //8,遍历RowDataList，并打印数据集
-                        for (CanalEntry.RowData rowData : rowDatasList) {
-                            JSONObject beforeData = new JSONObject();
-                            List<CanalEntry.Column> beforeColumnsList = rowData.getBeforeColumnsList();
-                            for (CanalEntry.Column column : beforeColumnsList) {
-                                beforeData.put(column.getName(), column.getValue());
-                            }
-                            JSONObject affterData = new JSONObject();
-                            List<CanalEntry.Column> afterColumnsList = rowData.getAfterColumnsList();
-                            for (CanalEntry.Column column : afterColumnsList) {
-                                affterData.put(column.getName(), column.getValue());
-                            }
+    public void update(UserInfo before, UserInfo after) {
+    }
 
-                            System.out.println("Table:" + tableName +
-                                    ",EventType:" + eventType +
-                                    ",Before:" + beforeData +
-                                    ",After:" + affterData);
-                        }
-
-                    } else {
-                        System.out.println("当前操作类型为：" + entryType);
-                    }
-                }
-            }
-        }
+    @Override
+    public void delete(UserInfo t) {
     }
 
 }
 ```
-
-Spring Boot 启动入口：
-
-```java
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-
-@SpringBootApplication
-public class CanalDisruptorApplication_Test {
-
-    @Bean
-    public CanalMessageEventHandler canalMessageEventHandler(){
-        return new CanalMessageEventHandler();
-    }
-
-    public static void main(String[] args) throws Exception {
-        SpringApplication.run(CanalDisruptorApplication_Test.class, args);
-    }
-
-}
-```
-
-###### 2.3、服务端模式
-
-> 默认使用TCP方式连接 Canal Server ，可选择其他方式 ：TCP, KAFKA, ROCKETMQ, RABBITMQ, PULSARMQ
-
-
 
 
 ## Jeebiz 技术社区

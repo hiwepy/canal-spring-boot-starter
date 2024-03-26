@@ -32,7 +32,7 @@ public abstract class AbstractFlatMessageHandler implements MessageHandler<FlatM
     /**
      * 通过注解方式的表数据变更处理器
      */
-    private Map<String, CanalEventHolder> tableEventHolderMap;
+    private Map<String, List<CanalEventHolder>> tableEventHolderMap;
     /**
      * 表处理器
      */
@@ -53,7 +53,7 @@ public abstract class AbstractFlatMessageHandler implements MessageHandler<FlatM
     }
 
     @Override
-    public void handleMessage(FlatMessage flatMessage) {
+    public void handleMessage(String destination, FlatMessage flatMessage) {
         // 判断是否有 Data
         List<Map<String, String>> data = flatMessage.getData();
         if(CollectionUtils.isEmpty(data)){
@@ -81,16 +81,19 @@ public abstract class AbstractFlatMessageHandler implements MessageHandler<FlatM
             }
             try {
                 // 设置上下文
-                CanalModel model = CanalModel.Builder.builder()
+                CanalModel model = CanalModel.builder()
                         .id(flatMessage.getId())
-                        .database(schemaName)
+                        .schema(schemaName)
                         .table(tableName)
+                        .eventType(eventType)
                         .executeTime(flatMessage.getEs())
                         .createTime(flatMessage.getTs()).build();
                 // 获取表对应的注解处理器
-                CanalEventHolder eventHolder = HandlerUtil.getEventHolder(tableEventHolderMap, schemaName, tableName);
-                if(Objects.nonNull(eventHolder) && eventHolder.isMatch(eventType)) {
-                    this.handlerRowData(model, maps, eventHolder);
+                List<CanalEventHolder> eventHolders = HandlerUtil.getEventHolders(tableEventHolderMap, destination, schemaName, tableName, eventType);
+                if(CollectionUtils.isEmpty(eventHolders)){
+                    for (CanalEventHolder eventHolder : eventHolders) {
+                        this.handlerRowData(model, maps, eventHolder, eventType);
+                    }
                     continue;
                 }
                 // 获取表对应的处理器
@@ -105,12 +108,12 @@ public abstract class AbstractFlatMessageHandler implements MessageHandler<FlatM
         }
     }
 
-    public void handlerRowData(CanalModel model, List<Map<String, String>> rowData, CanalEventHolder eventHolder) throws Exception {
+    public void handlerRowData(CanalModel model, List<Map<String, String>> rowData, CanalEventHolder eventHolder, CanalEntry.EventType eventType) throws Exception {
         Method method = eventHolder.getMethod();
         try {
             CanalContext.setModel(model);
             ReflectionUtils.makeAccessible(method);
-            Object[] args = GenericUtil.getInvokeArgs(method, model, rowData);
+            Object[] args = GenericUtil.getInvokeArgs(method, model, rowData, eventType);
             method.invoke(eventHolder.getTarget(), args);
         } finally {
             // 移除上下文

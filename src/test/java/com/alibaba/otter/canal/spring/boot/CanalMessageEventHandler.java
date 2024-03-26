@@ -18,6 +18,11 @@ public class CanalMessageEventHandler {
         log.info("onCreateTableEvent");
     }
 
+    @OnCreateTableEvent(schema = "my_auth")
+    public void onCreateTableEvent2(CanalModel model, CanalEntry.RowChange rowChange) {
+        log.info("onCreateTableEvent2");
+    }
+
     @OnCreateIndexEvent(schema = "my_auth", table = "user_info")
     public void onCreateIndexEvent(CanalModel model, CanalEntry.RowChange rowChange) {
         log.info("OnCreateIndexEvent");

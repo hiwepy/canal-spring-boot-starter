@@ -1,8 +1,11 @@
 package com.alibaba.otter.canal.client;
 
+import com.alibaba.otter.canal.client.kafka.KafkaCanalConnector;
 import com.alibaba.otter.canal.client.pulsarmq.PulsarMQCanalConnector;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.util.ReflectionUtils;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 /**
@@ -13,6 +16,13 @@ public class PulsarMQCanalClient extends AbstractMQCanalClient<PulsarMQCanalConn
 
     private PulsarMQCanalClient(List<PulsarMQCanalConnector> connectors) {
         super(connectors);
+    }
+
+    @Override
+    protected String getDestination(PulsarMQCanalConnector connector) {
+        Field topicField =  ReflectionUtils.findField(PulsarMQCanalConnector.class, "topic");
+        ReflectionUtils.makeAccessible(topicField);
+        return (String) ReflectionUtils.getField(topicField, connector);
     }
 
     public static final class Builder extends AbstractClientBuilder<PulsarMQCanalClient, PulsarMQCanalConnector> {

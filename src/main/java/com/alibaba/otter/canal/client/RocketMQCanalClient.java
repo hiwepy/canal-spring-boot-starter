@@ -1,7 +1,10 @@
 package com.alibaba.otter.canal.client;
 
+import com.alibaba.otter.canal.client.pulsarmq.PulsarMQCanalConnector;
 import com.alibaba.otter.canal.client.rocketmq.RocketMQCanalConnector;
+import org.springframework.util.ReflectionUtils;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 /**
@@ -11,6 +14,13 @@ public class RocketMQCanalClient extends AbstractMQCanalClient<RocketMQCanalConn
 
     public RocketMQCanalClient(List<RocketMQCanalConnector> connectors) {
         super(connectors);
+    }
+
+    @Override
+    protected String getDestination(RocketMQCanalConnector connector) {
+        Field topicField =  ReflectionUtils.findField(RocketMQCanalConnector.class, "topic");
+        ReflectionUtils.makeAccessible(topicField);
+        return (String) ReflectionUtils.getField(topicField, connector);
     }
 
     public static final class Builder extends AbstractClientBuilder<RocketMQCanalClient, RocketMQCanalConnector> {

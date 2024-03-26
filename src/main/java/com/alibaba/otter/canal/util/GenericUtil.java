@@ -24,16 +24,35 @@ public class GenericUtil {
 
     private static Map<Class<? extends EntryHandler>, Class> cache = new ConcurrentHashMap<>();
 
-    public static Object[] getInvokeArgs(Method method, CanalModel model, CanalEntry.RowChange rowChange) {
-        return Arrays.stream(method.getParameterTypes())
-                .map(pClass -> CanalModel.class.isAssignableFrom(pClass) ? model : CanalEntry.RowChange.class.isAssignableFrom(pClass) ? rowChange : null)
+    public static Object[] getInvokeArgs(Method method, CanalModel model, CanalEntry.RowChange rowChange, CanalEntry.EventType eventType) {
+        return Arrays.stream(method.getParameterTypes()).map(pClass -> {
+                    if(CanalModel.class.isAssignableFrom(pClass)){
+                        return model;
+                    }
+                    if(CanalEntry.RowChange.class.isAssignableFrom(pClass)) {
+                        return rowChange;
+                    }
+                    if(CanalEntry.EventType.class.isAssignableFrom(pClass)) {
+                        return eventType;
+                    }
+                    return null;
+                })
                 .toArray();
     }
 
-    public static Object[] getInvokeArgs(Method method, CanalModel model, List<Map<String, String>> rowData) {
-        return Arrays.stream(method.getParameterTypes())
-                .map(pClass -> CanalModel.class.isAssignableFrom(pClass) ? model : List.class.isAssignableFrom(pClass) ? rowData : null)
-                .toArray();
+    public static Object[] getInvokeArgs(Method method, CanalModel model, List<Map<String, String>> rowData, CanalEntry.EventType eventType) {
+        return Arrays.stream(method.getParameterTypes()).map(pClass -> {
+                if(CanalModel.class.isAssignableFrom(pClass)){
+                    return model;
+                }
+                if(List.class.isAssignableFrom(pClass)) {
+                    return rowData;
+                }
+                if(CanalEntry.EventType.class.isAssignableFrom(pClass)) {
+                    return eventType;
+                }
+                return null;
+            }).toArray();
     }
 
     public static String getTableGenericProperties(EntryHandler entryHandler) {

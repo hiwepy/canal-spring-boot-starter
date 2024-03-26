@@ -28,8 +28,8 @@ public class SyncMessageHandlerImpl extends AbstractMessageHandler {
     }
 
     @Override
-    public void handleMessage(Message message) {
-        super.handleMessage(message);
+    public void handleMessage(String destination, Message message) {
+        super.handleMessage(destination, message);
     }
 
 

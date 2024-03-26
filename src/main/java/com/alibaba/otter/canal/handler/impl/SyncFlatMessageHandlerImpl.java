@@ -27,7 +27,7 @@ public class SyncFlatMessageHandlerImpl extends AbstractFlatMessageHandler {
     }
 
     @Override
-    public void handleMessage(FlatMessage flatMessage) {
-        super.handleMessage(flatMessage);
+    public void handleMessage(String destination, FlatMessage flatMessage) {
+        super.handleMessage(destination, flatMessage);
     }
 }

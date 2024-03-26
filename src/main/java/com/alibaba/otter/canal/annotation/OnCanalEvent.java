@@ -10,7 +10,7 @@ import java.lang.annotation.*;
  * @author lujun
  */
 
-@Target({ElementType.METHOD, ElementType.TYPE})
+@Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface OnCanalEvent {
@@ -41,6 +41,6 @@ public @interface OnCanalEvent {
      * default for all
      *
      */
-    CanalEntry.EventType[] eventType() default {};
+    CanalEntry.EventType[] eventType();
 
 }

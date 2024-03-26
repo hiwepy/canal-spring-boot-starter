@@ -9,6 +9,7 @@ import org.apache.commons.lang.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -85,8 +86,11 @@ public abstract class AbstractCanalClient<C extends CanalConnector> implements C
         }
     }
 
+    protected abstract String getDestination(C connector);
+
     @Override
     public void process(C connector) {
+        String destination = this.getDestination(connector);
         while (running) {
             try {
                 connector.connect();
@@ -98,7 +102,7 @@ public abstract class AbstractCanalClient<C extends CanalConnector> implements C
                     if (message.getId() != -1 && message.getEntries().size() != 0) {
                         CanalUtils.printSummary(message, batchId, message.getEntries().size());
                         CanalUtils.printEntry(message.getEntries());
-                        messageHandler.handleMessage(message);
+                        messageHandler.handleMessage(destination, message);
                     }
                     connector.ack(batchId);
                 }

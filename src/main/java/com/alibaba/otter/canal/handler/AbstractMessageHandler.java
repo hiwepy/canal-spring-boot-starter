@@ -34,7 +34,7 @@ public abstract class AbstractMessageHandler implements MessageHandler<Message>,
     /**
      * 通过注解方式的表数据变更处理器
      */
-    private Map<String, CanalEventHolder> tableEventHolderMap;
+    private Map<String, List<CanalEventHolder>> tableEventHolderMap;
     /**
      * 表数据变更处理器
      */
@@ -59,7 +59,7 @@ public abstract class AbstractMessageHandler implements MessageHandler<Message>,
     }
 
     @Override
-    public void handleMessage(Message message) {
+    public void handleMessage(String destination, Message message) {
         // 遍历 entryes，单条解析
         for (CanalEntry.Entry entry : message.getEntries()) {
             // 获取数据库实例
@@ -71,21 +71,24 @@ public abstract class AbstractMessageHandler implements MessageHandler<Message>,
             // 判断当前entryType类型是否订阅
             if (this.isSubscribed(entryType)) {
                 try {
-                    // 设置上下文
-                    CanalModel model = CanalModel.Builder.builder()
-                            .id(message.getId())
-                            .table(tableName)
-                            .executeTime(entry.getHeader().getExecuteTime())
-                            .database(schemaName)
-                            .build();
                     // 获取序列化后的数据
                     CanalEntry.RowChange rowChange = CanalEntry.RowChange.parseFrom(entry.getStoreValue());
                     // 获取当前事件的操作类型
                     CanalEntry.EventType eventType = rowChange.getEventType();
+                    // 设置上下文
+                    CanalModel model = CanalModel.builder()
+                            .id(message.getId())
+                            .schema(schemaName)
+                            .table(tableName)
+                            .eventType(eventType)
+                            .executeTime(entry.getHeader().getExecuteTime())
+                            .build();
                     // 获取表对应的注解处理器
-                    CanalEventHolder eventHolder = HandlerUtil.getEventHolder(tableEventHolderMap, schemaName, tableName);
-                    if(Objects.nonNull(eventHolder) && eventHolder.isMatch(eventType)){
-                        this.handlerRowData(model, rowChange, eventHolder);
+                    List<CanalEventHolder> eventHolders = HandlerUtil.getEventHolders(tableEventHolderMap, destination, schemaName, tableName, eventType);
+                    if(CollectionUtils.isEmpty(eventHolders)){
+                        for (CanalEventHolder eventHolder : eventHolders) {
+                            this.handlerRowData(model, rowChange, eventHolder, eventType);
+                        }
                         continue;
                     }
                     // 获取表对应的处理器
@@ -106,12 +109,12 @@ public abstract class AbstractMessageHandler implements MessageHandler<Message>,
         }
     }
 
-    public void handlerRowData(CanalModel model, CanalEntry.RowChange rowChange, CanalEventHolder eventHolder) throws Exception {
+    public void handlerRowData(CanalModel model, CanalEntry.RowChange rowChange, CanalEventHolder eventHolder, CanalEntry.EventType eventType) throws Exception {
         try {
             CanalContext.setModel(model);
             Method method = eventHolder.getMethod();
             ReflectionUtils.makeAccessible(method);
-            Object[] args = GenericUtil.getInvokeArgs(method, model, rowChange);
+            Object[] args = GenericUtil.getInvokeArgs(method, model, rowChange, eventType);
             method.invoke(eventHolder.getTarget(), args);
         } finally {
             // 移除上下文

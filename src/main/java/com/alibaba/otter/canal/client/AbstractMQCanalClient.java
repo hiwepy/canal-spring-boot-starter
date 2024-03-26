@@ -5,6 +5,7 @@ import com.alibaba.otter.canal.protocol.FlatMessage;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 public abstract class AbstractMQCanalClient<C extends CanalMQConnector> extends AbstractCanalClient<C> {
@@ -15,6 +16,7 @@ public abstract class AbstractMQCanalClient<C extends CanalMQConnector> extends 
 
     @Override
     public void process(C connector) {
+        String destination = this.getDestination(connector);
         MessageHandler messageHandler = super.getMessageHandler();
         while (running) {
             try {
@@ -26,7 +28,7 @@ public abstract class AbstractMQCanalClient<C extends CanalMQConnector> extends 
                         log.info("获取消息 {}", messages);
                         if (messages != null) {
                             for (FlatMessage flatMessage : messages) {
-                                messageHandler.handleMessage(flatMessage);
+                                messageHandler.handleMessage(destination, flatMessage);
                             }
                         }
                         connector.ack();

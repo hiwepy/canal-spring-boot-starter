@@ -11,6 +11,6 @@ public interface MessageHandler<T> {
      * 处理消息
      * @param t 消息
      */
-    void handleMessage(T t);
+    void handleMessage(String destination, T t);
 
 }

@@ -40,9 +40,9 @@ public abstract class AbstractCanalClient<C extends CanalConnector> implements C
      */
     protected Integer batchSize = 1;
     /**
-     * 获取数据超时时间
+     * 获取数据超时时间，-1代表不做timeout控制
      */
-    protected Long timeout = 1L;
+    protected Long timeout = -1L;
     /**
      * 获取数据超时时间单位
      */

@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 public abstract class AbstractMQCanalClient<C extends CanalMQConnector> extends AbstractCanalClient<C> {

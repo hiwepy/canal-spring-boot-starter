@@ -1,6 +1,5 @@
 package com.alibaba.otter.canal.util;
 
-import com.alibaba.otter.canal.client.CanalConnectors;
 import com.alibaba.otter.canal.client.impl.ClusterCanalConnector;
 import com.alibaba.otter.canal.client.impl.ClusterNodeAccessStrategy;
 import com.alibaba.otter.canal.client.impl.SimpleCanalConnector;

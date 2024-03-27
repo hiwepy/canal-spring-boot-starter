@@ -14,7 +14,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 @Configuration
 @ConditionalOnClass({ CanalConnector.class, CanalLifeCycle.class, CanalPacket.class })
-@ConditionalOnProperty(value = CanalProperties.CANAL_ASYNC, havingValue = "true", matchIfMissing = true)
+@ConditionalOnProperty(value = CanalProperties.CANAL_ASYNC, havingValue = "true")
 @EnableConfigurationProperties({CanalProperties.class, CanalThreadPoolProperties.class})
 public class CanalThreadPoolAutoConfiguration {
 

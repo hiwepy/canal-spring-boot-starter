@@ -62,30 +62,29 @@ public abstract class AbstractMessageHandler implements MessageHandler<Message>,
     public void handleMessage(String destination, Message message) {
         // 遍历 entryes，单条解析
         for (CanalEntry.Entry entry : message.getEntries()) {
-            // 获取数据库实例
-            String schemaName = entry.getHeader().getSchemaName();
-            // 获取表名
-            String tableName = entry.getHeader().getTableName();
             // 获取类型
             CanalEntry.EntryType entryType = entry.getEntryType();
             // 判断当前entryType类型是否订阅
             if (this.isSubscribed(entryType)) {
+                // 获取数据库实例
+                String schemaName = entry.getHeader().getSchemaName();
+                // 获取表名
+                String tableName = entry.getHeader().getTableName();
                 try {
                     // 获取序列化后的数据
                     CanalEntry.RowChange rowChange = CanalEntry.RowChange.parseFrom(entry.getStoreValue());
                     // 获取当前事件的操作类型
                     CanalEntry.EventType eventType = rowChange.getEventType();
-                    // 设置上下文
-                    CanalModel model = CanalModel.builder()
-                            .id(message.getId())
-                            .schema(schemaName)
-                            .table(tableName)
-                            .eventType(eventType)
-                            .executeTime(entry.getHeader().getExecuteTime())
-                            .build();
                     // 获取表对应的注解处理器
                     List<CanalEventHolder> eventHolders = HandlerUtil.getEventHolders(tableEventHolderMap, destination, schemaName, tableName, eventType);
-                    if(CollectionUtils.isEmpty(eventHolders)){
+                    if(!CollectionUtils.isEmpty(eventHolders)){
+                        CanalModel model = CanalModel.builder()
+                                .id(message.getId())
+                                .schema(schemaName)
+                                .table(tableName)
+                                .eventType(eventType)
+                                .executeTime(entry.getHeader().getExecuteTime())
+                                .build();
                         for (CanalEventHolder eventHolder : eventHolders) {
                             this.handlerRowData(model, rowChange, eventHolder, eventType);
                         }
@@ -95,6 +94,13 @@ public abstract class AbstractMessageHandler implements MessageHandler<Message>,
                     EntryHandler<?> entryHandler = HandlerUtil.getEntryHandler(tableHandlerMap, schemaName, tableName);
                     // 判断是否有对应的处理器
                     if(Objects.nonNull(entryHandler)){
+                        CanalModel model = CanalModel.builder()
+                                .id(message.getId())
+                                .schema(schemaName)
+                                .table(tableName)
+                                .eventType(eventType)
+                                .executeTime(entry.getHeader().getExecuteTime())
+                                .build();
                         // 遍历RowDataList，并逐行调用Handler处理
                         for (CanalEntry.RowData rowData : rowChange.getRowDatasList()) {
                             this.handlerRowData(model, rowData, entryHandler, eventType);

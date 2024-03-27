@@ -1,6 +1,5 @@
 package com.alibaba.otter.canal.client;
 
-import com.alibaba.otter.canal.client.kafka.KafkaCanalConnector;
 import com.alibaba.otter.canal.client.pulsarmq.PulsarMQCanalConnector;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.ReflectionUtils;

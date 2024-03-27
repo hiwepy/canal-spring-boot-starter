@@ -40,7 +40,7 @@ public class CanalClusterClientAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(value = CanalProperties.CANAL_ASYNC, havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(value = CanalProperties.CANAL_ASYNC, havingValue = "true")
     public MessageHandler messageHandler(RowDataHandler<CanalEntry.RowData> rowDataHandler,
                                          ObjectProvider<EntryHandler> entryHandlerProvider,
                                          ThreadPoolTaskExecutor threadPoolTaskExecutor) {

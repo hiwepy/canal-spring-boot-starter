@@ -1,6 +1,5 @@
 package com.alibaba.otter.canal.client;
 
-import com.alibaba.otter.canal.client.pulsarmq.PulsarMQCanalConnector;
 import com.alibaba.otter.canal.client.rocketmq.RocketMQCanalConnector;
 import org.springframework.util.ReflectionUtils;
 

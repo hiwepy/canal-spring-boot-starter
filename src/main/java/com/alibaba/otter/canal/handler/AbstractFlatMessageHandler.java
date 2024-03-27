@@ -80,17 +80,16 @@ public abstract class AbstractFlatMessageHandler implements MessageHandler<FlatM
                 maps = Stream.of(data.get(i)).collect(Collectors.toList());
             }
             try {
-                // 设置上下文
-                CanalModel model = CanalModel.builder()
-                        .id(flatMessage.getId())
-                        .schema(schemaName)
-                        .table(tableName)
-                        .eventType(eventType)
-                        .executeTime(flatMessage.getEs())
-                        .createTime(flatMessage.getTs()).build();
                 // 获取表对应的注解处理器
                 List<CanalEventHolder> eventHolders = HandlerUtil.getEventHolders(tableEventHolderMap, destination, schemaName, tableName, eventType);
-                if(CollectionUtils.isEmpty(eventHolders)){
+                if(!CollectionUtils.isEmpty(eventHolders)){
+                    CanalModel model = CanalModel.builder()
+                            .id(flatMessage.getId())
+                            .schema(schemaName)
+                            .table(tableName)
+                            .eventType(eventType)
+                            .executeTime(flatMessage.getEs())
+                            .createTime(flatMessage.getTs()).build();
                     for (CanalEventHolder eventHolder : eventHolders) {
                         this.handlerRowData(model, maps, eventHolder, eventType);
                     }
@@ -100,6 +99,13 @@ public abstract class AbstractFlatMessageHandler implements MessageHandler<FlatM
                 EntryHandler<?> entryHandler = HandlerUtil.getEntryHandler(tableHandlerMap, schemaName, tableName);
                 // 判断是否有对应的处理器
                 if(Objects.nonNull(entryHandler)){
+                    CanalModel model = CanalModel.builder()
+                            .id(flatMessage.getId())
+                            .schema(schemaName)
+                            .table(tableName)
+                            .eventType(eventType)
+                            .executeTime(flatMessage.getEs())
+                            .createTime(flatMessage.getTs()).build();
                    this.handlerRowData(model, maps, entryHandler, eventType);
                 }
             } catch (Exception e) {

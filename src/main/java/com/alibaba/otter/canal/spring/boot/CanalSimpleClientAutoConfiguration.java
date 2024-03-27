@@ -1,7 +1,6 @@
 package com.alibaba.otter.canal.spring.boot;
 
 import com.alibaba.otter.canal.client.SimpleCanalClient;
-import com.alibaba.otter.canal.client.impl.ClusterCanalConnector;
 import com.alibaba.otter.canal.client.impl.SimpleCanalConnector;
 import com.alibaba.otter.canal.factory.EntryColumnModelFactory;
 import com.alibaba.otter.canal.handler.EntryHandler;
@@ -28,7 +27,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Configuration
-@ConditionalOnClass({ SimpleCanalConnector.class, ClusterCanalConnector.class })
+@ConditionalOnClass({ SimpleCanalConnector.class })
 @ConditionalOnProperty(value = CanalProperties.CANAL_MODE, havingValue = "simple", matchIfMissing = true)
 @EnableConfigurationProperties({CanalProperties.class, CanalSimpleProperties.class})
 @Import(CanalThreadPoolAutoConfiguration.class)
@@ -41,7 +40,7 @@ public class CanalSimpleClientAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(value = CanalProperties.CANAL_ASYNC, havingValue = "true", matchIfMissing = true)
+    //@ConditionalOnProperty(value = CanalProperties.CANAL_ASYNC, havingValue = "true", matchIfMissing = true)
     public MessageHandler messageHandler(RowDataHandler<CanalEntry.RowData> rowDataHandler,
                                          ObjectProvider<EntryHandler> entryHandlerProvider,
                                          @Qualifier("canalTaskExecutor") ThreadPoolTaskExecutor threadPoolTaskExecutor) {
@@ -49,7 +48,6 @@ public class CanalSimpleClientAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(value = CanalProperties.CANAL_ASYNC, havingValue = "false")
     public MessageHandler messageHandler(RowDataHandler<CanalEntry.RowData> rowDataHandler,
                                          ObjectProvider<EntryHandler> entryHandlerProvider) {
         return new SyncMessageHandlerImpl(entryHandlerProvider.stream().collect(Collectors.toList()), rowDataHandler);
@@ -57,7 +55,7 @@ public class CanalSimpleClientAutoConfiguration {
 
     @Bean(initMethod = "start", destroyMethod = "stop")
     public SimpleCanalClient simpleCanalClient(ObjectProvider<SimpleCanalConnector> connectorProvider,
-                                               ObjectProvider<MessageHandler> messageHandlerProvider,
+                                               MessageHandler messageHandler,
                                                CanalProperties canalProperties,
                                                CanalSimpleProperties connectorProperties){
         // 1. 获取Spring 上下文中所有的 SimpleCanalConnector
@@ -74,7 +72,7 @@ public class CanalSimpleClientAutoConfiguration {
                 .filter(canalProperties.getFilter())
                 .timeout(canalProperties.getTimeout())
                 .unit(canalProperties.getUnit())
-                .messageHandler(messageHandlerProvider.getIfAvailable())
+                .messageHandler(messageHandler)
                 .build(simpleCanalConnectors);
     }
 

@@ -41,7 +41,7 @@ public class CanalKafkaClientAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnProperty(value = CanalProperties.CANAL_ASYNC, havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(value = CanalProperties.CANAL_ASYNC, havingValue = "true")
     public MessageHandler messageHandler(RowDataHandler<List<Map<String, String>>> rowDataHandler,
                                          ObjectProvider<EntryHandler> entryHandlerProvider,
                                          @Qualifier("canalTaskExecutor") ThreadPoolTaskExecutor canalTaskExecutor) {

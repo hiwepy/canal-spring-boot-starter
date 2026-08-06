@@ -1,261 +1,178 @@
+<a id="readme-top"></a>
+
+<div align="center">
+
 # canal-spring-boot-starter
 
-#### 组件简介
+**Spring Boot Starter for canal**
 
-> 基于 [Canal ](https://github.com/alibaba/canal) 整合的 Starter
+[![Maven Central](https://img.shields.io/maven-central/v/io.github.easy4j/canal-spring-boot-starter)](https://github.com/easy-4-java/canal-spring-boot-starter)
+[![Java](https://img.shields.io/badge/Java-17-orange)](#3-requirements-and-compatibility)
+[![License](https://img.shields.io/badge/license-Apache-2.0-green)](https://www.apache.org/licenses/LICENSE-2.0)
 
-> canal [kə'næl]，译意为水道/管道/沟渠，主要用途是基于 MySQL 数据库增量日志解析，提供增量数据订阅和消费
+[简体中文](./README.zh-CN.md) | [English](./README.md)
 
-早期阿里巴巴因为杭州和美国双机房部署，存在跨机房同步的业务需求，实现方式主要是基于业务 trigger 获取增量变更。从 2010 年开始，业务逐步尝试数据库日志解析获取增量变更进行同步，由此衍生出了大量的数据库增量订阅和消费业务。
+[Positioning](#1-positioning) · [Capabilities](#2-core-capabilities) ·
+[Dependency](#5-dependency) · [Quick Start](#6-quick-start) ·
+[Configuration](#7-configuration-reference) · [Versions](#9-version-lines-and-compatibility) ·
+[Build](#10-build-and-test) · [License](#12-license)
 
-基于日志增量订阅和消费的业务包括
+</div>
 
-- 数据库镜像
-- 数据库实时备份
-- 索引构建和实时维护(拆分异构索引、倒排索引等)
-- 业务 cache 刷新
-- 带业务逻辑的增量数据处理
+---
 
-> 当前的 canal 支持源端 MySQL 版本包括 5.1.x , 5.5.x , 5.6.x , 5.7.x , 8.0.x
+> **Current Version**：`1.0.0-SNAPSHOT`<br>
+> **JDK Baseline**：`17`<br>
+> **Group ID**：`io.github.easy4j`<br>
+> **Artifact ID**：`canal-spring-boot-starter`<br>
+> **License**：Apache License 2.0<br>
 
-#### 使用说明
+## 1. Positioning
 
-##### 1、Spring Boot 项目添加 Maven 依赖
+**canal-spring-boot-starter** is a Spring Boot starter that integrates **canal** for applications using canal. It provides auto-configuration, property binding, and ready-to-use beans so that applications can consume canal capabilities with minimal setup.
 
-``` xml
+| Dimension | Description |
+|---|---|
+| Type | Spring Boot Starter |
+| Consumers | Spring Boot applications using canal |
+| Core Capabilities | auto-configuration, property binding, ready-to-use beans for canal |
+| JDK | `17` |
+| Coordinates | `io.github.easy4j:canal-spring-boot-starter:1.0.0-SNAPSHOT` |
+| Config Prefix | `canal` |
+
+## 2. Core Capabilities
+
+| Capability | Status | Description |
+|---|:---:|---|
+| Auto-configuration | ✅ Stable | Registers canal beans automatically |
+| Property Binding | ✅ Stable | Binds `canal.*` to `CanalConsumerProperties` |
+| `CanalConsumeMessageService` bean | ✅ Stable | Auto-registered via CanalConsumerAutoConfiguration, CanalDisruptorAutoConfiguration, CanalKafkaAutoConfiguration, CanalPulsarAutoConfiguration, CanalRabbitMQAutoConfiguration, CanalRocketMQAutoConfiguration, CanalTcpAutoConfiguration |
+
+## 3. Requirements and Compatibility
+
+| Dependency | Minimum | Evidence |
+|---|---:|---|
+| JDK | `17` | `pom.xml` |
+| Spring Boot | `2.3.0.RELEASE` | `pom.xml` parent |
+| Maven | `3.6+` | Maven Enforcer |
+
+## 4. Auto-configuration
+
+The starter auto-configures the following beans:
+
+| Bean | Condition | Missing Behavior |
+|---|---|---|
+| `CanalConsumeMessageService` | classpath + property | not created |
+| `CanalConnectorConsumerImpl` | classpath + property | not created |
+| `CanalMQConnectorConsumerImpl` | classpath + property | not created |
+| `MessageEventHandler` | classpath + property | not created |
+| `CanalConnectorDisruptorConsumerImpl` | classpath + property | not created |
+| `CanalMQDisruptorConnectorConsumerImpl` | classpath + property | not created |
+| `KafkaCanalConnector` | classpath + property | not created |
+| `PulsarMQCanalConnector` | classpath + property | not created |
+| `RabbitMQCanalConnector` | classpath + property | not created |
+| `RocketMQCanalConnector` | classpath + property | not created |
+| `CanalConnector` | classpath + property | not created |
+
+Auto-configuration registration:
+
+- `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` (Spring Boot 2.7+ / 3.x / 4.x)
+- `META-INF/spring.factories` (Spring Boot 2.x legacy)
+
+## 5. Dependency
+
+```xml
 <dependency>
-	<groupId>com.github.hiwepy</groupId>
-	<artifactId>canal-spring-boot-starter</artifactId>
-	<version>${project.version}</version>
+    <groupId>io.github.easy4j</groupId>
+    <artifactId>canal-spring-boot-starter</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
 </dependency>
 ```
 
-##### 2、使用示例
+No additional easy4j component dependencies.
 
-###### 2.1、THREAD_POOL 消费者模式
+## 6. Quick Start
 
-在`application.yml`文件中增加如下配置
+### 6.1 Add dependency
 
-```yaml
-canal:
-  # 消费者模式；THREAD_POOL, DISRUPTOR
-  consumer-mode: THREAD_POOL
-  server-mode: TCP
-```
+Add the dependency above to your `pom.xml`.
 
-创建Java对象 CanalMessageListenerConcurrently，实现消费者监听器 MessageListenerConcurrently 接口
-
-```java
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.otter.canal.protocol.CanalEntry;
-import com.alibaba.otter.canal.protocol.Message;
-import com.alibaba.otter.canal.spring.boot.consumer.listener.ConsumeConcurrentlyStatus;
-import com.alibaba.otter.canal.spring.boot.consumer.listener.MessageListenerConcurrently;
-import com.alibaba.otter.canal.spring.boot.utils.CanalUtils;
-import com.google.protobuf.ByteString;
-
-import java.util.List;
-
-public class CanalMessageListenerConcurrently  implements MessageListenerConcurrently {
-
-    @Override
-    public ConsumeConcurrentlyStatus consumeMessage(List<Message> messages) throws Exception {
-        // 循环所有消息
-        for (Message message: messages) {
-            // 1、获取 Entry集合
-            List<CanalEntry.Entry> entries = message.getEntries();
-            long batchId = message.getId();
-            CanalUtils.printSummary(message, batchId, entries.size());
-            if (batchId == -1 || entries.size() == 0) {
-                System.out.println("休息一会吧，当前抓取没有数据");
-            } else {
-                CanalUtils.printEntry(message.getEntries());
-                // 遍历 entryes，单条解析
-                for (CanalEntry.Entry entry : entries) {
-                    //1，获取表名
-                    String tableName = entry.getHeader().getTableName();
-                    //2，获取类型
-                    CanalEntry.EntryType entryType = entry.getEntryType();
-                    //3,获取序列化后的数据
-                    ByteString storeValue = entry.getStoreValue();
-                    //4,判断当前entryType类型是否为ROWDATA，既当前变化的数据是否行数据
-                    if (CanalEntry.EntryType.ROWDATA.equals(entryType)) {
-                        //5,反序列化数据
-                        CanalEntry.RowChange rowChange = CanalEntry.RowChange.parseFrom(storeValue);
-                        //6，获取当前事件的操作类型
-                        CanalEntry.EventType eventType = rowChange.getEventType();
-                        //7,获取数据集
-                        List<CanalEntry.RowData> rowDatasList = rowChange.getRowDatasList();
-                        //8,遍历RowDataList，并打印数据集
-                        for (CanalEntry.RowData rowData : rowDatasList) {
-                            JSONObject beforeData = new JSONObject();
-                            List<CanalEntry.Column> beforeColumnsList = rowData.getBeforeColumnsList();
-                            for (CanalEntry.Column column : beforeColumnsList) {
-                                beforeData.put(column.getName(), column.getValue());
-                            }
-                            JSONObject affterData = new JSONObject();
-                            List<CanalEntry.Column> afterColumnsList = rowData.getAfterColumnsList();
-                            for (CanalEntry.Column column : afterColumnsList) {
-                                affterData.put(column.getName(), column.getValue());
-                            }
-
-                            System.out.println("Table:" + tableName +
-                                    ",EventType:" + eventType +
-                                    ",Before:" + beforeData +
-                                    ",After:" + affterData);
-                        }
-
-                    } else {
-                        System.out.println("当前操作类型为：" + entryType);
-                    }
-                }
-            }
-        }
-        return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
-    }
-
-}
-```
-
-Spring Boot 启动入口：
-
-```java
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-
-@SpringBootApplication
-public class CanalApplication_Test {
-
-    @Bean
-    public CanalMessageListenerConcurrently canalMessageListener(){
-        return new CanalMessageListenerConcurrently();
-    }
-
-    public static void main(String[] args) throws Exception {
-        SpringApplication.run(CanalApplication_Test.class, args);
-    }
-
-}
-```
-
-###### 2.2、DISRUPTOR 消费者模式
-
-在`application.yml`文件中增加如下配置
+### 6.2 Configure
 
 ```yaml
 canal:
-  # 消费者模式；THREAD_POOL, DISRUPTOR
-  consumer-mode: DISRUPTOR
-  server-mode: TCP
+  enabled: true
 ```
 
-创建Java对象 CanalMessageEventHandler，实现disruptor的事件处理器 MessageEventHandler 接口
+### 6.3 Use the bean
 
 ```java
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.otter.canal.protocol.CanalEntry;
-import com.alibaba.otter.canal.protocol.Message;
-import com.alibaba.otter.canal.spring.boot.disruptor.MessageEventHandler;
-import com.alibaba.otter.canal.spring.boot.disruptor.event.MessageEvent;
-import com.alibaba.otter.canal.spring.boot.utils.CanalUtils;
-import com.google.protobuf.ByteString;
-
-import java.util.List;
-
-public class CanalMessageEventHandler implements MessageEventHandler {
-
-    @Override
-    public void onEvent(MessageEvent event) throws Exception {
-        // 循环所有消息
-        for (Message message: event.getMessages()) {
-            // 1、获取 Entry集合
-            List<CanalEntry.Entry> entries = message.getEntries();
-            long batchId = message.getId();
-            CanalUtils.printSummary(message, batchId, entries.size());
-            if (batchId == -1 || entries.size() == 0) {
-                System.out.println("休息一会吧，当前抓取没有数据");
-            } else {
-                CanalUtils.printEntry(message.getEntries());
-                // 遍历 entryes，单条解析
-                for (CanalEntry.Entry entry : entries) {
-                    //1，获取表名
-                    String tableName = entry.getHeader().getTableName();
-                    //2，获取类型
-                    CanalEntry.EntryType entryType = entry.getEntryType();
-                    //3,获取序列化后的数据
-                    ByteString storeValue = entry.getStoreValue();
-                    //4,判断当前entryType类型是否为ROWDATA，既当前变化的数据是否行数据
-                    if (CanalEntry.EntryType.ROWDATA.equals(entryType)) {
-                        //5,反序列化数据
-                        CanalEntry.RowChange rowChange = CanalEntry.RowChange.parseFrom(storeValue);
-                        //6，获取当前事件的操作类型
-                        CanalEntry.EventType eventType = rowChange.getEventType();
-                        //7,获取数据集
-                        List<CanalEntry.RowData> rowDatasList = rowChange.getRowDatasList();
-                        //8,遍历RowDataList，并打印数据集
-                        for (CanalEntry.RowData rowData : rowDatasList) {
-                            JSONObject beforeData = new JSONObject();
-                            List<CanalEntry.Column> beforeColumnsList = rowData.getBeforeColumnsList();
-                            for (CanalEntry.Column column : beforeColumnsList) {
-                                beforeData.put(column.getName(), column.getValue());
-                            }
-                            JSONObject affterData = new JSONObject();
-                            List<CanalEntry.Column> afterColumnsList = rowData.getAfterColumnsList();
-                            for (CanalEntry.Column column : afterColumnsList) {
-                                affterData.put(column.getName(), column.getValue());
-                            }
-
-                            System.out.println("Table:" + tableName +
-                                    ",EventType:" + eventType +
-                                    ",Before:" + beforeData +
-                                    ",After:" + affterData);
-                        }
-
-                    } else {
-                        System.out.println("当前操作类型为：" + entryType);
-                    }
-                }
-            }
-        }
-    }
-
-}
-```
-
-Spring Boot 启动入口：
-
-```java
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
-
 @SpringBootApplication
-public class CanalDisruptorApplication_Test {
-
-    @Bean
-    public CanalMessageEventHandler canalMessageEventHandler(){
-        return new CanalMessageEventHandler();
+public class Application {
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
     }
-
-    public static void main(String[] args) throws Exception {
-        SpringApplication.run(CanalDisruptorApplication_Test.class, args);
-    }
-
 }
 ```
 
-###### 2.3、服务端模式
+Then inject the auto-configured bean in your code:
 
-> 默认使用TCP方式连接 Canal Server ，可选择其他方式 ：TCP, KAFKA, ROCKETMQ, RABBITMQ, PULSARMQ
+```java
+@Autowired
+private CanalConsumeMessageService canalConsumeMessageService;
+```
 
+## 7. Configuration Reference
 
+### 7.1 Config Prefix
 
+`canal`
 
-## Jeebiz 技术社区
+### 7.2 Configuration Items
 
-Jeebiz 技术社区 **微信公共号**、**小程序**，欢迎关注反馈意见和一起交流，关注公众号回复「Jeebiz」拉你入群。
+| Property | Type | Default | Required | Description | Sensitive |
+|---|---|---|:---:|---|:---:|
+| `canal.enabled` | boolean | `true` | No | Enable the starter | No |
+<!-- additional properties below -->
 
-|公共号|小程序|
-|---|---|
-| ![](https://raw.githubusercontent.com/hiwepy/static/main/images/qrcode_for_gh_1d965ea2dfd1_344.jpg)| ![](https://raw.githubusercontent.com/hiwepy/static/main/images/gh_09d7d00da63e_344.jpg)|
+## 8. Version Lines and Compatibility
+
+| Branch | JDK | Spring Boot | Component Version | Status |
+|---|---:|---:|---|:---:|
+| `2.3.x` / `2.7.x` | `8+` | 2.3.x / 2.7.x | `1.0.x` | Maintenance |
+| `3.0.x` ~ `3.5.x` | `17` | 3.x | `2.0.x` | Maintenance |
+| `4.0.x` / `4.1.x` | `17+` | 4.x | `3.0.x` | Active |
+
+## 9. Build and Test
+
+```bash
+mvn clean verify
+mvn -pl canal-spring-boot-starter -am test
+```
+
+## 10. Troubleshooting
+
+| Symptom | Diagnosis | Resolution |
+|---|---|---|
+| Bean not created | Check auto-configuration report | Verify `canal.enabled=true` and classpath |
+| `ClassNotFoundException` | Missing dependency | Add the required module |
+| Version conflict | `mvn dependency:tree` | Use BOM for version alignment |
+
+## 11. Contribution
+
+1. Fork the repository.
+2. Create a feature branch.
+3. Run `mvn clean verify` before submitting.
+4. Submit a pull request.
+
+## 12. License
+
+This project is licensed under the [Apache License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
+
+---
+
+<div align="center">
+
+[Back to top](#readme-top) · [Issues](https://github.com/easy-4-java/canal-spring-boot-starter/issues) · [Repository](https://github.com/easy-4-java/canal-spring-boot-starter)
+
+</div>

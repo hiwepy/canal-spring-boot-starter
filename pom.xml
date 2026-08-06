@@ -310,6 +310,8 @@
                 </activation>
             <properties>
                 <additionalparam>-Xdoclint:none</additionalparam>
+                <commons-io.version>2.22.0</commons-io.version>
+                <slf4j.version>2.0.18</slf4j.version>
             </properties>
         </profile>
         <profile>
@@ -520,7 +522,18 @@
                 <artifactId>transmittable-thread-local</artifactId>
                 <version>${transmittable-thread-local.version}</version>
             </dependency>
-        </dependencies>
+                <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io.version}</version>
+            <scope>test</scope>
+        </dependency>
+</dependencies>
     </dependencyManagement>
 
     <dependencies>
@@ -537,7 +550,7 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>2.0.13</version>
+            <version>${slf4j.version}</version>
         </dependency>
 
         
@@ -672,7 +685,7 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.11.0</version>
+            <version>${commons-io.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

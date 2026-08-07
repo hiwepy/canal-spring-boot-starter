@@ -1,0 +1,49 @@
+# CI workflow for the feature/v1.0.0_back line
+#
+# Triggers:
+#   - push / pull_request on feature/v1.0.0_back
+#   - manual workflow_dispatch
+#
+# Runs `mvn -B clean verify` with version-line JDK.
+name: CI
+
+on:
+  push:
+    branches: [feature/v1.0.0_back]
+  pull_request:
+    branches: [feature/v1.0.0_back]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: JDK 8/17 Build & Verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        java: [8, 17]
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up JDK ${{ matrix.java }}
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.java }}
+          cache: maven
+
+      - name: Build and verify
+        run: mvn -B --no-transfer-progress clean verify
+
+      - name: Upload surefire reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports-jdk${{ matrix.java }}
+          path: target/surefire-reports
+          retention-days: 14

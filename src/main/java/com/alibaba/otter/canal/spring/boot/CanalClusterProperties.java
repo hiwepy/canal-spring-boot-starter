@@ -9,60 +9,72 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Connection properties for the Canal <strong>cluster</strong> client mode.
+ * <p>
+ * Bound to the {@code canal.cluster.*} configuration namespace. Each
+ * {@link Instance} describes a high-availability Canal cluster connection,
+ * optionally backed by a ZooKeeper ensemble for failover. When
+ * {@link Instance#getZkServers()} is set it takes precedence over
+ * {@link Instance#getAddresses()}.
+ * </p>
+ *
+ * <h3>Configuration keys</h3>
+ * <ul>
+ *   <li>{@code canal.cluster.instances} — list of Canal cluster connection definitions</li>
+ * </ul>
+ *
+ * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 1.0.0
+ */
 @ConfigurationProperties(CanalClusterProperties.PREFIX)
 @Getter
 @Setter
 @ToString
 public class CanalClusterProperties {
 
+    /** Default Canal server TCP port. */
     public static final int DEFAULT_PORT = 11111;
     private static final int DEFAULT_MAX_RETRIES = 3;
     private static final int DEFAULT_MAX_SLEEP_MS = Integer.MAX_VALUE;
+    /** Configuration prefix used by Spring Boot to bind properties. */
     public static final String PREFIX = "canal.cluster";
 
     /**
-     * 配置信息
+     * List of Canal cluster instance connection definitions. Each entry produces
+     * one {@code ClusterCanalConnector} when the cluster client is built.
      */
     private List<CanalClusterProperties.Instance> instances = new ArrayList<>();
 
+    /**
+     * Connection definition for a single Canal cluster instance.
+     */
     @Data
     public static class Instance {
 
-        /**
-         * Canal Server 地址
-         */
+        /** Comma-separated list of Canal server addresses. */
         private String addresses;
         /**
-         * Canal Zookeeper 地址。如果设置了该属性，则忽略addresses属性。
+         * ZooKeeper address list used for cluster failover. When set, it takes
+         * precedence over {@link #addresses}.
          */
         private String zkServers;
-        /**
-         * Canal Destination 地址
-         */
+        /** Canal destination (instance name) to subscribe to. */
         private String destination;
-        /**
-         * Canal Server 账号
-         */
+        /** Canal server account username, if authentication is enabled. */
         private String username;
-        /**
-         * Canal Server 密码
-         */
+        /** Canal server account password, if authentication is enabled. */
         private String password;
-        /**
-         * Socket 连接超时时间，单位：毫秒。默认为 60000
-         */
+        /** Socket connect timeout in milliseconds. Defaults to {@code 60000}. */
         private int soTimeout     = 60000;
-        /**
-         * Socket 空闲超时时间，单位：毫秒。默认为 3600000
-         */
+        /** Socket idle timeout in milliseconds. Defaults to {@code 3600000} (1 hour). */
         private int idleTimeout   = 60 * 60 * 1000;
         /**
-         * 重试次数;设置-1时可以subscribe阻塞等待时优雅停机
+         * Number of retries on connection failure. Set to {@code -1} to allow
+         * graceful shutdown while {@code subscribe} is blocking.
          */
         private int retryTimes    = 3;
-        /**
-         * 重试的时间间隔，默认5秒
-         */
+        /** Interval between retries in milliseconds. Defaults to {@code 5000}. */
         private int retryInterval = 5000;
 
     }

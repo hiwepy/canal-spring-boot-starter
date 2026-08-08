@@ -22,65 +22,77 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Base {@link MessageHandler} for MQ-based Canal clients that consume flattened
+ * {@link FlatMessage} events (JSON).
+ * <p>
+ * Iterates over the data rows of each flat message, resolves the matching
+ * {@link EntryHandler} or annotation-based {@link CanalEventHolder} for the
+ * changed table, and dispatches the row to it. For UPDATE events the before-
+ * and after-image maps are merged so handlers receive both. Implements
+ * {@link ApplicationContextAware} to discover beans annotated with
+ * {@link CanalEventHandler} on context initialisation.
+ * </p>
+ *
+ * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 1.0.0
+ */
 @Slf4j
 public abstract class AbstractFlatMessageHandler implements MessageHandler<FlatMessage>, ApplicationContextAware {
 
-    /**
-     * 指定订阅的事件类型，主要用于标识事务的开始，变更数据，结束
-     */
+    /** Entry types to subscribe to, marking transaction begin, data change and transaction end. */
     private List<CanalEntry.EntryType> subscribeTypes = Arrays.asList(CanalEntry.EntryType.ROWDATA);
-    /**
-     * 通过注解方式的表数据变更处理器
-     */
+    /** Annotation-based table event handlers keyed by destination/schema/table/event. */
     private Map<String, List<CanalEventHolder>> tableEventHolderMap;
-    /**
-     * 表处理器
-     */
+    /** Programmatic {@link EntryHandler} instances keyed by schema/table. */
     private Map<String, EntryHandler> tableHandlerMap;
-    /**
-     * 行数据处理器
-     */
+    /** Row data handler used to transform row data into entry models. */
     private RowDataHandler<List<Map<String, String>>> rowDataHandler;
 
+    /**
+     * @param subscribeTypes  entry types to subscribe to (overrides the default when non-null)
+     * @param entryHandlers   programmatic entry handlers to register
+     * @param rowDataHandler  the row data handler used to transform row data
+     */
     public AbstractFlatMessageHandler(List<CanalEntry.EntryType> subscribeTypes,
                                       List<? extends EntryHandler> entryHandlers,
                                       RowDataHandler<List<Map<String, String>>> rowDataHandler) {
         if(Objects.nonNull(subscribeTypes)){
             this.subscribeTypes = subscribeTypes;
         }
-        this.tableHandlerMap = HandlerUtil.getTableHandlerMap(entryHandlers);
+        this.tableHandlerMap = HandlerUtil.getTableHandlerList(entryHandlers);
         this.rowDataHandler = rowDataHandler;
     }
 
     @Override
     public void handleMessage(String destination, FlatMessage flatMessage) {
-        // 判断是否有 Data
+        // Skip if there is no data.
         List<Map<String, String>> data = flatMessage.getData();
         if(CollectionUtils.isEmpty(data)){
             return;
         }
-        // 遍历 Data，单条解析
+        // Iterate over data rows, parsing each one.
         for (int i = 0; i < data.size(); i++) {
-            // 获取数据库实例
+            // Database (schema) name.
             String schemaName = flatMessage.getDatabase();
-            // 获取表名
+            // Table name.
             String tableName = flatMessage.getTable();
-            // 获取类型
+            // Event type.
             CanalEntry.EventType eventType = CanalEntry.EventType.valueOf(flatMessage.getType());
-            // 获取当前行数据
+            // Current row data.
             List<Map<String, String>> maps;
             if (eventType.equals(CanalEntry.EventType.UPDATE)) {
-                // 更新后的数据
+                // After-image.
                 Map<String, String> map = data.get(i);
-                // 更新前的数据
+                // Before-image.
                 Map<String, String> oldMap = flatMessage.getOld().get(i);
-                // 合并新旧数据
+                // Merge before/after images.
                 maps = Stream.of(map, oldMap).collect(Collectors.toList());
             } else {
                 maps = Stream.of(data.get(i)).collect(Collectors.toList());
             }
             try {
-                // 获取表对应的注解处理器
+                // Resolve annotation-based handlers for this table.
                 List<CanalEventHolder> eventHolders = HandlerUtil.getEventHolders(tableEventHolderMap, destination, schemaName, tableName, eventType);
                 if(!CollectionUtils.isEmpty(eventHolders)){
                     CanalModel model = CanalModel.builder()
@@ -95,9 +107,9 @@ public abstract class AbstractFlatMessageHandler implements MessageHandler<FlatM
                     }
                     continue;
                 }
-                // 获取表对应的处理器
+                // Resolve the programmatic handler for this table.
                 EntryHandler<?> entryHandler = HandlerUtil.getEntryHandler(tableHandlerMap, schemaName, tableName);
-                // 判断是否有对应的处理器
+                // Dispatch if a matching handler exists.
                 if(Objects.nonNull(entryHandler)){
                     CanalModel model = CanalModel.builder()
                             .id(flatMessage.getId())
@@ -114,6 +126,16 @@ public abstract class AbstractFlatMessageHandler implements MessageHandler<FlatM
         }
     }
 
+    /**
+     * Dispatches row data to an annotation-based handler, binding the
+     * {@link CanalModel} to the thread-local context for the call.
+     *
+     * @param model       the Canal context model
+     * @param rowData     the row data (column maps) to dispatch
+     * @param eventHolder the annotation-based handler holder
+     * @param eventType   the Canal event type
+     * @throws Exception if the target method invocation fails
+     */
     public void handlerRowData(CanalModel model, List<Map<String, String>> rowData, CanalEventHolder eventHolder, CanalEntry.EventType eventType) throws Exception {
         Method method = eventHolder.getMethod();
         try {
@@ -122,36 +144,54 @@ public abstract class AbstractFlatMessageHandler implements MessageHandler<FlatM
             Object[] args = GenericUtil.getInvokeArgs(method, model, rowData, eventType);
             method.invoke(eventHolder.getTarget(), args);
         } finally {
-            // 移除上下文
+            // Clear the thread-local context.
             CanalContext.removeModel();
         }
     }
 
+    /**
+     * Dispatches row data to a programmatic {@link EntryHandler} via the
+     * configured {@link RowDataHandler}, binding the {@link CanalModel} to the
+     * thread-local context for the call.
+     *
+     * @param model        the Canal context model
+     * @param rowData      the row data (column maps) to dispatch
+     * @param entryHandler the programmatic entry handler
+     * @param eventType    the Canal event type
+     * @throws Exception if the row data handler fails
+     */
     public void handlerRowData(CanalModel model, List<Map<String, String>> rowData, EntryHandler entryHandler, CanalEntry.EventType eventType) throws Exception {
         try {
-            // 设置上下文
+            // Bind the context.
             CanalContext.setModel(model);
-            // 逐行调用Handler处理
+            // Dispatch the row to the handler.
             rowDataHandler.handlerRowData(rowData, entryHandler, eventType);
         } finally {
-            // 移除上下文
+            // Clear the thread-local context.
             CanalContext.removeModel();
         }
     }
 
+    /**
+     * Discovers beans annotated with {@link CanalEventHandler} and indexes
+     * their {@link OnCanalEvent} methods into {@link #tableEventHolderMap}.
+     *
+     * @param applicationContext the running application context
+     * @throws BeansException if bean lookup fails
+     */
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         log.info("{}: annotation event handler is initializing....", Thread.currentThread().getName());
-        // 获取所有的处理器
+        // Collect every @CanalEventHandler bean.
         Map<String, Object> eventHandlerMap = applicationContext.getBeansWithAnnotation(CanalEventHandler.class);
         if(CollectionUtils.isEmpty(eventHandlerMap)){
             log.info("{}: not found annotation event handler.", Thread.currentThread().getName());
             return;
         }
-        // 注解处理器对象
+        // Build the event-holder index.
         List<CanalEventHolder> eventHolders = new ArrayList<>();
         for (Object target : eventHandlerMap.values()) {
-            // 获取对象声明的方法
+            // Inspect every declared method on the bean.
             Method[] methods = ReflectionUtils.getDeclaredMethods(target.getClass());
             for (Method method : methods) {
                 OnCanalEvent canalEvent = AnnotatedElementUtils.findMergedAnnotation(method, OnCanalEvent.class);

@@ -7,14 +7,29 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 /**
- * RocketMQ 模式 Canal 客户端
+ * Canal client for the <strong>RocketMQ</strong> mode that consumes flattened
+ * Canal binlog messages from RocketMQ topics via {@link RocketMQCanalConnector}
+ * instances.
+ *
+ * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 1.0.0
  */
 public class RocketMQCanalClient extends AbstractMQCanalClient<RocketMQCanalConnector> {
 
+    /**
+     * @param connectors the RocketMQ connectors this client will consume from
+     */
     public RocketMQCanalClient(List<RocketMQCanalConnector> connectors) {
         super(connectors);
     }
 
+    /**
+     * Resolves the destination name (RocketMQ topic) by reflecting on the
+     * connector's {@code topic} field, used as the logging/MDC destination.
+     *
+     * @param connector the RocketMQ connector to inspect
+     * @return the RocketMQ topic name
+     */
     @Override
     protected String getDestination(RocketMQCanalConnector connector) {
         Field topicField =  ReflectionUtils.findField(RocketMQCanalConnector.class, "topic");
@@ -22,8 +37,19 @@ public class RocketMQCanalClient extends AbstractMQCanalClient<RocketMQCanalConn
         return (String) ReflectionUtils.getField(topicField, connector);
     }
 
+    /**
+     * Fluent builder for {@link RocketMQCanalClient}.
+     */
     public static final class Builder extends AbstractClientBuilder<RocketMQCanalClient, RocketMQCanalConnector> {
 
+        /**
+         * Builds a {@link RocketMQCanalClient} from the supplied connectors,
+         * applying the filter, batch size, timeout, entry types and message
+         * handler configured on this builder.
+         *
+         * @param connectors the RocketMQ connectors the client will consume from
+         * @return the constructed RocketMQ Canal client
+         */
         @Override
         public RocketMQCanalClient build(List<RocketMQCanalConnector> connectors) {
             RocketMQCanalClient canalClient = new RocketMQCanalClient(connectors);

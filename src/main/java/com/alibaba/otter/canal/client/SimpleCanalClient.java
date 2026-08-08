@@ -8,7 +8,12 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 /**
- * Simple 模式 Canal 客户端
+ * Canal client for the <strong>simple</strong> mode that consumes binlog
+ * entries from one or more {@link SimpleCanalConnector} instances via direct
+ * single-node TCP connections.
+ *
+ * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 1.0.0
  */
 public class SimpleCanalClient extends AbstractCanalClient<SimpleCanalConnector> {
 
@@ -16,6 +21,13 @@ public class SimpleCanalClient extends AbstractCanalClient<SimpleCanalConnector>
         super(connectors);
     }
 
+    /**
+     * Resolves the Canal destination name by reflecting on the connector's
+     * {@code clientIdentity} field, used as the logging/MDC destination.
+     *
+     * @param connector the simple connector to inspect
+     * @return the destination name
+     */
     @Override
     protected String getDestination(SimpleCanalConnector connector) {
         Field clientIdentityField = ReflectionUtils.findField(SimpleCanalConnector.class, "clientIdentity");
@@ -24,8 +36,19 @@ public class SimpleCanalClient extends AbstractCanalClient<SimpleCanalConnector>
         return clientIdentity.getDestination();
     }
 
+    /**
+     * Fluent builder for {@link SimpleCanalClient}.
+     */
     public static final class Builder extends AbstractClientBuilder<SimpleCanalClient, SimpleCanalConnector> {
 
+        /**
+         * Builds a {@link SimpleCanalClient} from the supplied connectors,
+         * applying the filter, batch size, timeout, entry types and message
+         * handler configured on this builder.
+         *
+         * @param connectors the simple connectors the client will consume from
+         * @return the constructed simple Canal client
+         */
         @Override
         public SimpleCanalClient build(List<SimpleCanalConnector> connectors) {
             SimpleCanalClient canalClient = new SimpleCanalClient(connectors);

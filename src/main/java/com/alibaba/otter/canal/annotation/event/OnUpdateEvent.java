@@ -7,10 +7,16 @@ import org.springframework.core.annotation.AliasFor;
 import java.lang.annotation.*;
 
 /**
- * 更新操作监听器
- * 发生update时会触发
+ * Listens for Canal {@code UPDATE} row events.
+ * <p>
+ * A composed alias for {@link OnCanalEvent} that fixes the event type to
+ * {@link CanalEntry.EventType#UPDATE}. Apply it to a method of a
+ * {@link com.alibaba.otter.canal.annotation.CanalEventHandler}-annotated bean to
+ * receive update events for the matching destination/schema/table.
+ * </p>
  *
- * @author lujun
+ * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 1.0.0
  */
 
 @Target({ElementType.METHOD})
@@ -20,27 +26,25 @@ import java.lang.annotation.*;
 public @interface OnUpdateEvent {
 
     /**
-     * canal 指令
-     * default for all
+     * Canal destination (instance) name. Defaults to empty, matching all destinations.
      *
-     * @return canal destination
+     * @return the destination name
      */
     @AliasFor(annotation = OnCanalEvent.class)
     String destination() default "";
 
     /**
-     * 数据库实例
+     * Database (schema) name.
      *
-     * @return canal destination
+     * @return the schema name
      */
     @AliasFor(annotation = OnCanalEvent.class)
     String schema();
 
     /**
-     * 监听的表
-     * default for all
+     * Table name. Defaults to wildcard, matching all tables.
      *
-     * @return canal destination
+     * @return the table name
      */
     @AliasFor(annotation = OnCanalEvent.class)
     String table();

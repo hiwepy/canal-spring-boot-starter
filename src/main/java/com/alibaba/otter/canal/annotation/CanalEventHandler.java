@@ -6,8 +6,17 @@ import org.springframework.stereotype.Component;
 import java.lang.annotation.*;
 
 /**
- * Canal 处理器注解，继承 @Component
- * 用于标注 Canal 处理器
+ * Marks a class as a Canal event handler and registers it as a Spring
+ * {@link Component}.
+ * <p>
+ * Methods within the annotated class can be further annotated with
+ * {@link OnCanalEvent} to receive specific row-change events. The Canal message
+ * handlers scan the application context for beans annotated with
+ * {@code @CanalEventHandler} on startup.
+ * </p>
+ *
+ * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 1.0.0
  */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
@@ -16,8 +25,9 @@ import java.lang.annotation.*;
 public @interface CanalEventHandler {
 
     /**
-     * 继承 @Component 的 value 属性
-     * @return String
+     * Alias for the {@link Component#value() component name}.
+     *
+     * @return the bean name
      */
     @AliasFor(annotation = Component.class)
     String value() default "";

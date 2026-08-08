@@ -5,9 +5,17 @@ import com.alibaba.otter.canal.protocol.CanalEntry;
 import java.lang.annotation.*;
 
 /**
- * 监听数据库的操作
+ * Marks a method as a Canal row-change handler within a
+ * {@link CanalEventHandler}-annotated bean.
+ * <p>
+ * The destination, schema and table attributes default to wildcards so an
+ * unannotated method receives events for every table. The {@link #eventType()}
+ * attribute has no default and must be supplied explicitly to filter the event
+ * types (INSERT, UPDATE, DELETE, ...).
+ * </p>
  *
- * @author lujun
+ * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 1.0.0
  */
 
 @Target({ElementType.TYPE})
@@ -16,30 +24,30 @@ import java.lang.annotation.*;
 public @interface OnCanalEvent {
 
     /**
-     * canal 指令
-     * default for all
-     * @return destination name
+     * Canal destination (instance) name. Defaults to empty, matching all destinations.
+     *
+     * @return the destination name
      */
     String destination() default "";
 
     /**
-     * 数据库实例
-     * default for all
-     * @return schema name
+     * Database (schema) name. Defaults to {@code "*"}, matching all schemas.
+     *
+     * @return the schema name
      */
     String schema() default "*";
 
     /**
-     * 监听的表
-     * default for all
-     * @return table name
+     * Table name. Defaults to {@code "*"}, matching all tables.
+     *
+     * @return the table name
      */
     String table() default "*";
 
     /**
-     * 监听操作的类型
-     * default for all\
-     * @return CanalEntry.EventType
+     * Canal event types the method should handle. Must be supplied explicitly.
+     *
+     * @return the event types to handle
      */
     CanalEntry.EventType[] eventType();
 

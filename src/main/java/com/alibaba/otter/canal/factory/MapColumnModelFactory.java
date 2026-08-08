@@ -9,16 +9,27 @@ import org.springframework.beans.BeanUtils;
 
 import java.util.Map;
 
+/**
+ * {@link IModelFactory} that materialises flat Canal column maps
+ * ({@code Map<String, String>}) into entry model instances.
+ * <p>
+ * The target entity class is resolved from the handler's generic signature and
+ * populated using its MyBatis-Plus {@link TableInfo} column-to-property mapping.
+ * </p>
+ *
+ * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 1.0.0
+ */
 public class MapColumnModelFactory extends AbstractModelFactory<Map<String, String>> {
 
     @Override
     <R> R newInstance(Class<R> tableClass, Map<String, String> valueMap) throws Exception {
         R object = BeanUtils.instantiateClass(tableClass);
-        // 获取 mybatis-plus 的注解信息
+        // Resolve the MyBatis-Plus table metadata.
         TableInfo tableInfo = TableInfoHelper.getTableInfo(tableClass);
-        // 循环表数据
+        // Iterate over mapped fields.
         for (TableFieldInfo tableFieldInfo:  tableInfo.getFieldList()) {
-            // 获取实体对象属性映射字段对应的值
+            // Map the column value onto the matching property.
             Object value = MapUtils.getObject(valueMap, tableFieldInfo.getColumn());
             PropertyUtils.setProperty(object, tableFieldInfo.getProperty(), value);
         }

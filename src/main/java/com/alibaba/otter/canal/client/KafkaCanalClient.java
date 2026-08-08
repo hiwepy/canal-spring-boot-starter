@@ -8,7 +8,12 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 /**
- * Kafka 模式 Canal 客户端
+ * Canal client for the <strong>Kafka</strong> mode that consumes flattened
+ * Canal binlog messages from Kafka topics via {@link KafkaCanalConnector}
+ * instances.
+ *
+ * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 1.0.0
  */
 @Slf4j
 public class KafkaCanalClient extends AbstractMQCanalClient<KafkaCanalConnector> {
@@ -17,6 +22,13 @@ public class KafkaCanalClient extends AbstractMQCanalClient<KafkaCanalConnector>
         super(connectors);
     }
 
+    /**
+     * Resolves the destination name (Kafka topic) by reflecting on the
+     * connector's {@code topic} field, used as the logging/MDC destination.
+     *
+     * @param connector the Kafka connector to inspect
+     * @return the Kafka topic name
+     */
     @Override
     protected String getDestination(KafkaCanalConnector connector) {
         Field topicField =  ReflectionUtils.findField(KafkaCanalConnector.class, "topic");
@@ -24,8 +36,19 @@ public class KafkaCanalClient extends AbstractMQCanalClient<KafkaCanalConnector>
         return (String) ReflectionUtils.getField(topicField, connector);
     }
 
+    /**
+     * Fluent builder for {@link KafkaCanalClient}.
+     */
     public static final class Builder extends AbstractClientBuilder<KafkaCanalClient, KafkaCanalConnector> {
 
+        /**
+         * Builds a {@link KafkaCanalClient} from the supplied connectors,
+         * applying the filter, batch size, timeout, entry types and message
+         * handler configured on this builder.
+         *
+         * @param connectors the Kafka connectors the client will consume from
+         * @return the constructed Kafka Canal client
+         */
         @Override
         public KafkaCanalClient build(List<KafkaCanalConnector> connectors) {
             KafkaCanalClient canalClient = new KafkaCanalClient(connectors);

@@ -7,9 +7,28 @@ import org.springframework.util.CollectionUtils;
 
 import java.util.List;
 
+/**
+ * Base implementation of a Canal client that consumes flattened Canal messages
+ * ({@link FlatMessage}) from a message-queue-backed {@link CanalMQConnector}
+ * (e.g. Kafka, RocketMQ, Pulsar, RabbitMQ).
+ * <p>
+ * Each worker thread connects, subscribes, polls flat messages without ack,
+ * dispatches them to the configured {@link MessageHandler}, and acks the batch
+ * once all messages have been handled. Consumption and connection errors are
+ * logged and the loop resumes; on shutdown the connector is unsubscribed and
+ * disconnected.
+ * </p>
+ *
+ * @param <C> the {@link CanalMQConnector} implementation type
+ * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 1.0.0
+ */
 @Slf4j
 public abstract class AbstractMQCanalClient<C extends CanalMQConnector> extends AbstractCanalClient<C> {
 
+    /**
+     * @param connectors the MQ-backed connectors this client will consume from
+     */
     public AbstractMQCanalClient(List<C> connectors) {
         super(connectors);
     }
@@ -33,11 +52,11 @@ public abstract class AbstractMQCanalClient<C extends CanalMQConnector> extends 
                         }
                         connector.ack();
                     } catch (Exception e) {
-                        log.error("canal 消费异常", e);
+                        log.error("canal consume error", e);
                     }
                 }
             } catch (Exception e) {
-                log.error("canal 连接异常", e);
+                log.error("canal connection error", e);
             }
         }
         connector.unsubscribe();

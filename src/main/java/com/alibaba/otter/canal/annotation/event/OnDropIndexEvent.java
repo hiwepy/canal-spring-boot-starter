@@ -7,9 +7,16 @@ import org.springframework.core.annotation.AliasFor;
 import java.lang.annotation.*;
 
 /**
- * 刪除索引操作
+ * Listens for Canal {@code DINDEX} (index drop) events.
+ * <p>
+ * A composed alias for {@link OnCanalEvent} that fixes the event type to
+ * {@link CanalEntry.EventType#DINDEX}. Apply it to a method of a
+ * {@link com.alibaba.otter.canal.annotation.CanalEventHandler}-annotated bean to
+ * receive index-drop events for the matching destination/schema/table.
+ * </p>
  *
- * @author lujun
+ * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 1.0.0
  */
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
@@ -17,24 +24,25 @@ import java.lang.annotation.*;
 @OnCanalEvent(eventType = CanalEntry.EventType.DINDEX)
 public @interface OnDropIndexEvent {
     /**
-     * canal 指令
-     * default for all
-     * @return canal destination
+     * Canal destination (instance) name. Defaults to empty, matching all destinations.
+     *
+     * @return the destination name
      */
     @AliasFor(annotation = OnCanalEvent.class)
     String destination() default "";
 
     /**
-     * 数据库实例
-     * @return 数据库实例
+     * Database (schema) name.
+     *
+     * @return the schema name
      */
     @AliasFor(annotation = OnCanalEvent.class)
     String schema();
 
     /**
-     * 监听的表
-     * default for all
-     * @return 监听的表
+     * Table name. Defaults to wildcard, matching all tables.
+     *
+     * @return the table name
      */
     @AliasFor(annotation = OnCanalEvent.class)
     String table();

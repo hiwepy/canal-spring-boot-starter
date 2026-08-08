@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, hiwepy (https://github.com/hiwepy).
+ * Copyright (c) 2018, hiwepy (https://github.com/easy-4-java).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -22,8 +22,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Connection properties for the Canal <strong>Kafka</strong> client mode.
+ * <p>
+ * Bound to the {@code canal.kafka.*} configuration namespace. Each
+ * {@link Instance} describes a Kafka consumer subscribing to Canal binlog
+ * events published to a Kafka topic.
+ * </p>
  *
- * @author ： <a href="https://github.com/hiwepy">hiwepy</a>
+ * <h3>Configuration keys</h3>
+ * <ul>
+ *   <li>{@code canal.kafka.enabled} — whether the Kafka client is enabled (default {@code false})</li>
+ *   <li>{@code canal.kafka.instances} — list of Kafka Canal consumer definitions</li>
+ * </ul>
+ *
+ * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 1.0.0
  */
 @ConfigurationProperties(CanalKafkaClientProperties.PREFIX)
 @Data
@@ -32,48 +45,40 @@ public class CanalKafkaClientProperties {
     private static final int DEFAULT_MAX_RETRIES = 3;
     private static final int DEFAULT_MAX_SLEEP_MS = Integer.MAX_VALUE;
 
+	/** Configuration prefix used by Spring Boot to bind properties. */
 	public static final String PREFIX = "canal.kafka";
 
 	/**
-	 * Whether Enable Canal KafkaMQ.
+	 * Whether to enable the Canal Kafka client. When {@code false} (the default)
+	 * the Kafka auto-configuration is skipped.
 	 */
 	private boolean enabled = false;
 
 	/**
-	 * 配置信息
+	 * List of Kafka Canal consumer connection definitions. Each entry produces
+	 * one {@code KafkaCanalConnector} when the Kafka client is built.
 	 */
 	private List<CanalKafkaClientProperties.Instance> instances = new ArrayList<>();
 
+	/**
+	 * Connection definition for a single Kafka Canal consumer.
+	 */
 	@Data
 	public static class Instance {
 
-		/**
-		 * 启动时从未消费的消息位置开始
-		 */
+		/** Whether to start consuming from the earliest available offset. */
 		boolean earliest = true;
-		/**
-		 * 消息分区索引
-		 */
+		/** Kafka partition index to consume from, or {@code null} to consume all partitions. */
 		Integer partition;
-		/**
-		 * Kafka服务器地址
-		 */
+		/** Comma-separated Kafka broker server addresses. */
 		String servers;
-		/**
-		 * 订阅的消息主题
-		 */
+		/** Kafka topic that Canal publishes binlog events to. */
 		String topic;
-		/**
-		 * 消费者组ID
-		 */
+		/** Kafka consumer group id. */
 		String groupId;
-		/**
-		 * 批量获取数据的大小
-		 */
+		/** Number of messages fetched per batch, or {@code null} to use the client default. */
 		Integer batchSize;
-		/**
-		 * 是否扁平化Canal消息内容
-		 */
+		/** Whether Canal messages are flattened (plain JSON) on the broker side. */
 		boolean flatMessage;
 
 	}

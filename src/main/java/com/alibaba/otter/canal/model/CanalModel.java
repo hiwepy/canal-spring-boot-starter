@@ -7,7 +7,15 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * canal 消息模型
+ * Immutable snapshot of the metadata for a Canal row-change event.
+ * <p>
+ * Bound to {@link CanalContext} for the duration of a handler invocation so
+ * that business code can read the originating schema, table, event type and
+ * timing without altering method signatures.
+ * </p>
+ *
+ * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 1.0.0
  */
 @Setter
 @Getter
@@ -15,36 +23,22 @@ import lombok.Setter;
 public class CanalModel {
 
 
-    /**
-     * 消息id
-     */
+    /** Canal batch/message id. */
     private long id;
 
-    /**
-     * 库名
-     */
+    /** Canal destination name. */
     private String destination;
 
-    /**
-     * 库名
-     */
+    /** Database (schema) name the change originated from. */
     private String schema;
-    /**
-     * 表名
-     */
+    /** Table name the change originated from. */
     private String table;
-    /**
-     * 事件类型
-     */
+    /** Canal event type (INSERT, UPDATE, DELETE, ...). */
     private CanalEntry.EventType eventType;
-    /**
-     * binlog executeTime
-     */
+    /** Binlog execute time in milliseconds. */
     private Long executeTime;
 
-    /**
-     * dml build timeStamp
-     */
+    /** DML build timestamp in milliseconds. */
     private Long createTime;
 
     @Override

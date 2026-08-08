@@ -23,7 +23,7 @@ import java.util.List;
 
 /**
  *
- * @author ： <a href="https://github.com/easy-4-java">hiwepy</a>
+ * @author [@Loong Wan](https://github.com/loong10k)
  */
 @ConfigurationProperties(CanalKafkaClientProperties.PREFIX)
 @Data

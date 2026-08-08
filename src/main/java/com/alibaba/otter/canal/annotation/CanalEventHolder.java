@@ -7,30 +7,28 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 
 /**
- * 监听 canal 操作
+ * Holds the metadata for a single {@link OnCanalEvent}-annotated method,
+ * allowing the Canal message handlers to invoke it reflectively when a matching
+ * row-change event is received.
  *
- * @author lujun
+ * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 1.0.0
  */
 public class CanalEventHolder {
 
-    /**
-     * 目标 bean
-     */
+    /** The target bean instance owning the annotated method. */
     private Object target;
-    /**
-     * 监听的方法
-     */
+    /** The annotated method to invoke. */
     private Method method;
-    /**
-     * 监听的事件
-     */
+    /** The {@link OnCanalEvent} annotation driving the binding. */
     private OnCanalEvent event;
 
     /**
-     * 构造方法，设置目标，方法以及注解类型
-     * @param target Object 目标
-     * @param method Method 方法
-     * @param event OnCanalEvent 注解
+     * Creates a new holder wrapping the target bean, method and annotation.
+     *
+     * @param target the bean instance owning the method
+     * @param method the annotated method to invoke
+     * @param event  the {@link OnCanalEvent} annotation
      */
     public CanalEventHolder(Object target, Method method, OnCanalEvent event) {
         this.target = target;
@@ -39,29 +37,33 @@ public class CanalEventHolder {
     }
 
     /**
-     * 返回目标类
-     * @return Object
+     * @return the target bean instance
      */
     public Object getTarget() {
         return target;
     }
 
     /**
-     * 返回方法
-     * @return Method
+     * @return the annotated method
      */
     public Method getMethod() {
         return method;
     }
 
     /**
-     * 返回注解类型
-     * @return OnCanalEvent
+     * @return the {@link OnCanalEvent} annotation
      */
     public OnCanalEvent getEvent() {
         return event;
     }
 
+    /**
+     * Determines whether this holder should handle the given event type.
+     *
+     * @param eventType the Canal event type to test
+     * @return {@code true} if the annotation declares no event types, declares a
+     *         matching type, or the supplied type is {@code null}
+     */
     public boolean isMatch(CanalEntry.EventType eventType) {
         return this.getEvent().eventType().length == 0 || Arrays.stream(this.getEvent().eventType()).anyMatch(ev -> ev == eventType) || eventType == null;
     }

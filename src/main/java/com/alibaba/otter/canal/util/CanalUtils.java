@@ -31,7 +31,13 @@ import java.util.Date;
 import java.util.List;
 
 /**
+ * Debug/diagnostic helpers that format Canal binlog entries, transactions and
+ * GTID metadata for logging.
+ * <p>All output is emitted at DEBUG level so production logs are not polluted
+ * unless explicitly enabled.</p>
+ *
  * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 1.0.0
  */
 public class CanalUtils {
 
@@ -59,6 +65,13 @@ public class CanalUtils {
 
     }
 
+    /**
+     * Logs a one-line summary of a polled message batch.
+     *
+     * @param message the polled Canal message
+     * @param batchId the batch id
+     * @param size    the number of entries in the batch
+     */
     public static void printSummary(Message message, long batchId, int size) {
         long memsize = 0;
         for (Entry entry : message.getEntries()) {
@@ -77,6 +90,12 @@ public class CanalUtils {
                 endPosition });
     }
 
+    /**
+     * Builds a human-readable binlog position string for the given entry.
+     *
+     * @param entry the entry to inspect
+     * @return a {@code logfile:offset:time(date) [gtid(...)]} formatted position string
+     */
     public static String buildPositionForDump(Entry entry) {
         long time = entry.getHeader().getExecuteTime();
         Date date = new Date(time);
@@ -89,6 +108,12 @@ public class CanalUtils {
         return position;
     }
 
+    /**
+     * Logs detailed information about each entry (transaction begin/end, DDL, row
+     * data) in the supplied list.
+     *
+     * @param entrys the entries to log
+     */
     public static void printEntry(List<Entry> entrys) {
         for (Entry entry : entrys) {
             long executeTime = entry.getHeader().getExecuteTime();
@@ -104,7 +129,7 @@ public class CanalUtils {
                     } catch (InvalidProtocolBufferException e) {
                         throw new RuntimeException("parse event has an error , data:" + entry.toString(), e);
                     }
-                    // 打印事务头信息，执行的线程id，事务耗时
+                    // Log the transaction header: thread id and transaction duration.
                     logger.debug(transaction_format,
                         new Object[] { entry.getHeader().getLogfileName(),
                                 String.valueOf(entry.getHeader().getLogfileOffset()),
@@ -119,7 +144,7 @@ public class CanalUtils {
                     } catch (InvalidProtocolBufferException e) {
                         throw new RuntimeException("parse event has an error , data:" + entry.toString(), e);
                     }
-                    // 打印事务提交信息，事务id
+                    // Log the transaction commit information: transaction id.
                     logger.debug("----------------\n");
                     logger.debug(" END ----> transaction id: {}", end.getTransactionId());
                     printXAInfo(end.getPropsList());
@@ -169,13 +194,19 @@ public class CanalUtils {
         }
     }
 
+    /**
+     * Logs each column of a row change, including name, value, MySQL type and
+     * update flag.
+     *
+     * @param columns the columns to log
+     */
     public static void printColumn(List<Column> columns) {
         for (Column column : columns) {
             StringBuilder builder = new StringBuilder();
             try {
                 if (StringUtils.containsIgnoreCase(column.getMysqlType(), "BLOB")
                     || StringUtils.containsIgnoreCase(column.getMysqlType(), "BINARY")) {
-                    // get value bytes
+                    // Decode BLOB/BINARY columns from ISO-8859-1 to UTF-8.
                     builder.append(column.getName() + " : "
                                    + new String(column.getValue().getBytes("ISO-8859-1"), "UTF-8"));
                 } else {
@@ -192,6 +223,11 @@ public class CanalUtils {
         }
     }
 
+    /**
+     * Logs XA transaction metadata (type and xid) when present.
+     *
+     * @param pairs the key/value pairs to scan for XA_TYPE / XA_XID
+     */
     public static void printXAInfo(List<Pair> pairs) {
         if (pairs == null) {
             return;
@@ -214,10 +250,10 @@ public class CanalUtils {
     }
 
 	/**
-     * 获取当前Entry的 GTID信息示例
+     * Returns the current GTID of the given entry header.
      *
-     * @param header header
-     * @return   GTID
+     * @param header the entry header to inspect
+     * @return the current GTID, or an empty string when absent
      */
     public static String getCurrentGtid(CanalEntry.Header header) {
         List<CanalEntry.Pair> props = header.getPropsList();
@@ -232,10 +268,10 @@ public class CanalUtils {
     }
 
     /**
-     * 获取当前Entry的 GTID Sequence No信息示例
+     * Returns the current GTID sequence number of the given entry header.
      *
-     * @param header header
-     * @return GTID Sequence No
+     * @param header the entry header to inspect
+     * @return the GTID sequence number, or an empty string when absent
      */
     public static String getCurrentGtidSn(CanalEntry.Header header) {
         List<CanalEntry.Pair> props = header.getPropsList();
@@ -250,10 +286,10 @@ public class CanalUtils {
     }
 
     /**
-     * 获取当前Entry的 GTID Last Committed信息示例
+     * Returns the current GTID last-committed value of the given entry header.
      *
-     * @param header header
-     * @return GTID Last Committed
+     * @param header the entry header to inspect
+     * @return the GTID last-committed value, or an empty string when absent
      */
     public static String getCurrentGtidLct(CanalEntry.Header header) {
         List<CanalEntry.Pair> props = header.getPropsList();

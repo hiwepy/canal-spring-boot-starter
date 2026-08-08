@@ -15,12 +15,22 @@ import org.springframework.util.StringUtils;
 
 import java.net.InetSocketAddress;
 
+/**
+ * Factory methods that build Canal {@link com.alibaba.otter.canal.client.CanalConnector}
+ * instances from the starter's typed property objects.
+ *
+ * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 1.0.0
+ */
 public class ConnectorUtil {
 
     /**
-     * 创建集群模式的 Canal 连接器
-     * @param instance 实例配置
-     * @return Canal 连接器
+     * Creates a cluster-mode {@link ClusterCanalConnector} from the given instance.
+     * <p>When {@code zkServers} is set a ZooKeeper-backed node access strategy is
+     * used; otherwise a simple address-list strategy is used.</p>
+     *
+     * @param instance the cluster instance configuration
+     * @return the configured cluster Canal connector
      */
     public static ClusterCanalConnector createClusterCanalConnector(CanalClusterProperties.Instance instance) {
         if (StringUtils.hasText(instance.getZkServers())) {
@@ -47,9 +57,10 @@ public class ConnectorUtil {
     }
 
     /**
-     * 创建 Kafka 连接器
-     * @param instance 实例配置
-     * @return Canal 连接器
+     * Creates a Kafka {@link KafkaCanalConnector} from the given instance.
+     *
+     * @param instance the Kafka instance configuration
+     * @return the configured Kafka Canal connector
      */
     public static KafkaCanalConnector createKafkaCanalConnector(CanalKafkaClientProperties.Instance instance) {
         KafkaCanalConnector connector = instance.isEarliest() ? new KafkaOffsetCanalConnector(instance.getServers(),
@@ -61,9 +72,10 @@ public class ConnectorUtil {
     }
 
     /**
-     * 创建 PulsarMQ 连接器
-     * @param instance 实例配置
-     * @return Canal 连接器
+     * Creates a Pulsar {@link PulsarMQCanalConnector} from the given instance.
+     *
+     * @param instance the Pulsar instance configuration
+     * @return the configured Pulsar Canal connector
      */
     public static PulsarMQCanalConnector createPulsarMQCanalConnector(CanalPulsarClientProperties.Instance instance) {
         PulsarMQCanalConnector connector = new PulsarMQCanalConnector(Boolean.TRUE,
@@ -76,9 +88,10 @@ public class ConnectorUtil {
     }
 
     /**
-     * 创建 RabbitMQ 连接器
-     * @param instance 实例配置
-     * @return Canal 连接器
+     * Creates a RabbitMQ {@link RabbitMQCanalConnector} from the given instance.
+     *
+     * @param instance the RabbitMQ instance configuration
+     * @return the configured RabbitMQ Canal connector
      */
     public static RabbitMQCanalConnector createRabbitMQCanalConnector(CanalRabbitmqClientProperties.Instance instance) {
         RabbitMQCanalConnector connector = new RabbitMQCanalConnector(instance.getAddresses(), instance.getVhost(),
@@ -89,12 +102,15 @@ public class ConnectorUtil {
     }
 
     /**
-     * 创建 RocketMQ 连接器
-     * @param instance 实例配置
-     * @return Canal 连接器
+     * Creates a RocketMQ {@link RocketMQCanalConnector} from the given instance,
+     * selecting the appropriate constructor based on whether cloud credentials,
+     * namespace and trace topic are configured.
+     *
+     * @param instance the RocketMQ instance configuration
+     * @return the configured RocketMQ Canal connector
      */
     public static RocketMQCanalConnector createRocketMQCanalConnector(CanalRocketmqClientProperties.Instance instance) {
-        // 1、创建连接实例
+        // 1. Create the connector instance.
         RocketMQCanalConnector connector;
         if (StringUtils.hasText(instance.getAccessKey()) && StringUtils.hasText(instance.getSecretKey())) {
             if (StringUtils.hasText(instance.getNamespace())) {
@@ -120,9 +136,10 @@ public class ConnectorUtil {
     }
 
     /**
-     * 创建单机模式的 Canal 连接器
-     * @param instance 实例配置
-     * @return Canal 连接器
+     * Creates a simple-mode {@link SimpleCanalConnector} for a single Canal server.
+     *
+     * @param instance the simple instance configuration
+     * @return the configured simple Canal connector
      */
     public static SimpleCanalConnector createSimpleCanalConnector(CanalSimpleProperties.Instance instance) {
         InetSocketAddress address = new InetSocketAddress(instance.getHost(), instance.getPort());

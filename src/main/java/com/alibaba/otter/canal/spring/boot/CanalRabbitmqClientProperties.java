@@ -21,60 +21,65 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Connection properties for the Canal <strong>RabbitMQ</strong> client mode.
+ * <p>
+ * Bound to the {@code canal.rabbitmq.*} configuration namespace. Each
+ * {@link Instance} describes a RabbitMQ consumer subscribing to Canal binlog
+ * events published to a RabbitMQ queue.
+ * </p>
+ *
+ * <h3>Configuration keys</h3>
+ * <ul>
+ *   <li>{@code canal.rabbitmq.enabled} — whether the RabbitMQ client is enabled (default {@code false})</li>
+ *   <li>{@code canal.rabbitmq.instances} — list of RabbitMQ Canal consumer definitions</li>
+ * </ul>
+ *
+ * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 1.0.0
+ */
 @ConfigurationProperties(CanalRabbitmqClientProperties.PREFIX)
 @Data
 public class CanalRabbitmqClientProperties {
 
+	/** Configuration prefix used by Spring Boot to bind properties. */
 	public static final String PREFIX = "canal.rabbitmq";
 
 	/**
-	 * Whether Enable Canal RabbitMQ.
+	 * Whether to enable the Canal RabbitMQ client. When {@code false} (the
+	 * default) the RabbitMQ auto-configuration is skipped.
 	 */
 	private boolean enabled = false;
 
     /**
-     * 配置信息
+     * List of RabbitMQ Canal consumer connection definitions. Each entry
+     * produces one {@code RabbitMQCanalConnector} when the RabbitMQ client is built.
      */
     private List<CanalRabbitmqClientProperties.Instance> instances = new ArrayList<>();
 
+    /**
+     * Connection definition for a single RabbitMQ Canal consumer.
+     */
     @Data
     public static class Instance {
 
-        /**
-         * RabbitMQ服务器地址
-         */
+        /** Comma-separated RabbitMQ broker server addresses. */
         private String                              addresses;
-        /**
-         * 虚拟主机
-         */
+        /** RabbitMQ virtual host. */
         private String                              vhost;
-        /**
-         * 队列名称
-         */
+        /** RabbitMQ queue name that Canal publishes binlog events to. */
         private String                              queueName;
-        /**
-         * 访问Key
-         */
+        /** Alibaba Cloud access key, when connecting to Cloud RabbitMQ. */
         private String                              accessKey;
-        /**
-         * 访问密钥
-         */
+        /** Alibaba Cloud secret key, when connecting to Cloud RabbitMQ. */
         private String                              secretKey;
-        /**
-         * 资源所有者的ID
-         */
+        /** Alibaba Cloud resource owner id, when connecting to Cloud RabbitMQ. */
         private Long                                resourceOwnerId;
-        /**
-         * 用户名
-         */
+        /** RabbitMQ username, if authentication is enabled. */
         private String                              username;
-        /**
-         * 密码
-         */
+        /** RabbitMQ password, if authentication is enabled. */
         private String                              password;
-        /**
-         * 是否扁平化Canal消息内容
-         */
+        /** Whether Canal messages are flattened (plain JSON) on the broker side. */
         private boolean                             flatMessage;
 
     }

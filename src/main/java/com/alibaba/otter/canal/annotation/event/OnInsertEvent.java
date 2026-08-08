@@ -7,9 +7,16 @@ import org.springframework.core.annotation.AliasFor;
 import java.lang.annotation.*;
 
 /**
- * 新增操作监听器 发生insert时 会触发
+ * Listens for Canal {@code INSERT} row events.
+ * <p>
+ * A composed alias for {@link OnCanalEvent} that fixes the event type to
+ * {@link CanalEntry.EventType#INSERT}. Apply it to a method of a
+ * {@link com.alibaba.otter.canal.annotation.CanalEventHandler}-annotated bean to
+ * receive insert events for the matching destination/schema/table.
+ * </p>
  *
- * @author lujun
+ * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 1.0.0
  */
 
 @Target({ElementType.METHOD})
@@ -19,24 +26,25 @@ import java.lang.annotation.*;
 public @interface OnInsertEvent {
 
     /**
-     * canal 指令
-     * default for all
-     * @return canal destination
+     * Canal destination (instance) name. Defaults to empty, matching all destinations.
+     *
+     * @return the destination name
      */
     @AliasFor(annotation = OnCanalEvent.class)
     String destination() default "";
 
     /**
-     * 数据库实例
-     * @return 数据库实例
+     * Database (schema) name.
+     *
+     * @return the schema name
      */
     @AliasFor(annotation = OnCanalEvent.class)
     String schema();
 
     /**
-     * 监听的表
-     * default for all
-     * @return table name
+     * Table name. Defaults to wildcard, matching all tables.
+     *
+     * @return the table name
      */
     @AliasFor(annotation = OnCanalEvent.class)
     String table();

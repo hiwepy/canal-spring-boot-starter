@@ -21,64 +21,67 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Connection properties for the Canal <strong>RocketMQ</strong> client mode.
+ * <p>
+ * Bound to the {@code canal.rocketmq.*} configuration namespace. Each
+ * {@link Instance} describes a RocketMQ consumer subscribing to Canal binlog
+ * events published to a RocketMQ topic.
+ * </p>
+ *
+ * <h3>Configuration keys</h3>
+ * <ul>
+ *   <li>{@code canal.rocketmq.enabled} — whether the RocketMQ client is enabled (default {@code false})</li>
+ *   <li>{@code canal.rocketmq.instances} — list of RocketMQ Canal consumer definitions</li>
+ * </ul>
+ *
+ * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 1.0.0
+ */
 @ConfigurationProperties(CanalRocketmqClientProperties.PREFIX)
 @Data
 public class CanalRocketmqClientProperties {
 
+	/** Configuration prefix used by Spring Boot to bind properties. */
 	public static final String PREFIX = "canal.rocketmq";
 
 	/**
-	 * Whether Enable Canal RocketMQ.
+	 * Whether to enable the Canal RocketMQ client. When {@code false} (the
+	 * default) the RocketMQ auto-configuration is skipped.
 	 */
 	private boolean enabled = false;
 
     /**
-     * 配置信息
+     * List of RocketMQ Canal consumer connection definitions. Each entry
+     * produces one {@code RocketMQCanalConnector} when the RocketMQ client is built.
      */
     private List<CanalRocketmqClientProperties.Instance> instances = new ArrayList<>();
 
+    /**
+     * Connection definition for a single RocketMQ Canal consumer.
+     */
     @Data
     public static class Instance {
 
-        /**
-         * RocketMQ NameServer 服务地址
-         */
+        /** RocketMQ NameServer address list. */
         private String                              nameServer;
-        /**
-         * 订阅的消息主题
-         */
+        /** RocketMQ topic that Canal publishes binlog events to. */
         private String                              topic;
-        /**
-         * 消费者组名称
-         */
+        /** RocketMQ consumer group name. */
         private String                              groupName;
-        /**
-         * 是否开启消息轨迹
-         */
+        /** Whether to enable RocketMQ message tracing. */
         private boolean                             enableMessageTrace;
-        /**
-         * 访问Key
-         */
+        /** Alibaba Cloud access key, when connecting to Cloud RocketMQ. */
         private String                              accessKey;
-        /**
-         * 访问密钥
-         */
+        /** Alibaba Cloud secret key, when connecting to Cloud RocketMQ. */
         private String                              secretKey;
-        /**
-         * 访问的通道
-         */
+        /** Alibaba Cloud access channel, when connecting to Cloud RocketMQ. */
         private String                              accessChannel;
-        /**
-         * 命名空间
-         */
+        /** RocketMQ namespace, when applicable. */
         private String                              namespace;
-        /**
-         * 自定义轨迹主题
-         */
+        /** Custom RocketMQ message-trace topic name. */
         private String                              customizedTraceTopic;
-        /**
-         * 批量获取数据的大小
-         */
+        /** Number of messages fetched per batch. {@code -1} means unlimited. */
         private Integer batchSize					= -1;
 
     }

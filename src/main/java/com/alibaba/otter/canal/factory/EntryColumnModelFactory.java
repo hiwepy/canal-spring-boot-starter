@@ -19,6 +19,19 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * {@link IModelFactory} that materialises protobuf Canal columns
+ * ({@link CanalEntry.Column}) into entry model instances.
+ * <p>
+ * When the handler is bound to the {@link TableNameEnum#ALL} wildcard the
+ * columns are returned as a name/value map. Otherwise the target entity class
+ * is resolved from the handler's generic signature and populated using its
+ * MyBatis-Plus {@link TableInfo} column-to-property mapping.
+ * </p>
+ *
+ * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 1.0.0
+ */
 public class EntryColumnModelFactory extends AbstractModelFactory<List<CanalEntry.Column>> {
 
     @Override
@@ -45,16 +58,16 @@ public class EntryColumnModelFactory extends AbstractModelFactory<List<CanalEntr
         }
         Class<R> tableClass = GenericUtil.getTableClass(entryHandler);
         if (tableClass != null) {
-            // 获取 mybatis-plus 的注解信息
+            // Resolve the MyBatis-Plus table metadata.
             TableInfo tableInfo = TableInfoHelper.getTableInfo(tableClass);
-            // 创建实体对象
+            // Instantiate the entity.
             R object = BeanUtils.instantiateClass(tableClass);
             for (CanalEntry.Column column : columns) {
                 if (updateColumn.contains(column.getName())) {
-                    // 循环表数据
+                    // Iterate over mapped fields.
                     for (TableFieldInfo tableFieldInfo:  tableInfo.getFieldList()) {
                         String fieldName = tableFieldInfo.getProperty();
-                        // 获取实体对象属性映射字段对应的值
+                        // Map the column value onto the matching property.
                         if (StringUtils.equals(tableFieldInfo.getColumn(), column.getName())) {
                             PropertyUtils.setProperty(object, fieldName, column.getValue());
                             break;
@@ -70,19 +83,19 @@ public class EntryColumnModelFactory extends AbstractModelFactory<List<CanalEntr
 
     @Override
     <R> R newInstance(Class<R> rtClass, List<CanalEntry.Column> columns) throws Exception {
-        // 如果列为空，返回null
+        // Return null when the column list is empty.
         if(CollectionUtils.isEmpty(columns)){
             return null;
         }
-        // 创建实体对象
+        // Instantiate the entity.
         R object = BeanUtils.instantiateClass(rtClass);
-        // 获取 mybatis-plus 的注解信息
+        // Resolve the MyBatis-Plus table metadata.
         TableInfo tableInfo = TableInfoHelper.getTableInfo(rtClass);
-        // 循环表数据
+        // Iterate over mapped fields.
         for (TableFieldInfo tableFieldInfo:  tableInfo.getFieldList()) {
             String fieldName = tableFieldInfo.getProperty();
             for (CanalEntry.Column column : columns) {
-                // 获取实体对象属性映射字段对应的值
+                // Map the column value onto the matching property.
                 if (StringUtils.equals(tableFieldInfo.getColumn(), column.getName())) {
                     PropertyUtils.setProperty(object, fieldName, column.getValue());
                     break;

@@ -6,6 +6,16 @@ import com.alibaba.otter.canal.handler.EntryHandler;
 import com.alibaba.otter.canal.util.GenericUtil;
 import com.alibaba.otter.canal.util.HandlerUtil;
 
+/**
+ * Base {@link IModelFactory} implementation that resolves the target model type
+ * from the {@link EntryHandler} generic signature (or {@link TableNameEnum#ALL}
+ * wildcard) and delegates the actual conversion to
+ * {@link #newInstance(Class, Object)}.
+ *
+ * @param <T> the raw row data type
+ * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 1.0.0
+ */
 public abstract class AbstractModelFactory<T> implements IModelFactory<T> {
 
     @Override
@@ -21,5 +31,14 @@ public abstract class AbstractModelFactory<T> implements IModelFactory<T> {
         return null;
     }
 
+    /**
+     * Creates a new instance of the given target class from the supplied row data.
+     *
+     * @param tableClass the target entry model class
+     * @param t          the raw row data
+     * @param <R>        the entry model type
+     * @return the materialised entry model
+     * @throws Exception if conversion fails
+     */
     abstract <R> R newInstance(Class<R> tableClass, T t) throws Exception;
 }

@@ -8,7 +8,12 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 /**
- * PulsarMQ 模式 Canal 客户端
+ * Canal client for the <strong>Pulsar</strong> mode that consumes flattened
+ * Canal binlog messages from Pulsar topics via {@link PulsarMQCanalConnector}
+ * instances.
+ *
+ * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 1.0.0
  */
 @Slf4j
 public class PulsarMQCanalClient extends AbstractMQCanalClient<PulsarMQCanalConnector> {
@@ -17,6 +22,13 @@ public class PulsarMQCanalClient extends AbstractMQCanalClient<PulsarMQCanalConn
         super(connectors);
     }
 
+    /**
+     * Resolves the destination name (Pulsar topic) by reflecting on the
+     * connector's {@code topic} field, used as the logging/MDC destination.
+     *
+     * @param connector the Pulsar connector to inspect
+     * @return the Pulsar topic name
+     */
     @Override
     protected String getDestination(PulsarMQCanalConnector connector) {
         Field topicField =  ReflectionUtils.findField(PulsarMQCanalConnector.class, "topic");
@@ -24,8 +36,19 @@ public class PulsarMQCanalClient extends AbstractMQCanalClient<PulsarMQCanalConn
         return (String) ReflectionUtils.getField(topicField, connector);
     }
 
+    /**
+     * Fluent builder for {@link PulsarMQCanalClient}.
+     */
     public static final class Builder extends AbstractClientBuilder<PulsarMQCanalClient, PulsarMQCanalConnector> {
 
+        /**
+         * Builds a {@link PulsarMQCanalClient} from the supplied connectors,
+         * applying the filter, batch size, timeout, entry types and message
+         * handler configured on this builder.
+         *
+         * @param connectors the Pulsar connectors the client will consume from
+         * @return the constructed Pulsar Canal client
+         */
         @Override
         public PulsarMQCanalClient build(List<PulsarMQCanalConnector> connectors) {
             PulsarMQCanalClient canalClient = new PulsarMQCanalClient(connectors);

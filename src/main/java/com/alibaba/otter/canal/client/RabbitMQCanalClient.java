@@ -7,7 +7,12 @@ import java.lang.reflect.Field;
 import java.util.List;
 
 /**
- * RabbitMQ 模式 Canal 客户端
+ * Canal client for the <strong>RabbitMQ</strong> mode that consumes flattened
+ * Canal binlog messages from RabbitMQ queues via {@link RabbitMQCanalConnector}
+ * instances.
+ *
+ * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 1.0.0
  */
 public class RabbitMQCanalClient extends AbstractMQCanalClient<RabbitMQCanalConnector> {
 
@@ -15,6 +20,14 @@ public class RabbitMQCanalClient extends AbstractMQCanalClient<RabbitMQCanalConn
         super(connectors);
     }
 
+    /**
+     * Resolves the destination name (RabbitMQ broker address) by reflecting on
+     * the connector's {@code nameServer} field, used as the logging/MDC
+     * destination.
+     *
+     * @param connector the RabbitMQ connector to inspect
+     * @return the resolved destination name
+     */
     @Override
     protected String getDestination(RabbitMQCanalConnector connector) {
         Field nameServerField =  ReflectionUtils.findField(RabbitMQCanalConnector.class, "nameServer");
@@ -22,8 +35,19 @@ public class RabbitMQCanalClient extends AbstractMQCanalClient<RabbitMQCanalConn
         return (String) ReflectionUtils.getField(nameServerField, connector);
     }
 
+    /**
+     * Fluent builder for {@link RabbitMQCanalClient}.
+     */
     public static final class Builder extends AbstractClientBuilder<RabbitMQCanalClient, RabbitMQCanalConnector> {
 
+        /**
+         * Builds a {@link RabbitMQCanalClient} from the supplied connectors,
+         * applying the filter, batch size, timeout, entry types and message
+         * handler configured on this builder.
+         *
+         * @param connectors the RabbitMQ connectors the client will consume from
+         * @return the constructed RabbitMQ Canal client
+         */
         @Override
         public RabbitMQCanalClient build(List<RabbitMQCanalConnector> connectors) {
             RabbitMQCanalClient canalClient = new RabbitMQCanalClient(connectors);

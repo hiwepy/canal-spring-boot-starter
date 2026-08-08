@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, hiwepy (https://github.com/hiwepy).
+ * Copyright (c) 2018, hiwepy (https://github.com/easy-4-java).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -22,8 +22,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * PulsarMQ
- * @author ： <a href="https://github.com/hiwepy">hiwepy</a>
+ * Connection properties for the Canal <strong>Pulsar</strong> client mode.
+ * <p>
+ * Bound to the {@code canal.pulsar.*} configuration namespace. Each
+ * {@link Instance} describes a Pulsar consumer subscribing to Canal binlog
+ * events published to a Pulsar topic.
+ * </p>
+ *
+ * <h3>Configuration keys</h3>
+ * <ul>
+ *   <li>{@code canal.pulsar.enabled} — whether the Pulsar client is enabled (default {@code false})</li>
+ *   <li>{@code canal.pulsar.instances} — list of Pulsar Canal consumer definitions</li>
+ * </ul>
+ *
+ * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 1.0.0
  */
 @ConfigurationProperties(CanalPulsarClientProperties.PREFIX)
 @Data
@@ -31,83 +44,59 @@ public class CanalPulsarClientProperties {
 
     private static final int DEFAULT_MAX_RETRIES = 3;
     private static final int DEFAULT_MAX_SLEEP_MS = Integer.MAX_VALUE;
+	/** Configuration prefix used by Spring Boot to bind properties. */
 	public static final String PREFIX = "canal.pulsar";
 
 	/**
-	 * Whether Enable Canal PulsarMQ.
+	 * Whether to enable the Canal Pulsar client. When {@code false} (the default)
+	 * the Pulsar auto-configuration is skipped.
 	 */
 	private boolean enabled = false;
 
 	/**
-	 * 配置信息
+	 * List of Pulsar Canal consumer connection definitions. Each entry produces
+	 * one {@code PulsarMQCanalConnector} when the Pulsar client is built.
 	 */
 	private List<CanalPulsarClientProperties.Instance> instances = new ArrayList<>();
 
+	/**
+	 * Connection definition for a single Pulsar Canal consumer.
+	 */
 	@Data
 	public static class Instance {
 
-		/**
-		 * PulsarMQ 服务地址
-		 */
+		/** Pulsar broker service URL. */
 		private String serviceUrl;
-		/**
-		 * 角色认证 token
-		 */
+		/** Authentication role token used by the Pulsar client. */
 		private String roleToken;
-		/**
-		 * 订阅的主题
-		 */
+		/** Pulsar topic that Canal publishes binlog events to. */
 		private String topic;
-		/**
-		 * 订阅客户端名称
-		 */
+		/** Pulsar subscription name used by the consumer. */
 		private String subscriptName;
-		/**
-		 * 每次批量获取数据的最大条目数，默认30
-		 */
+		/** Maximum number of messages fetched per batch. Defaults to {@code 30}. */
 		private int batchSize = 30;
 		/**
-		 * 与{@code batchSize}一起决定批量获取的数据大小
-		 * 当：
-		 * <p>
-		 * 1. {@code batchSize} 条消息未消费时<br/>
-		 * 2. 距上一次批量消费时间达到{@code batchTimeoutSeconds}秒时
-		 * </p>
-		 * 任一条件满足，即执行批量消费
+		 * Combined with {@link #batchSize} to control the batch fetch behaviour. A
+		 * batch is delivered when either {@code batchSize} messages have
+		 * accumulated or {@code batchTimeoutSeconds} elapse since the last batch.
 		 */
 		private int batchTimeoutSeconds = 30;
 		/**
-		 * 批量处理消息时，一次批量处理的超时时间秒数
-		 * <p>
-		 * 该时间应该根据{@code batchSize}和{@code batchTimeoutSeconds}合理设置
-		 * </p>
+		 * Timeout in seconds for processing a single batch. Should be tuned in
+		 * line with {@link #batchSize} and {@link #batchTimeoutSeconds}.
 		 */
 		private int batchProcessTimeoutSeconds = 60;
-		/**
-		 * 消费失败后的重试秒数，默认60秒
-		 */
+		/** Delay in seconds before redelivering failed messages. Defaults to {@code 60}. */
 		private int redeliveryDelaySeconds = 60;
-		/**
-		 * 当客户端接收到消息，30秒还没有返回ack给服务端时，ack超时，会重新消费该消息
-		 */
+		/** Ack timeout in seconds; unacked messages are redelivered after this period. */
 		private int ackTimeoutSeconds = 30;
-		/**
-		 * 是否开启消息失败重试功能，默认开启
-		 */
+		/** Whether to enable the message retry feature. Defaults to {@code true}. */
 		private boolean retry = true;
-		/**
-		 * <p>
-		 * true重试(-RETRY)和死信队列(-DLQ)后缀为大写，有些地方创建的为小写，需确保正确
-		 * </p>
-		 */
+		/** Whether the retry ({@code -RETRY}) and dead-letter ({@code -DLQ}) suffixes are upper-case. */
 		private boolean retryDLQUpperCase = false;
-		/**
-		 * 最大重试次数
-		 */
+		/** Maximum number of redelivery attempts before a message is moved to the dead-letter queue. */
 		private int maxRedeliveryCount = 128;
-		/**
-		 * 是否扁平化Canal消息内容
-		 */
+		/** Whether Canal messages are flattened (plain JSON) on the broker side. */
 		private boolean flatMessage = false;
 
 	}

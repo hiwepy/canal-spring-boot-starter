@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018, hiwepy (https://github.com/hiwepy).
+ * Copyright (c) 2018, hiwepy (https://github.com/easy-4-java).
  *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not
  * use this file except in compliance with the License. You may obtain a copy of
@@ -24,80 +24,101 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.function.Function;
 
 /**
+ * Thread-pool configuration for the Canal asynchronous task executor.
+ * <p>
+ * Bound to the {@code canal.thread-pool.*} configuration namespace. Controls
+ * pool sizing, queue capacity, keep-alive, naming and rejection policy of the
+ * {@code canalTaskExecutor} used to dispatch Canal messages to entry handlers.
+ * </p>
  *
- * @author ： <a href="https://github.com/hiwepy">hiwepy</a>
+ * <h3>Configuration keys</h3>
+ * <ul>
+ *   <li>{@code canal.thread-pool.core-pool-size} — core pool size (default {@code 1})</li>
+ *   <li>{@code canal.thread-pool.max-pool-size} — maximum pool size (default: available processors)</li>
+ *   <li>{@code canal.thread-pool.queue-capacity} — blocking queue capacity (default {@code Integer.MAX_VALUE})</li>
+ *   <li>{@code canal.thread-pool.keep-alive} — keep-alive duration (default {@code 60s})</li>
+ *   <li>{@code canal.thread-pool.rejected-policy} — rejection policy (default {@code AbortPolicy})</li>
+ * </ul>
+ *
+ * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 1.0.0
  */
 @ConfigurationProperties(CanalThreadPoolProperties.PREFIX)
 @Data
 public class CanalThreadPoolProperties {
 
+	/** Configuration prefix used by Spring Boot to bind properties. */
 	public static final String PREFIX = "canal.thread-pool";
 
 	/**
-	 * Set the ThreadPoolExecutor's core pool size. Default is 1.
-	 * positive.
+	 * Core pool size for the Canal task executor. Must be positive. Defaults to {@code 1}.
 	 */
 	private int corePoolSize = 1;
 
 	/**
-	 * Set the ThreadPoolExecutor's maximum pool size. Default is the number of Processor.
+	 * Maximum pool size for the Canal task executor. Defaults to the number of
+	 * available processors.
 	 */
 	private int maxPoolSize = Runtime.getRuntime().availableProcessors();
 
 	/**
-	 * Set the capacity for the ThreadPoolExecutor's BlockingQueue. Default is Integer.MAX_VALUE.
-	 * Any positive value will lead to a LinkedBlockingQueue instance; any other value will lead to a SynchronousQueue instance.
+	 * Capacity of the executor's blocking queue. Any positive value yields a
+	 * {@code LinkedBlockingQueue}; any other value yields a
+	 * {@code SynchronousQueue}. Defaults to {@code Integer.MAX_VALUE}.
 	 */
 	private int queueCapacity = Integer.MAX_VALUE;
 
 	/**
-	 * Set the ThreadPoolExecutor's keep-alive time. Default is 60 seconds.
+	 * Keep-alive duration for idle threads beyond the core pool. Defaults to {@code 60s}.
 	 */
 	private Duration keepAlive = Duration.ofSeconds(60);
 
 	/**
-	 * Specify whether to allow core threads to time out. This enables dynamic
-	 * growing and shrinking even in combination with a non-zero queue (since
-	 * the max pool size will only grow once the queue is full).
-	 * <p>Default is "false".
+	 * Whether core threads are allowed to time out, enabling dynamic growing and
+	 * shrinking even with a non-zero queue. Defaults to {@code false}.
 	 */
 	private boolean allowCoreThreadTimeOut = false;
 
+	/**
+	 * Whether to wait for queued tasks to complete on application shutdown.
+	 * Defaults to {@code false}.
+	 */
 	private boolean waitForTasksToCompleteOnShutdown = false;
 
+	/**
+	 * Seconds to wait for remaining tasks to finish on shutdown before the
+	 * executor is forcibly terminated. Defaults to {@code 0}.
+	 */
 	private int awaitTerminationSeconds = 0;
 
 	/**
-	 * Specify the prefix to use for the names of newly created threads.
-	 * Default is "RedisAsyncTaskExecutor-".
+	 * Name prefix used for newly created threads. Defaults to
+	 * {@code "RedisAsyncTaskExecutor-"}.
 	 */
 	private String threadNamePrefix = "RedisAsyncTaskExecutor-";
 
 	/**
-	 * Set whether this factory is supposed to create daemon threads,
-	 * just executing as long as the application itself is running.
-	 * <p>Default is "false": Concrete factories usually support explicit cancelling.
-	 * Hence, if the application shuts down, Runnables will by default finish their
-	 * execution.
-	 * <p>Specify "true" for eager shutdown of threads which still actively execute
-	 * a {@link Runnable} at the time that the application itself shuts down.
+	 * Whether created threads should be daemon threads. Daemon threads exit when
+	 * the JVM shuts down. Defaults to {@code false}.
 	 */
 	private boolean daemon = false;
 
 	/**
-	 * Set the Rejected Policy to use for the ExecutorService.
-	 * Default is the ExecutorService's default abort policy.
+	 * Rejection policy applied when the executor cannot accept a new task.
+	 * Defaults to {@link RejectedPolicy#AbortPolicy}.
 	 * @see java.util.concurrent.ThreadPoolExecutor.AbortPolicy
 	 */
 	private RejectedPolicy rejectedPolicy = RejectedPolicy.AbortPolicy;
 
 
 	/**
-	 * 拒绝处理策略
-	 * CallerRunsPolicy()：交由调用方线程运行，比如 main 线程。
-	 * AbortPolicy()：直接抛出异常。
-	 * DiscardPolicy()：直接丢弃。
-	 * DiscardOldestPolicy()：丢弃队列中最老的任务。
+	 * Rejection policies for the Canal task executor.
+	 * <ul>
+	 *   <li>{@link #CallerRunsPolicy} — run the rejected task on the caller thread</li>
+	 *   <li>{@link #AbortPolicy} — throw a {@code RejectedExecutionException}</li>
+	 *   <li>{@link #DiscardPolicy} — silently discard the rejected task</li>
+	 *   <li>{@link #DiscardOldestPolicy} — discard the oldest queued task and retry</li>
+	 * </ul>
 	 */
 	public enum RejectedPolicy {
 
@@ -114,12 +135,16 @@ public class CanalThreadPoolProperties {
 			return new ThreadPoolExecutor.DiscardOldestPolicy();
 		});
 
+		/** Factory that produces the matching {@link RejectedExecutionHandler}. */
 		private Function<Object, RejectedExecutionHandler> function;
 
 		private RejectedPolicy(Function<Object, RejectedExecutionHandler> function) {
 			this.function = function;
 		}
 
+		/**
+		 * @return the {@link RejectedExecutionHandler} associated with this policy.
+		 */
 		public RejectedExecutionHandler getRejectedExecutionHandler(){
 			return this.function.apply(null);
 		}

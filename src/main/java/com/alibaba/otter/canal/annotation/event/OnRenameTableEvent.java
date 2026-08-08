@@ -7,9 +7,16 @@ import org.springframework.core.annotation.AliasFor;
 import java.lang.annotation.*;
 
 /**
- * 重命名表
+ * Listens for Canal {@code RENAME} (table rename) events.
+ * <p>
+ * A composed alias for {@link OnCanalEvent} that fixes the event type to
+ * {@link CanalEntry.EventType#RENAME}. Apply it to a method of a
+ * {@link com.alibaba.otter.canal.annotation.CanalEventHandler}-annotated bean to
+ * receive table-rename events for the matching destination/schema.
+ * </p>
  *
- * @author lujun
+ * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 1.0.0
  */
 
 @Target({ElementType.METHOD})
@@ -19,16 +26,17 @@ import java.lang.annotation.*;
 public @interface OnRenameTableEvent {
 
     /**
-     * canal 指令
-     * default for all
-     * @return canal 指令
+     * Canal destination (instance) name. Defaults to empty, matching all destinations.
+     *
+     * @return the destination name
      */
     @AliasFor(annotation = OnCanalEvent.class)
     String destination() default "";
 
     /**
-     * 数据库实例
-     * @return 数据库实例
+     * Database (schema) name.
+     *
+     * @return the schema name
      */
     @AliasFor(annotation = OnCanalEvent.class)
     String schema();

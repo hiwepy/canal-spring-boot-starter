@@ -17,12 +17,28 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 泛型工具类
+ * Reflection helpers for resolving {@link EntryHandler} generic types and
+ * building reflective method invocation argument arrays.
+ *
+ * @author [@Loong Wan](https://github.com/loong10k)
+ * @since 1.0.0
  */
 public class GenericUtil {
 
+    /** Cache of resolved entry model classes keyed by handler class. */
     private static Map<Class<? extends EntryHandler>, Class> cache = new ConcurrentHashMap<>();
 
+    /**
+     * Builds the argument array for invoking an annotation-based handler method,
+     * matching each declared parameter type to the supplied model, row change or
+     * event type.
+     *
+     * @param method    the method to invoke
+     * @param model     the Canal context model
+     * @param rowChange the row change to pass
+     * @param eventType the Canal event type
+     * @return the resolved arguments in declaration order
+     */
     public static Object[] getInvokeArgs(Method method, CanalModel model, CanalEntry.RowChange rowChange, CanalEntry.EventType eventType) {
         return Arrays.stream(method.getParameterTypes()).map(pClass -> {
                     if(CanalModel.class.isAssignableFrom(pClass)){
@@ -39,6 +55,17 @@ public class GenericUtil {
                 .toArray();
     }
 
+    /**
+     * Builds the argument array for invoking an annotation-based handler method,
+     * matching each declared parameter type to the supplied model, row data or
+     * event type.
+     *
+     * @param method    the method to invoke
+     * @param model     the Canal context model
+     * @param rowData   the flat row data (column maps) to pass
+     * @param eventType the Canal event type
+     * @return the resolved arguments in declaration order
+     */
     public static Object[] getInvokeArgs(Method method, CanalModel model, List<Map<String, String>> rowData, CanalEntry.EventType eventType) {
         return Arrays.stream(method.getParameterTypes()).map(pClass -> {
                 if(CanalModel.class.isAssignableFrom(pClass)){
@@ -54,10 +81,17 @@ public class GenericUtil {
             }).toArray();
     }
 
+    /**
+     * Resolves the MyBatis-Plus table name for the entry model bound to the
+     * given handler.
+     *
+     * @param entryHandler the handler to inspect
+     * @return the resolved table name, or {@code null} if not available
+     */
     public static String getTableGenericProperties(EntryHandler entryHandler) {
         Class<?> tableClass = getTableClass(entryHandler);
         if (tableClass != null) {
-            // 3.2、获取 mybatis-plus 的注解信息
+            // Resolve the MyBatis-Plus table metadata.
             TableInfo tableInfo = TableInfoHelper.getTableInfo(tableClass);
             if (Objects.nonNull(tableInfo)) {
                 return tableInfo.getTableName();
@@ -67,9 +101,18 @@ public class GenericUtil {
     }
 
 
+    /**
+     * Resolves the entry model class bound to the given handler by inspecting
+     * the {@link EntryHandler} generic signature. Results are cached per handler
+     * class.
+     *
+     * @param object the handler to inspect
+     * @param <T>    the entry model type
+     * @return the resolved entry model class, or {@code null} if not found
+     */
     @SuppressWarnings("unchecked")
     public static <T> Class<T> getTableClass(EntryHandler object) {
-        // 1、获取处理器的泛型类型
+        // Resolve the handler's generic type argument.
         Class<? extends EntryHandler> handlerClass = object.getClass();
         Class tableClass = cache.get(handlerClass);
         if (tableClass == null) {

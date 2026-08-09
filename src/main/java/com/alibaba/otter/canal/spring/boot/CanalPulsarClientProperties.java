@@ -15,7 +15,6 @@
  */
 package com.alibaba.otter.canal.spring.boot;
 
-import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.ArrayList;
@@ -39,7 +38,6 @@ import java.util.List;
  * @since 1.0.0
  */
 @ConfigurationProperties(CanalPulsarClientProperties.PREFIX)
-@Data
 public class CanalPulsarClientProperties {
 
     private static final int DEFAULT_MAX_RETRIES = 3;
@@ -62,7 +60,6 @@ public class CanalPulsarClientProperties {
 	/**
 	 * Connection definition for a single Pulsar Canal consumer.
 	 */
-	@Data
 	public static class Instance {
 
 		/** Pulsar broker service URL. */
@@ -73,33 +70,57 @@ public class CanalPulsarClientProperties {
 		private String topic;
 		/** Pulsar subscription name used by the consumer. */
 		private String subscriptName;
-		/** Maximum number of messages fetched per batch. Defaults to {@code 30}. */
+		/** Maximum number of messages fetched per batch. */
 		private int batchSize = 30;
-		/**
-		 * Combined with {@link #batchSize} to control the batch fetch behaviour. A
-		 * batch is delivered when either {@code batchSize} messages have
-		 * accumulated or {@code batchTimeoutSeconds} elapse since the last batch.
-		 */
+		/** Batch fetch timeout in seconds. */
 		private int batchTimeoutSeconds = 30;
-		/**
-		 * Timeout in seconds for processing a single batch. Should be tuned in
-		 * line with {@link #batchSize} and {@link #batchTimeoutSeconds}.
-		 */
+		/** Timeout in seconds for processing a single batch. */
 		private int batchProcessTimeoutSeconds = 60;
-		/** Delay in seconds before redelivering failed messages. Defaults to {@code 60}. */
+		/** Delay in seconds before redelivering failed messages. */
 		private int redeliveryDelaySeconds = 60;
-		/** Ack timeout in seconds; unacked messages are redelivered after this period. */
+		/** Ack timeout in seconds. */
 		private int ackTimeoutSeconds = 30;
-		/** Whether to enable the message retry feature. Defaults to {@code true}. */
+		/** Whether to enable the message retry feature. */
 		private boolean retry = true;
-		/** Whether the retry ({@code -RETRY}) and dead-letter ({@code -DLQ}) suffixes are upper-case. */
+		/** Whether the retry and dead-letter suffixes are upper-case. */
 		private boolean retryDLQUpperCase = false;
-		/** Maximum number of redelivery attempts before a message is moved to the dead-letter queue. */
+		/** Maximum number of redelivery attempts before dead-lettering. */
 		private int maxRedeliveryCount = 128;
 		/** Whether Canal messages are flattened (plain JSON) on the broker side. */
 		private boolean flatMessage = false;
 
+		public String getServiceUrl() { return serviceUrl; }
+		public void setServiceUrl(String serviceUrl) { this.serviceUrl = serviceUrl; }
+		public String getRoleToken() { return roleToken; }
+		public void setRoleToken(String roleToken) { this.roleToken = roleToken; }
+		public String getTopic() { return topic; }
+		public void setTopic(String topic) { this.topic = topic; }
+		public String getSubscriptName() { return subscriptName; }
+		public void setSubscriptName(String subscriptName) { this.subscriptName = subscriptName; }
+		public int getBatchSize() { return batchSize; }
+		public void setBatchSize(int batchSize) { this.batchSize = batchSize; }
+		public int getBatchTimeoutSeconds() { return batchTimeoutSeconds; }
+		public void setBatchTimeoutSeconds(int batchTimeoutSeconds) { this.batchTimeoutSeconds = batchTimeoutSeconds; }
+		public int getBatchProcessTimeoutSeconds() { return batchProcessTimeoutSeconds; }
+		public void setBatchProcessTimeoutSeconds(int batchProcessTimeoutSeconds) { this.batchProcessTimeoutSeconds = batchProcessTimeoutSeconds; }
+		public int getRedeliveryDelaySeconds() { return redeliveryDelaySeconds; }
+		public void setRedeliveryDelaySeconds(int redeliveryDelaySeconds) { this.redeliveryDelaySeconds = redeliveryDelaySeconds; }
+		public int getAckTimeoutSeconds() { return ackTimeoutSeconds; }
+		public void setAckTimeoutSeconds(int ackTimeoutSeconds) { this.ackTimeoutSeconds = ackTimeoutSeconds; }
+		public boolean isRetry() { return retry; }
+		public void setRetry(boolean retry) { this.retry = retry; }
+		public boolean isRetryDLQUpperCase() { return retryDLQUpperCase; }
+		public void setRetryDLQUpperCase(boolean retryDLQUpperCase) { this.retryDLQUpperCase = retryDLQUpperCase; }
+		public int getMaxRedeliveryCount() { return maxRedeliveryCount; }
+		public void setMaxRedeliveryCount(int maxRedeliveryCount) { this.maxRedeliveryCount = maxRedeliveryCount; }
+		public boolean isFlatMessage() { return flatMessage; }
+		public void setFlatMessage(boolean flatMessage) { this.flatMessage = flatMessage; }
+
 	}
 
+	public boolean isEnabled() { return enabled; }
+	public void setEnabled(boolean enabled) { this.enabled = enabled; }
+	public List<CanalPulsarClientProperties.Instance> getInstances() { return instances; }
+	public void setInstances(List<CanalPulsarClientProperties.Instance> instances) { this.instances = instances; }
 
 }

@@ -16,7 +16,6 @@
 package com.alibaba.otter.canal.spring.boot;
 
 import com.alibaba.otter.canal.protocol.CanalEntry;
-import lombok.Data;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
@@ -48,7 +47,6 @@ import java.util.concurrent.TimeUnit;
  * @since 1.0.0
  */
 @ConfigurationProperties(CanalProperties.PREFIX)
-@Data
 public class CanalProperties {
 
 	/** Configuration prefix used by Spring Boot to bind properties. */
@@ -95,6 +93,21 @@ public class CanalProperties {
 	 * data and transaction end.
 	 */
 	private List<CanalEntry.EntryType> subscribeTypes = Arrays.asList(CanalEntry.EntryType.ROWDATA);
+
+	public ClientMode getMode() { return mode; }
+	public void setMode(ClientMode mode) { this.mode = mode; }
+	public Boolean getAsync() { return async; }
+	public void setAsync(Boolean async) { this.async = async; }
+	public String getFilter() { return filter; }
+	public void setFilter(String filter) { this.filter = filter; }
+	public Integer getBatchSize() { return batchSize; }
+	public void setBatchSize(Integer batchSize) { this.batchSize = batchSize; }
+	public Long getTimeout() { return timeout; }
+	public void setTimeout(Long timeout) { this.timeout = timeout; }
+	public TimeUnit getUnit() { return unit; }
+	public void setUnit(TimeUnit unit) { this.unit = unit; }
+	public List<CanalEntry.EntryType> getSubscribeTypes() { return subscribeTypes; }
+	public void setSubscribeTypes(List<CanalEntry.EntryType> subscribeTypes) { this.subscribeTypes = subscribeTypes; }
 
 	/**
 	 * Canal client connection mode.

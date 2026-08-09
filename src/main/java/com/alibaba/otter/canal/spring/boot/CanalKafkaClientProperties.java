@@ -15,7 +15,6 @@
  */
 package com.alibaba.otter.canal.spring.boot;
 
-import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.ArrayList;
@@ -39,7 +38,6 @@ import java.util.List;
  * @since 1.0.0
  */
 @ConfigurationProperties(CanalKafkaClientProperties.PREFIX)
-@Data
 public class CanalKafkaClientProperties {
 
     private static final int DEFAULT_MAX_RETRIES = 3;
@@ -63,25 +61,43 @@ public class CanalKafkaClientProperties {
 	/**
 	 * Connection definition for a single Kafka Canal consumer.
 	 */
-	@Data
 	public static class Instance {
 
 		/** Whether to start consuming from the earliest available offset. */
-		boolean earliest = true;
+		private boolean earliest = true;
 		/** Kafka partition index to consume from, or {@code null} to consume all partitions. */
-		Integer partition;
+		private Integer partition;
 		/** Comma-separated Kafka broker server addresses. */
-		String servers;
+		private String servers;
 		/** Kafka topic that Canal publishes binlog events to. */
-		String topic;
+		private String topic;
 		/** Kafka consumer group id. */
-		String groupId;
+		private String groupId;
 		/** Number of messages fetched per batch, or {@code null} to use the client default. */
-		Integer batchSize;
+		private Integer batchSize;
 		/** Whether Canal messages are flattened (plain JSON) on the broker side. */
-		boolean flatMessage;
+		private boolean flatMessage;
+
+		public boolean isEarliest() { return earliest; }
+		public void setEarliest(boolean earliest) { this.earliest = earliest; }
+		public Integer getPartition() { return partition; }
+		public void setPartition(Integer partition) { this.partition = partition; }
+		public String getServers() { return servers; }
+		public void setServers(String servers) { this.servers = servers; }
+		public String getTopic() { return topic; }
+		public void setTopic(String topic) { this.topic = topic; }
+		public String getGroupId() { return groupId; }
+		public void setGroupId(String groupId) { this.groupId = groupId; }
+		public Integer getBatchSize() { return batchSize; }
+		public void setBatchSize(Integer batchSize) { this.batchSize = batchSize; }
+		public boolean isFlatMessage() { return flatMessage; }
+		public void setFlatMessage(boolean flatMessage) { this.flatMessage = flatMessage; }
 
 	}
 
+	public boolean isEnabled() { return enabled; }
+	public void setEnabled(boolean enabled) { this.enabled = enabled; }
+	public List<CanalKafkaClientProperties.Instance> getInstances() { return instances; }
+	public void setInstances(List<CanalKafkaClientProperties.Instance> instances) { this.instances = instances; }
 
 }

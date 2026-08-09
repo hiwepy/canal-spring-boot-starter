@@ -4,8 +4,9 @@ import com.alibaba.otter.canal.handler.MessageHandler;
 import com.alibaba.otter.canal.protocol.CanalEntry;
 import com.alibaba.otter.canal.protocol.Message;
 import com.alibaba.otter.canal.util.CanalUtils;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 import java.util.Arrays;
@@ -28,8 +29,9 @@ import java.util.concurrent.TimeUnit;
  * @author [@Loong Wan](https://github.com/loong10k)
  * @since 1.0.0
  */
-@Slf4j
 public abstract class AbstractCanalClient<C extends CanalConnector> implements CanalClient<C> {
+
+    private static final Logger log = LoggerFactory.getLogger(AbstractCanalClient.class);
 
     /** Handler invoked when a worker thread terminates with an uncaught exception. */
     protected Thread.UncaughtExceptionHandler handler            = (t, e) -> log.error("parse events has an error",

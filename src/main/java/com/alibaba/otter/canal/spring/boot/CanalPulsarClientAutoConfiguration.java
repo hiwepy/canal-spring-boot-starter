@@ -1,30 +1,78 @@
 package com.alibaba.otter.canal.spring.boot;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.alibaba.otter.canal.client.PulsarMQCanalClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.alibaba.otter.canal.client.pulsarmq.PulsarMQCanalConnector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.alibaba.otter.canal.factory.MapColumnModelFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.alibaba.otter.canal.handler.EntryHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.alibaba.otter.canal.handler.MessageHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.alibaba.otter.canal.handler.RowDataHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.alibaba.otter.canal.handler.impl.AsyncFlatMessageHandlerImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.alibaba.otter.canal.handler.impl.MapRowDataHandlerImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.alibaba.otter.canal.handler.impl.SyncFlatMessageHandlerImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.alibaba.otter.canal.util.ConnectorUtil;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.pulsar.client.api.PulsarClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Import;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.stream.Collectors;
 
 /**
@@ -52,7 +100,6 @@ import java.util.stream.Collectors;
 @ConditionalOnProperty(value = CanalProperties.CANAL_MODE, havingValue = "pulsarmq")
 @EnableConfigurationProperties({CanalProperties.class, CanalPulsarClientProperties.class})
 @Import(CanalThreadPoolAutoConfiguration.class)
-@Slf4j
 public class CanalPulsarClientAutoConfiguration {
 
     /**

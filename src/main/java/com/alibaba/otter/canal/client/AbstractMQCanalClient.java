@@ -2,7 +2,8 @@ package com.alibaba.otter.canal.client;
 
 import com.alibaba.otter.canal.handler.MessageHandler;
 import com.alibaba.otter.canal.protocol.FlatMessage;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import java.util.List;
@@ -23,8 +24,9 @@ import java.util.List;
  * @author [@Loong Wan](https://github.com/loong10k)
  * @since 1.0.0
  */
-@Slf4j
 public abstract class AbstractMQCanalClient<C extends CanalMQConnector> extends AbstractCanalClient<C> {
+
+    private static final Logger log = LoggerFactory.getLogger(AbstractMQCanalClient.class);
 
     /**
      * @param connectors the MQ-backed connectors this client will consume from

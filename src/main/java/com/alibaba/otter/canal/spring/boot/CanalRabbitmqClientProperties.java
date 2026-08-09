@@ -15,7 +15,6 @@
  */
 package com.alibaba.otter.canal.spring.boot;
 
-import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.ArrayList;
@@ -39,7 +38,6 @@ import java.util.List;
  * @since 1.0.0
  */
 @ConfigurationProperties(CanalRabbitmqClientProperties.PREFIX)
-@Data
 public class CanalRabbitmqClientProperties {
 
 	/** Configuration prefix used by Spring Boot to bind properties. */
@@ -60,28 +58,51 @@ public class CanalRabbitmqClientProperties {
     /**
      * Connection definition for a single RabbitMQ Canal consumer.
      */
-    @Data
     public static class Instance {
 
         /** Comma-separated RabbitMQ broker server addresses. */
-        private String                              addresses;
+        private String addresses;
         /** RabbitMQ virtual host. */
-        private String                              vhost;
+        private String vhost;
         /** RabbitMQ queue name that Canal publishes binlog events to. */
-        private String                              queueName;
+        private String queueName;
         /** Alibaba Cloud access key, when connecting to Cloud RabbitMQ. */
-        private String                              accessKey;
+        private String accessKey;
         /** Alibaba Cloud secret key, when connecting to Cloud RabbitMQ. */
-        private String                              secretKey;
+        private String secretKey;
         /** Alibaba Cloud resource owner id, when connecting to Cloud RabbitMQ. */
-        private Long                                resourceOwnerId;
+        private Long resourceOwnerId;
         /** RabbitMQ username, if authentication is enabled. */
-        private String                              username;
+        private String username;
         /** RabbitMQ password, if authentication is enabled. */
-        private String                              password;
+        private String password;
         /** Whether Canal messages are flattened (plain JSON) on the broker side. */
-        private boolean                             flatMessage;
+        private boolean flatMessage;
+
+        public String getAddresses() { return addresses; }
+        public void setAddresses(String addresses) { this.addresses = addresses; }
+        public String getVhost() { return vhost; }
+        public void setVhost(String vhost) { this.vhost = vhost; }
+        public String getQueueName() { return queueName; }
+        public void setQueueName(String queueName) { this.queueName = queueName; }
+        public String getAccessKey() { return accessKey; }
+        public void setAccessKey(String accessKey) { this.accessKey = accessKey; }
+        public String getSecretKey() { return secretKey; }
+        public void setSecretKey(String secretKey) { this.secretKey = secretKey; }
+        public Long getResourceOwnerId() { return resourceOwnerId; }
+        public void setResourceOwnerId(Long resourceOwnerId) { this.resourceOwnerId = resourceOwnerId; }
+        public String getUsername() { return username; }
+        public void setUsername(String username) { this.username = username; }
+        public String getPassword() { return password; }
+        public void setPassword(String password) { this.password = password; }
+        public boolean isFlatMessage() { return flatMessage; }
+        public void setFlatMessage(boolean flatMessage) { this.flatMessage = flatMessage; }
 
     }
+
+	public boolean isEnabled() { return enabled; }
+	public void setEnabled(boolean enabled) { this.enabled = enabled; }
+	public List<CanalRabbitmqClientProperties.Instance> getInstances() { return instances; }
+	public void setInstances(List<CanalRabbitmqClientProperties.Instance> instances) { this.instances = instances; }
 
 }

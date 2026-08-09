@@ -2,7 +2,6 @@ package com.alibaba.otter.canal.client;
 
 import com.alibaba.otter.canal.handler.MessageHandler;
 import com.alibaba.otter.canal.protocol.CanalEntry;
-import lombok.experimental.Accessors;
 import org.apache.commons.lang.StringUtils;
 
 import java.util.Arrays;
@@ -23,7 +22,6 @@ import java.util.concurrent.TimeUnit;
  * @author [@Loong Wan](https://github.com/loong10k)
  * @since 1.0.0
  */
-@Accessors(chain = true)
 public abstract class AbstractClientBuilder<R extends CanalClient, C extends CanalConnector> {
 
     /** Canal subscription filter expression. */

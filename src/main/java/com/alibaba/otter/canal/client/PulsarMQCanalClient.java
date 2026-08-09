@@ -1,10 +1,18 @@
 package com.alibaba.otter.canal.client;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.alibaba.otter.canal.client.pulsarmq.PulsarMQCanalConnector;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.ReflectionUtils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.lang.reflect.Field;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.List;
 
 /**
@@ -15,7 +23,6 @@ import java.util.List;
  * @author [@Loong Wan](https://github.com/loong10k)
  * @since 1.0.0
  */
-@Slf4j
 public class PulsarMQCanalClient extends AbstractMQCanalClient<PulsarMQCanalConnector> {
 
     private PulsarMQCanalClient(List<PulsarMQCanalConnector> connectors) {

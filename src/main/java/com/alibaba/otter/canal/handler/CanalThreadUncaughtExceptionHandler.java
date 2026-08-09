@@ -1,6 +1,7 @@
 package com.alibaba.otter.canal.handler;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Logs uncaught exceptions thrown by Canal worker threads.
@@ -13,8 +14,9 @@ import lombok.extern.slf4j.Slf4j;
  * @author [@Loong Wan](https://github.com/loong10k)
  * @since 1.0.0
  */
-@Slf4j
 public class CanalThreadUncaughtExceptionHandler implements Thread.UncaughtExceptionHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(CanalThreadUncaughtExceptionHandler.class);
 
     /**
      * Logs the throwable raised by the given thread.

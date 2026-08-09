@@ -1,29 +1,75 @@
 package com.alibaba.otter.canal.spring.boot;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.alibaba.otter.canal.client.ClusterCanalClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.alibaba.otter.canal.client.impl.ClusterCanalConnector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.alibaba.otter.canal.client.impl.SimpleCanalConnector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.alibaba.otter.canal.factory.EntryColumnModelFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.alibaba.otter.canal.handler.EntryHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.alibaba.otter.canal.handler.MessageHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.alibaba.otter.canal.handler.RowDataHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.alibaba.otter.canal.handler.impl.AsyncMessageHandlerImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.alibaba.otter.canal.handler.impl.RowDataHandlerImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.alibaba.otter.canal.handler.impl.SyncMessageHandlerImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.alibaba.otter.canal.protocol.CanalEntry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import com.alibaba.otter.canal.util.ConnectorUtil;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Import;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.stream.Collectors;
 
 /**
@@ -51,7 +97,6 @@ import java.util.stream.Collectors;
 @ConditionalOnProperty(value = CanalProperties.CANAL_MODE, havingValue = "cluster")
 @EnableConfigurationProperties({CanalProperties.class, CanalClusterProperties.class})
 @Import(CanalThreadPoolAutoConfiguration.class)
-@Slf4j
 public class CanalClusterClientAutoConfiguration {
 
     /**

@@ -118,9 +118,20 @@ public class GenericUtil {
         if (tableClass == null) {
             Type[] interfacesTypes = handlerClass.getGenericInterfaces();
             for (Type t : interfacesTypes) {
-                Class c = (Class) ((ParameterizedType) t).getRawType();
+                if (!(t instanceof ParameterizedType)) {
+                    continue;
+                }
+                ParameterizedType pt = (ParameterizedType) t;
+                Class c = (Class) pt.getRawType();
                 if (c.equals(EntryHandler.class)) {
-                    tableClass = (Class<T>) ((ParameterizedType) t).getActualTypeArguments()[0];
+                    Type typeArg = pt.getActualTypeArguments()[0];
+                    if (typeArg instanceof Class) {
+                        tableClass = (Class<T>) typeArg;
+                    } else if (typeArg instanceof ParameterizedType) {
+                        tableClass = (Class<T>) ((ParameterizedType) typeArg).getRawType();
+                    } else {
+                        continue;
+                    }
                     cache.putIfAbsent(handlerClass, tableClass);
                     return tableClass;
                 }

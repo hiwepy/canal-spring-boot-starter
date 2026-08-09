@@ -15,7 +15,6 @@
  */
 package com.alibaba.otter.canal.spring.boot;
 
-import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.time.Duration;
@@ -44,7 +43,6 @@ import java.util.function.Function;
  * @since 1.0.0
  */
 @ConfigurationProperties(CanalThreadPoolProperties.PREFIX)
-@Data
 public class CanalThreadPoolProperties {
 
 	/** Configuration prefix used by Spring Boot to bind properties. */
@@ -150,4 +148,26 @@ public class CanalThreadPoolProperties {
 		}
 
 	}
+
+	public int getCorePoolSize() { return corePoolSize; }
+	public void setCorePoolSize(int corePoolSize) { this.corePoolSize = corePoolSize; }
+	public int getMaxPoolSize() { return maxPoolSize; }
+	public void setMaxPoolSize(int maxPoolSize) { this.maxPoolSize = maxPoolSize; }
+	public int getQueueCapacity() { return queueCapacity; }
+	public void setQueueCapacity(int queueCapacity) { this.queueCapacity = queueCapacity; }
+	public Duration getKeepAlive() { return keepAlive; }
+	public void setKeepAlive(Duration keepAlive) { this.keepAlive = keepAlive; }
+	public boolean isAllowCoreThreadTimeOut() { return allowCoreThreadTimeOut; }
+	public void setAllowCoreThreadTimeOut(boolean allowCoreThreadTimeOut) { this.allowCoreThreadTimeOut = allowCoreThreadTimeOut; }
+	public boolean isWaitForTasksToCompleteOnShutdown() { return waitForTasksToCompleteOnShutdown; }
+	public void setWaitForTasksToCompleteOnShutdown(boolean waitForTasksToCompleteOnShutdown) { this.waitForTasksToCompleteOnShutdown = waitForTasksToCompleteOnShutdown; }
+	public int getAwaitTerminationSeconds() { return awaitTerminationSeconds; }
+	public void setAwaitTerminationSeconds(int awaitTerminationSeconds) { this.awaitTerminationSeconds = awaitTerminationSeconds; }
+	public String getThreadNamePrefix() { return threadNamePrefix; }
+	public void setThreadNamePrefix(String threadNamePrefix) { this.threadNamePrefix = threadNamePrefix; }
+	public boolean isDaemon() { return daemon; }
+	public void setDaemon(boolean daemon) { this.daemon = daemon; }
+	public RejectedPolicy getRejectedPolicy() { return rejectedPolicy; }
+	public void setRejectedPolicy(RejectedPolicy rejectedPolicy) { this.rejectedPolicy = rejectedPolicy; }
+
 }

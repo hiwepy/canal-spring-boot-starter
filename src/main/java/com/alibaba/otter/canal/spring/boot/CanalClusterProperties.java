@@ -1,9 +1,5 @@
 package com.alibaba.otter.canal.spring.boot;
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.ArrayList;
@@ -28,9 +24,6 @@ import java.util.List;
  * @since 1.0.0
  */
 @ConfigurationProperties(CanalClusterProperties.PREFIX)
-@Getter
-@Setter
-@ToString
 public class CanalClusterProperties {
 
     /** Default Canal server TCP port. */
@@ -46,18 +39,17 @@ public class CanalClusterProperties {
      */
     private List<CanalClusterProperties.Instance> instances = new ArrayList<>();
 
+    public List<CanalClusterProperties.Instance> getInstances() { return instances; }
+    public void setInstances(List<CanalClusterProperties.Instance> instances) { this.instances = instances; }
+
     /**
      * Connection definition for a single Canal cluster instance.
      */
-    @Data
     public static class Instance {
 
         /** Comma-separated list of Canal server addresses. */
         private String addresses;
-        /**
-         * ZooKeeper address list used for cluster failover. When set, it takes
-         * precedence over {@link #addresses}.
-         */
+        /** ZooKeeper address list used for cluster failover. */
         private String zkServers;
         /** Canal destination (instance name) to subscribe to. */
         private String destination;
@@ -65,17 +57,33 @@ public class CanalClusterProperties {
         private String username;
         /** Canal server account password, if authentication is enabled. */
         private String password;
-        /** Socket connect timeout in milliseconds. Defaults to {@code 60000}. */
-        private int soTimeout     = 60000;
-        /** Socket idle timeout in milliseconds. Defaults to {@code 3600000} (1 hour). */
-        private int idleTimeout   = 60 * 60 * 1000;
-        /**
-         * Number of retries on connection failure. Set to {@code -1} to allow
-         * graceful shutdown while {@code subscribe} is blocking.
-         */
-        private int retryTimes    = 3;
-        /** Interval between retries in milliseconds. Defaults to {@code 5000}. */
+        /** Socket connect timeout in milliseconds. */
+        private int soTimeout = 60000;
+        /** Socket idle timeout in milliseconds. */
+        private int idleTimeout = 60 * 60 * 1000;
+        /** Number of retries on connection failure. */
+        private int retryTimes = 3;
+        /** Interval between retries in milliseconds. */
         private int retryInterval = 5000;
+
+        public String getAddresses() { return addresses; }
+        public void setAddresses(String addresses) { this.addresses = addresses; }
+        public String getZkServers() { return zkServers; }
+        public void setZkServers(String zkServers) { this.zkServers = zkServers; }
+        public String getDestination() { return destination; }
+        public void setDestination(String destination) { this.destination = destination; }
+        public String getUsername() { return username; }
+        public void setUsername(String username) { this.username = username; }
+        public String getPassword() { return password; }
+        public void setPassword(String password) { this.password = password; }
+        public int getSoTimeout() { return soTimeout; }
+        public void setSoTimeout(int soTimeout) { this.soTimeout = soTimeout; }
+        public int getIdleTimeout() { return idleTimeout; }
+        public void setIdleTimeout(int idleTimeout) { this.idleTimeout = idleTimeout; }
+        public int getRetryTimes() { return retryTimes; }
+        public void setRetryTimes(int retryTimes) { this.retryTimes = retryTimes; }
+        public int getRetryInterval() { return retryInterval; }
+        public void setRetryInterval(int retryInterval) { this.retryInterval = retryInterval; }
 
     }
 

@@ -5,13 +5,15 @@ import com.alibaba.otter.canal.annotation.CanalEventHandler;
 import com.alibaba.otter.canal.annotation.event.*;
 import com.alibaba.otter.canal.model.CanalModel;
 import com.alibaba.otter.canal.protocol.CanalEntry;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 @CanalEventHandler
-@Slf4j
 public class CanalMessageEventHandler {
+
+    private static final Logger log = LoggerFactory.getLogger(CanalMessageEventHandler.class);
 
     @OnCreateTableEvent(schema = "my_auth")
     public void onCreateTableEvent(CanalModel model, CanalEntry.RowChange rowChange) {
@@ -30,12 +32,8 @@ public class CanalMessageEventHandler {
 
     @OnInsertEvent(schema = "my_auth", table = "user_info")
     public void onEventInsertData(CanalModel model, CanalEntry.RowChange rowChange) {
-
-        // 1，获取当前事件的操作类型
         CanalEntry.EventType eventType = rowChange.getEventType();
-        // 2,获取数据集
         List<CanalEntry.RowData> rowDatasList = rowChange.getRowDatasList();
-        // 3,遍历RowDataList，并打印数据集
         for (CanalEntry.RowData rowData : rowDatasList) {
             JSONObject beforeData = new JSONObject();
             List<CanalEntry.Column> beforeColumnsList = rowData.getBeforeColumnsList();
@@ -47,13 +45,11 @@ public class CanalMessageEventHandler {
             for (CanalEntry.Column column : afterColumnsList) {
                 affterData.put(column.getName(), column.getValue());
             }
-
             System.out.println("Table:" + model.getTable() +
                     ",EventType:" + eventType +
                     ",Before:" + beforeData +
                     ",After:" + affterData);
         }
-
     }
 
     @OnUpdateEvent(schema = "my_auth", table = "user_info")

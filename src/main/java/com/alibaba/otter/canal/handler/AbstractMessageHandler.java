@@ -9,7 +9,8 @@ import com.alibaba.otter.canal.protocol.CanalEntry;
 import com.alibaba.otter.canal.protocol.Message;
 import com.alibaba.otter.canal.util.GenericUtil;
 import com.alibaba.otter.canal.util.HandlerUtil;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -35,8 +36,9 @@ import java.util.*;
  * @author [@Loong Wan](https://github.com/loong10k)
  * @since 1.0.0
  */
-@Slf4j
 public abstract class AbstractMessageHandler implements MessageHandler<Message>, ApplicationContextAware {
+
+    private static final Logger log = LoggerFactory.getLogger(AbstractMessageHandler.class);
 
     /** Entry types to subscribe to, marking transaction begin, data change and transaction end. */
     private List<CanalEntry.EntryType> subscribeTypes = Arrays.asList(CanalEntry.EntryType.ROWDATA);
@@ -58,7 +60,7 @@ public abstract class AbstractMessageHandler implements MessageHandler<Message>,
         if(Objects.nonNull(subscribeTypes)){
             this.subscribeTypes = subscribeTypes;
         }
-        this.tableHandlerMap = HandlerUtil.getTableHandlerList(entryHandlers);
+        this.tableHandlerMap = HandlerUtil.getTableHandlerMap(entryHandlers);
         this.rowDataHandler = rowDataHandler;
     }
 

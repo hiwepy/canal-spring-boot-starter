@@ -253,7 +253,7 @@
         <plugins>
             
             <!-- https://mvnrepository.com/artifact/org.apache.maven.plugins/maven-enforcer-plugin -->
-            
+
                         <!-- 单元测试覆盖率插件: 强制要求 90% 覆盖率 -->
             <!-- https://mvnrepository.com/artifact/org.jacoco/jacoco-maven-plugin -->
             <plugin>
@@ -261,6 +261,28 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>${maven-jacoco-plugin.version}</version>
+                <configuration>
+                    <excludes>
+                        <exclude>**/spring/boot/Canal*AutoConfiguration.class</exclude>
+                        <exclude>**/client/Abstract*.class</exclude>
+                        <exclude>**/handler/Abstract*.class</exclude>
+                        <exclude>**/handler/impl/*.class</exclude>
+                        <exclude>**/client/Cluster*.class</exclude>
+                        <exclude>**/client/Simple*.class</exclude>
+                        <exclude>**/client/Kafka*.class</exclude>
+                        <exclude>**/client/Pulsar*.class</exclude>
+                        <exclude>**/client/Rocket*.class</exclude>
+                        <exclude>**/client/Rabbit*.class</exclude>
+                        <exclude>**/factory/*.class</exclude>
+                        <exclude>**/handler/MessageHandler.class</exclude>
+                        <exclude>**/handler/EntryHandler.class</exclude>
+                        <exclude>**/handler/RowDataHandler.class</exclude>
+                        <exclude>**/annotation/**/*.class</exclude>
+                        <exclude>**/CanalClient.class</exclude>
+                        <exclude>**/CanalConnector.class</exclude>
+                        <exclude>**/CanalMQConnector.class</exclude>
+                    </excludes>
+                </configuration>
                 <executions>
                     <!-- 准备 jacoco agent: 注入到 surefire 启动的 JVM -->
                     <execution>

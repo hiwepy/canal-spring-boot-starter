@@ -11,7 +11,7 @@ import java.util.Arrays;
  * allowing the Canal message handlers to invoke it reflectively when a matching
  * row-change event is received.
  *
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 1.0.0
  */
 public class CanalEventHolder {

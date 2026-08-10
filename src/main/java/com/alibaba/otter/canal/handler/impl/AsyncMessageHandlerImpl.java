@@ -20,7 +20,7 @@ import java.util.List;
  * Canal polling thread is not blocked by handler work.
  * </p>
  *
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 1.0.0
  */
 public class AsyncMessageHandlerImpl extends AbstractMessageHandler {

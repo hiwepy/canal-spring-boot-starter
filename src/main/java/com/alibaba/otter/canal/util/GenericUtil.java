@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * Reflection helpers for resolving {@link EntryHandler} generic types and
  * building reflective method invocation argument arrays.
  *
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 1.0.0
  */
 public class GenericUtil {

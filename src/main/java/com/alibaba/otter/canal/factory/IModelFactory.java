@@ -9,7 +9,7 @@ import java.util.Set;
  * Factory contract for materialising Canal row data into an entry model object.
  *
  * @param <T> the raw row data type (e.g. protobuf columns or column maps)
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 1.0.0
  */
 public interface IModelFactory<T> {

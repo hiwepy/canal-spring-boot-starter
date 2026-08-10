@@ -15,7 +15,7 @@ import java.lang.annotation.*;
  * {@code @CanalEventHandler} on startup.
  * </p>
  *
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 1.0.0
  */
 @Target({ElementType.TYPE})

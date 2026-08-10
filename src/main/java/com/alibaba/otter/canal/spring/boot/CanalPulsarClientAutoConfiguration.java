@@ -44,7 +44,7 @@ import java.util.stream.Collectors;
  *   <li>{@code canal.pulsar.instances} — list of Pulsar Canal consumer definitions</li>
  * </ul>
  *
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 1.0.0
  */
 @Configuration

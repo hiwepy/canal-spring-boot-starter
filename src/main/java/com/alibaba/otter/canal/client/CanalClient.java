@@ -13,7 +13,7 @@ import org.springframework.beans.factory.DisposableBean;
  * </p>
  *
  * @param <C> the {@link CanalConnector} type used by this client
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 1.0.0
  */
 public interface CanalClient<C extends CanalConnector> extends DisposableBean {

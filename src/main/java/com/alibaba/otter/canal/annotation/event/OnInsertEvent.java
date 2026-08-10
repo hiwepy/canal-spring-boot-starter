@@ -15,7 +15,7 @@ import java.lang.annotation.*;
  * receive insert events for the matching destination/schema/table.
  * </p>
  *
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 1.0.0
  */
 

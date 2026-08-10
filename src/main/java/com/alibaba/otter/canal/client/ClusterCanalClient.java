@@ -11,7 +11,7 @@ import java.util.List;
  * entries from one or more {@link ClusterCanalConnector} instances backed by a
  * Canal HA cluster (optionally via ZooKeeper failover).
  *
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 1.0.0
  */
 public class ClusterCanalClient extends AbstractCanalClient<ClusterCanalConnector> {

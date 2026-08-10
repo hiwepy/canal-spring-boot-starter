@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  * Registry helpers for resolving the {@link EntryHandler} or
  * {@link CanalEventHolder} that should handle a given Canal row-change event.
  *
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 1.0.0
  */
 public class HandlerUtil {

@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @param <R> the {@link CanalClient} type produced by this builder
  * @param <C> the {@link CanalConnector} type consumed by the produced client
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 1.0.0
  */
 @Accessors(chain = true)

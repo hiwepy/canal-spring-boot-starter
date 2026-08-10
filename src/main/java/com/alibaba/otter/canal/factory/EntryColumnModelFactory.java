@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  * MyBatis-Plus {@link TableInfo} column-to-property mapping.
  * </p>
  *
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 1.0.0
  */
 public class EntryColumnModelFactory extends AbstractModelFactory<List<CanalEntry.Column>> {

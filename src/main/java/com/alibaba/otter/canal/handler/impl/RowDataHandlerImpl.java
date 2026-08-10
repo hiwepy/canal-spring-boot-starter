@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  * before-image.
  * </p>
  *
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 1.0.0
  */
 public class RowDataHandlerImpl implements RowDataHandler<CanalEntry.RowData> {

@@ -36,7 +36,7 @@ import java.util.List;
  * <p>All output is emitted at DEBUG level so production logs are not polluted
  * unless explicitly enabled.</p>
  *
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 1.0.0
  */
 public class CanalUtils {

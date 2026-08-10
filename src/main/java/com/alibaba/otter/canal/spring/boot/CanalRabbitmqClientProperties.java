@@ -35,7 +35,7 @@ import java.util.List;
  *   <li>{@code canal.rabbitmq.instances} — list of RabbitMQ Canal consumer definitions</li>
  * </ul>
  *
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 1.0.0
  */
 @ConfigurationProperties(CanalRabbitmqClientProperties.PREFIX)

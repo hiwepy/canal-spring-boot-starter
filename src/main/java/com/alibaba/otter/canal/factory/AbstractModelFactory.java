@@ -13,7 +13,7 @@ import com.alibaba.otter.canal.util.HandlerUtil;
  * {@link #newInstance(Class, Object)}.
  *
  * @param <T> the raw row data type
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 1.0.0
  */
 public abstract class AbstractModelFactory<T> implements IModelFactory<T> {

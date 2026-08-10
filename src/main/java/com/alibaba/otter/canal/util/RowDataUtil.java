@@ -9,7 +9,7 @@ import java.util.Objects;
  * Lookup helpers for extracting column values from a Canal
  * {@link CanalEntry.RowData} before-/after-image.
  *
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 1.0.0
  */
 public class RowDataUtil {

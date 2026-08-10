@@ -12,7 +12,7 @@ import java.util.List;
  * entries from one or more {@link SimpleCanalConnector} instances via direct
  * single-node TCP connections.
  *
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 1.0.0
  */
 public class SimpleCanalClient extends AbstractCanalClient<SimpleCanalConnector> {

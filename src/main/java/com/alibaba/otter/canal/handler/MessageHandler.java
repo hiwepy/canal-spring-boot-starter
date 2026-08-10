@@ -9,7 +9,7 @@ package com.alibaba.otter.canal.handler;
  * </p>
  *
  * @param <T> the message type handled (e.g. {@code Message} or {@code FlatMessage})
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 1.0.0
  */
 @FunctionalInterface

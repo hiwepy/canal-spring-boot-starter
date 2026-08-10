@@ -19,7 +19,7 @@ import java.net.InetSocketAddress;
  * Factory methods that build Canal {@link com.alibaba.otter.canal.client.CanalConnector}
  * instances from the starter's typed property objects.
  *
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 1.0.0
  */
 public class ConnectorUtil {

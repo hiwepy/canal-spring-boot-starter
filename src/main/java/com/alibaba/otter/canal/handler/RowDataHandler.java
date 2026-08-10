@@ -7,7 +7,7 @@ import com.alibaba.otter.canal.protocol.CanalEntry;
  * dispatching it to an {@link EntryHandler}.
  *
  * @param <T> the raw row data type (e.g. {@code CanalEntry.RowData} or a list of column maps)
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 1.0.0
  */
 public interface RowDataHandler<T> {

@@ -39,7 +39,7 @@ import java.util.function.Function;
  *   <li>{@code canal.thread-pool.rejected-policy} — rejection policy (default {@code AbortPolicy})</li>
  * </ul>
  *
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 1.0.0
  */
 @ConfigurationProperties(CanalThreadPoolProperties.PREFIX)

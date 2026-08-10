@@ -33,7 +33,7 @@ import java.util.*;
  * {@link CanalEventHandler} on context initialisation.
  * </p>
  *
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 1.0.0
  */
 public abstract class AbstractMessageHandler implements MessageHandler<Message>, ApplicationContextAware {

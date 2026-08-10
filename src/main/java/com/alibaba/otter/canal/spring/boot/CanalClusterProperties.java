@@ -20,7 +20,7 @@ import java.util.List;
  *   <li>{@code canal.cluster.instances} — list of Canal cluster connection definitions</li>
  * </ul>
  *
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 1.0.0
  */
 @ConfigurationProperties(CanalClusterProperties.PREFIX)

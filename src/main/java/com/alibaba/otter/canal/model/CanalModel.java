@@ -11,7 +11,7 @@ import com.alibaba.otter.canal.protocol.CanalEntry;
  * timing without altering method signatures.
  * </p>
  *
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 1.0.0
  */
 public class CanalModel {

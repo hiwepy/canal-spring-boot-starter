@@ -17,7 +17,7 @@ import java.util.Map;
  * populated using its MyBatis-Plus {@link TableInfo} column-to-property mapping.
  * </p>
  *
- * @author [@Loong Wan](https://github.com/loong10k)
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
  * @since 1.0.0
  */
 public class MapColumnModelFactory extends AbstractModelFactory<Map<String, String>> {

@@ -38,6 +38,11 @@ import java.util.List;
  * @since 1.0.0
  */
 @ConfigurationProperties(CanalRocketmqClientProperties.PREFIX)
+/**
+ * <p>Auto-configuration for CanalRocketmqClientProperties.</p>
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
+ * @since 1.0.0
+ */
 public class CanalRocketmqClientProperties {
 
 	/** Configuration prefix used by Spring Boot to bind properties. */
@@ -81,32 +86,55 @@ public class CanalRocketmqClientProperties {
         /** Number of messages fetched per batch. */
         private Integer batchSize = -1;
 
+        /** @return return the name server. */
         public String getNameServer() { return nameServer; }
+        /** @param nameServer set the name server. */
         public void setNameServer(String nameServer) { this.nameServer = nameServer; }
+        /** @return return the topic. */
         public String getTopic() { return topic; }
+        /** @param topic set the topic. */
         public void setTopic(String topic) { this.topic = topic; }
+        /** @return return the group name. */
         public String getGroupName() { return groupName; }
+        /** @param groupName set the group name. */
         public void setGroupName(String groupName) { this.groupName = groupName; }
+        /** @return return whether enable message trace is enabled. */
         public boolean isEnableMessageTrace() { return enableMessageTrace; }
+        /** @param enableMessageTrace set the enable message trace. */
         public void setEnableMessageTrace(boolean enableMessageTrace) { this.enableMessageTrace = enableMessageTrace; }
+        /** @return return the access key. */
         public String getAccessKey() { return accessKey; }
+        /** @param accessKey set the access key. */
         public void setAccessKey(String accessKey) { this.accessKey = accessKey; }
+        /** @return return the secret key. */
         public String getSecretKey() { return secretKey; }
+        /** @param secretKey set the secret key. */
         public void setSecretKey(String secretKey) { this.secretKey = secretKey; }
+        /** @return return the access channel. */
         public String getAccessChannel() { return accessChannel; }
+        /** @param accessChannel set the access channel. */
         public void setAccessChannel(String accessChannel) { this.accessChannel = accessChannel; }
+        /** @return return the namespace. */
         public String getNamespace() { return namespace; }
+        /** @param namespace set the namespace. */
         public void setNamespace(String namespace) { this.namespace = namespace; }
+        /** @return return the customized trace topic. */
         public String getCustomizedTraceTopic() { return customizedTraceTopic; }
+        /** @param customizedTraceTopic set the customized trace topic. */
         public void setCustomizedTraceTopic(String customizedTraceTopic) { this.customizedTraceTopic = customizedTraceTopic; }
+        /** @return return the batch size. */
         public Integer getBatchSize() { return batchSize; }
+        /** @param batchSize set the batch size. */
         public void setBatchSize(Integer batchSize) { this.batchSize = batchSize; }
 
     }
 
+	/** @return return whether enabled is enabled. */
 	public boolean isEnabled() { return enabled; }
+	/** @param enabled set the enabled. */
 	public void setEnabled(boolean enabled) { this.enabled = enabled; }
 	public List<CanalRocketmqClientProperties.Instance> getInstances() { return instances; }
+	/** @param instances set the instances. */
 	public void setInstances(List<CanalRocketmqClientProperties.Instance> instances) { this.instances = instances; }
 
 }

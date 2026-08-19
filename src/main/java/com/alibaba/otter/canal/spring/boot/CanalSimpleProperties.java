@@ -23,6 +23,11 @@ import java.util.List;
  * @since 1.0.0
  */
 @ConfigurationProperties(CanalSimpleProperties.PREFIX)
+/**
+ * <p>Auto-configuration for CanalSimpleProperties.</p>
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
+ * @since 1.0.0
+ */
 public class CanalSimpleProperties {
 
     /** Default Canal server TCP port. */
@@ -39,6 +44,7 @@ public class CanalSimpleProperties {
     private List<CanalSimpleProperties.Instance> instances = new ArrayList<>();
 
     public List<CanalSimpleProperties.Instance> getInstances() { return instances; }
+    /** @param instances set the instances. */
     public void setInstances(List<CanalSimpleProperties.Instance> instances) { this.instances = instances; }
 
     /**
@@ -65,23 +71,41 @@ public class CanalSimpleProperties {
         /** Interval between retries in milliseconds. */
         private int retryInterval = 5000;
 
+        /** @return return the host. */
         public String getHost() { return host; }
+        /** @param host set the host. */
         public void setHost(String host) { this.host = host; }
+        /** @return return the port. */
         public Integer getPort() { return port; }
+        /** @param port set the port. */
         public void setPort(Integer port) { this.port = port; }
+        /** @return return the destination. */
         public String getDestination() { return destination; }
+        /** @param destination set the destination. */
         public void setDestination(String destination) { this.destination = destination; }
+        /** @return return the username. */
         public String getUsername() { return username; }
+        /** @param username set the username. */
         public void setUsername(String username) { this.username = username; }
+        /** @return return the password. */
         public String getPassword() { return password; }
+        /** @param password set the password. */
         public void setPassword(String password) { this.password = password; }
+        /** @return return the so timeout. */
         public int getSoTimeout() { return soTimeout; }
+        /** @param soTimeout set the so timeout. */
         public void setSoTimeout(int soTimeout) { this.soTimeout = soTimeout; }
+        /** @return return the idle timeout. */
         public int getIdleTimeout() { return idleTimeout; }
+        /** @param idleTimeout set the idle timeout. */
         public void setIdleTimeout(int idleTimeout) { this.idleTimeout = idleTimeout; }
+        /** @return return the retry times. */
         public int getRetryTimes() { return retryTimes; }
+        /** @param retryTimes set the retry times. */
         public void setRetryTimes(int retryTimes) { this.retryTimes = retryTimes; }
+        /** @return return the retry interval. */
         public int getRetryInterval() { return retryInterval; }
+        /** @param retryInterval set the retry interval. */
         public void setRetryInterval(int retryInterval) { this.retryInterval = retryInterval; }
 
     }

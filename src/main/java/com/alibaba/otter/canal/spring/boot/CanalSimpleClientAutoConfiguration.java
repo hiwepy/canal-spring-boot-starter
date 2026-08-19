@@ -97,6 +97,11 @@ import java.util.stream.Collectors;
 @ConditionalOnProperty(value = CanalProperties.CANAL_MODE, havingValue = "simple", matchIfMissing = true)
 @EnableConfigurationProperties({CanalProperties.class, CanalSimpleProperties.class})
 @Import(CanalThreadPoolAutoConfiguration.class)
+/**
+ * <p>Auto-configuration for CanalSimpleClientAutoConfiguration.</p>
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
+ * @since 1.0.0
+ */
 public class CanalSimpleClientAutoConfiguration {
 
     /**

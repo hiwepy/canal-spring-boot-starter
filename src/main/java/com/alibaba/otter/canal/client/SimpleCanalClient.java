@@ -29,6 +29,7 @@ public class SimpleCanalClient extends AbstractCanalClient<SimpleCanalConnector>
      * @return the destination name
      */
     @Override
+    /** @return return the destination. */
     protected String getDestination(SimpleCanalConnector connector) {
         Field clientIdentityField = ReflectionUtils.findField(SimpleCanalConnector.class, "clientIdentity");
         ReflectionUtils.makeAccessible(clientIdentityField);
@@ -50,6 +51,11 @@ public class SimpleCanalClient extends AbstractCanalClient<SimpleCanalConnector>
          * @return the constructed simple Canal client
          */
         @Override
+        /**
+         * <p>Build.</p>
+         * @param connectors
+         * @return the result
+         */
         public SimpleCanalClient build(List<SimpleCanalConnector> connectors) {
             SimpleCanalClient canalClient = new SimpleCanalClient(connectors);
             canalClient.setBatchSize(batchSize);

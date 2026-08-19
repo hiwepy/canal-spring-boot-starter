@@ -51,6 +51,11 @@ public class SyncMessageHandlerImpl extends AbstractMessageHandler {
      * @param message     the protobuf message to handle
      */
     @Override
+    /**
+     * <p>Handle message.</p>
+     * @param destination
+     * @param message
+     */
     public void handleMessage(String destination, Message message) {
         super.handleMessage(destination, message);
     }

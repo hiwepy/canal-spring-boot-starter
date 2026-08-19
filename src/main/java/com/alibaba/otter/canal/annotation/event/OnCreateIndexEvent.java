@@ -22,6 +22,11 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @OnCanalEvent(eventType = CanalEntry.EventType.CINDEX)
+/**
+ * <p>Auto-configuration for OnCreateIndexEvent.</p>
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
+ * @since 1.0.0
+ */
 public @interface OnCreateIndexEvent {
 
     /**

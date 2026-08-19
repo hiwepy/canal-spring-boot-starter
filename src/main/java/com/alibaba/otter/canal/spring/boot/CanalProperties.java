@@ -47,6 +47,11 @@ import java.util.concurrent.TimeUnit;
  * @since 1.0.0
  */
 @ConfigurationProperties(CanalProperties.PREFIX)
+/**
+ * <p>Auto-configuration for CanalProperties.</p>
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
+ * @since 1.0.0
+ */
 public class CanalProperties {
 
 	/** Configuration prefix used by Spring Boot to bind properties. */
@@ -94,19 +99,32 @@ public class CanalProperties {
 	 */
 	private List<CanalEntry.EntryType> subscribeTypes = Arrays.asList(CanalEntry.EntryType.ROWDATA);
 
+	/** @return return the mode. */
 	public ClientMode getMode() { return mode; }
+	/** @param mode set the mode. */
 	public void setMode(ClientMode mode) { this.mode = mode; }
+	/** @return return the async. */
 	public Boolean getAsync() { return async; }
+	/** @param async set the async. */
 	public void setAsync(Boolean async) { this.async = async; }
+	/** @return return the filter. */
 	public String getFilter() { return filter; }
+	/** @param filter set the filter. */
 	public void setFilter(String filter) { this.filter = filter; }
+	/** @return return the batch size. */
 	public Integer getBatchSize() { return batchSize; }
+	/** @param batchSize set the batch size. */
 	public void setBatchSize(Integer batchSize) { this.batchSize = batchSize; }
+	/** @return return the timeout. */
 	public Long getTimeout() { return timeout; }
+	/** @param timeout set the timeout. */
 	public void setTimeout(Long timeout) { this.timeout = timeout; }
+	/** @return return the unit. */
 	public TimeUnit getUnit() { return unit; }
+	/** @param unit set the unit. */
 	public void setUnit(TimeUnit unit) { this.unit = unit; }
 	public List<CanalEntry.EntryType> getSubscribeTypes() { return subscribeTypes; }
+	/** @param subscribeTypes set the subscribe types. */
 	public void setSubscribeTypes(List<CanalEntry.EntryType> subscribeTypes) { this.subscribeTypes = subscribeTypes; }
 
 	/**

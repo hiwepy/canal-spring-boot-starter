@@ -33,6 +33,11 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 @ConditionalOnClass({ CanalConnector.class, CanalLifeCycle.class, CanalPacket.class })
 @ConditionalOnProperty(value = CanalProperties.CANAL_ASYNC, havingValue = "true")
 @EnableConfigurationProperties({CanalProperties.class, CanalThreadPoolProperties.class})
+/**
+ * <p>Auto-configuration for CanalThreadPoolAutoConfiguration.</p>
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
+ * @since 1.0.0
+ */
 public class CanalThreadPoolAutoConfiguration {
 
     /**
@@ -45,6 +50,11 @@ public class CanalThreadPoolAutoConfiguration {
      * @return the initialised Canal task executor
      */
     @Bean(destroyMethod = "shutdown", name = "canalTaskExecutor")
+    /**
+     * <p>Canal task executor.</p>
+     * @param poolProperties
+     * @return the result
+     */
     public ThreadPoolTaskExecutor canalTaskExecutor(CanalThreadPoolProperties poolProperties) {
         BasicThreadFactory factory = new BasicThreadFactory.Builder().namingPattern("canal-execute-thread-%d")
                 .uncaughtExceptionHandler(new CanalThreadUncaughtExceptionHandler()).build();

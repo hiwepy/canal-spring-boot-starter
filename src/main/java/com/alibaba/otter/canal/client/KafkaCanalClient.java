@@ -37,6 +37,7 @@ public class KafkaCanalClient extends AbstractMQCanalClient<KafkaCanalConnector>
      * @return the Kafka topic name
      */
     @Override
+    /** @return return the destination. */
     protected String getDestination(KafkaCanalConnector connector) {
         Field topicField =  ReflectionUtils.findField(KafkaCanalConnector.class, "topic");
         ReflectionUtils.makeAccessible(topicField);
@@ -57,6 +58,11 @@ public class KafkaCanalClient extends AbstractMQCanalClient<KafkaCanalConnector>
          * @return the constructed Kafka Canal client
          */
         @Override
+        /**
+         * <p>Build.</p>
+         * @param connectors
+         * @return the result
+         */
         public KafkaCanalClient build(List<KafkaCanalConnector> connectors) {
             KafkaCanalClient canalClient = new KafkaCanalClient(connectors);
             canalClient.setBatchSize(batchSize);

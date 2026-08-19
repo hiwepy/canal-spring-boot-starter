@@ -50,6 +50,10 @@ public enum TableNameEnum {
     }
 
     @Override
+    /**
+     * <p>To string.</p>
+     * @return the result
+     */
     public String toString() {
         StringJoiner joiner = new StringJoiner(".").add(schema).add(table);
         return joiner.toString();

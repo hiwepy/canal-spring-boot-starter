@@ -29,6 +29,7 @@ public class RabbitMQCanalClient extends AbstractMQCanalClient<RabbitMQCanalConn
      * @return the resolved destination name
      */
     @Override
+    /** @return return the destination. */
     protected String getDestination(RabbitMQCanalConnector connector) {
         Field nameServerField =  ReflectionUtils.findField(RabbitMQCanalConnector.class, "nameServer");
         ReflectionUtils.makeAccessible(nameServerField);
@@ -49,6 +50,11 @@ public class RabbitMQCanalClient extends AbstractMQCanalClient<RabbitMQCanalConn
          * @return the constructed RabbitMQ Canal client
          */
         @Override
+        /**
+         * <p>Build.</p>
+         * @param connectors
+         * @return the result
+         */
         public RabbitMQCanalClient build(List<RabbitMQCanalConnector> connectors) {
             RabbitMQCanalClient canalClient = new RabbitMQCanalClient(connectors);
             canalClient.setBatchSize(batchSize);

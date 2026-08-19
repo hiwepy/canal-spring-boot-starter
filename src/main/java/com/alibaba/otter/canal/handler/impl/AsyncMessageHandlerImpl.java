@@ -61,6 +61,11 @@ public class AsyncMessageHandlerImpl extends AbstractMessageHandler {
      * @param message     the protobuf message to handle
      */
     @Override
+    /**
+     * <p>Handle message.</p>
+     * @param destination
+     * @param message
+     */
     public void handleMessage(String destination, Message message) {
         threadPoolTaskExecutor.execute(() -> super.handleMessage(destination, message));
     }

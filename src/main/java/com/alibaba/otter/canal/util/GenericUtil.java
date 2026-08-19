@@ -111,6 +111,7 @@ public class GenericUtil {
      * @return the resolved entry model class, or {@code null} if not found
      */
     @SuppressWarnings("unchecked")
+    /** @return return the table class. */
     public static <T> Class<T> getTableClass(EntryHandler object) {
         // Resolve the handler's generic type argument.
         Class<? extends EntryHandler> handlerClass = object.getClass();

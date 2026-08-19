@@ -100,6 +100,11 @@ import java.util.stream.Collectors;
 @ConditionalOnProperty(value = CanalProperties.CANAL_MODE, havingValue = "rocketmq")
 @EnableConfigurationProperties({CanalProperties.class, CanalRocketmqClientProperties.class})
 @Import(CanalThreadPoolAutoConfiguration.class)
+/**
+ * <p>Auto-configuration for CanalRocketmqClientAutoConfiguration.</p>
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
+ * @since 1.0.0
+ */
 public class CanalRocketmqClientAutoConfiguration {
 
 	/**
@@ -109,6 +114,10 @@ public class CanalRocketmqClientAutoConfiguration {
 	 * @return a row data handler backed by the {@link MapColumnModelFactory}
 	 */
 	@Bean
+	/**
+	 * <p>Row data handler.</p>
+	 * @return the result
+	 */
 	public RowDataHandler<List<Map<String, String>>> rowDataHandler() {
 		return new MapRowDataHandlerImpl(new MapColumnModelFactory());
 	}

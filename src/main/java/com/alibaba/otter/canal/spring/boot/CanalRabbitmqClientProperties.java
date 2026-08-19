@@ -38,6 +38,11 @@ import java.util.List;
  * @since 1.0.0
  */
 @ConfigurationProperties(CanalRabbitmqClientProperties.PREFIX)
+/**
+ * <p>Auto-configuration for CanalRabbitmqClientProperties.</p>
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
+ * @since 1.0.0
+ */
 public class CanalRabbitmqClientProperties {
 
 	/** Configuration prefix used by Spring Boot to bind properties. */
@@ -79,30 +84,51 @@ public class CanalRabbitmqClientProperties {
         /** Whether Canal messages are flattened (plain JSON) on the broker side. */
         private boolean flatMessage;
 
+        /** @return return the addresses. */
         public String getAddresses() { return addresses; }
+        /** @param addresses set the addresses. */
         public void setAddresses(String addresses) { this.addresses = addresses; }
+        /** @return return the vhost. */
         public String getVhost() { return vhost; }
+        /** @param vhost set the vhost. */
         public void setVhost(String vhost) { this.vhost = vhost; }
+        /** @return return the queue name. */
         public String getQueueName() { return queueName; }
+        /** @param queueName set the queue name. */
         public void setQueueName(String queueName) { this.queueName = queueName; }
+        /** @return return the access key. */
         public String getAccessKey() { return accessKey; }
+        /** @param accessKey set the access key. */
         public void setAccessKey(String accessKey) { this.accessKey = accessKey; }
+        /** @return return the secret key. */
         public String getSecretKey() { return secretKey; }
+        /** @param secretKey set the secret key. */
         public void setSecretKey(String secretKey) { this.secretKey = secretKey; }
+        /** @return return the resource owner id. */
         public Long getResourceOwnerId() { return resourceOwnerId; }
+        /** @param resourceOwnerId set the resource owner id. */
         public void setResourceOwnerId(Long resourceOwnerId) { this.resourceOwnerId = resourceOwnerId; }
+        /** @return return the username. */
         public String getUsername() { return username; }
+        /** @param username set the username. */
         public void setUsername(String username) { this.username = username; }
+        /** @return return the password. */
         public String getPassword() { return password; }
+        /** @param password set the password. */
         public void setPassword(String password) { this.password = password; }
+        /** @return return whether flat message is enabled. */
         public boolean isFlatMessage() { return flatMessage; }
+        /** @param flatMessage set the flat message. */
         public void setFlatMessage(boolean flatMessage) { this.flatMessage = flatMessage; }
 
     }
 
+	/** @return return whether enabled is enabled. */
 	public boolean isEnabled() { return enabled; }
+	/** @param enabled set the enabled. */
 	public void setEnabled(boolean enabled) { this.enabled = enabled; }
 	public List<CanalRabbitmqClientProperties.Instance> getInstances() { return instances; }
+	/** @param instances set the instances. */
 	public void setInstances(List<CanalRabbitmqClientProperties.Instance> instances) { this.instances = instances; }
 
 }

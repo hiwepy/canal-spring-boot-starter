@@ -73,6 +73,11 @@ public abstract class AbstractMessageHandler implements MessageHandler<Message>,
     }
 
     @Override
+    /**
+     * <p>Handle message.</p>
+     * @param destination
+     * @param message
+     */
     public void handleMessage(String destination, Message message) {
         // Iterate over entries, parsing each one.
         for (CanalEntry.Entry entry : message.getEntries()) {
@@ -183,6 +188,7 @@ public abstract class AbstractMessageHandler implements MessageHandler<Message>,
      * @throws BeansException if bean lookup fails
      */
     @Override
+    /** @param applicationContext set the application context. */
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         log.info("{}: annotation event handler is initializing....", Thread.currentThread().getName());
         // Collect every @CanalEventHandler bean.

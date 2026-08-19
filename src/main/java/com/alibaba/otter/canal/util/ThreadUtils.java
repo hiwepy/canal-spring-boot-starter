@@ -128,6 +128,11 @@ public final class ThreadUtils {
             private AtomicInteger threadIndex = new AtomicInteger(0);
 
             @Override
+            /**
+             * <p>New thread.</p>
+             * @param r
+             * @return the result
+             */
             public Thread newThread(Runnable r) {
                 Thread thread = new Thread(r, String.format("%s_%d", processName, this.threadIndex.incrementAndGet()));
                 thread.setDaemon(isDaemon);
@@ -150,6 +155,11 @@ public final class ThreadUtils {
             private AtomicInteger threadIndex = new AtomicInteger(0);
 
             @Override
+            /**
+             * <p>New thread.</p>
+             * @param r
+             * @return the result
+             */
             public Thread newThread(Runnable r) {
                 Thread thread = new Thread(r, String.format("%s_%d_%d", processName, threads, this.threadIndex.incrementAndGet()));
                 thread.setDaemon(isDaemon);
@@ -171,6 +181,11 @@ public final class ThreadUtils {
         thread.setDaemon(daemon);
         thread.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
             @Override
+            /**
+             * <p>Uncaught exception.</p>
+             * @param t
+             * @param e
+             */
             public void uncaughtException(Thread t, Throwable e) {
                 log.error("Uncaught exception in thread '" + t.getName() + "':", e);
             }

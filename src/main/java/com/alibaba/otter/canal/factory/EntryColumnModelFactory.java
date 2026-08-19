@@ -35,6 +35,12 @@ import java.util.stream.Collectors;
 public class EntryColumnModelFactory extends AbstractModelFactory<List<CanalEntry.Column>> {
 
     @Override
+    /**
+     * <p>New instance.</p>
+     * @param entryHandler
+     * @param columns
+     * @return the result
+     */
     public <R> R newInstance(EntryHandler entryHandler, List<CanalEntry.Column> columns) throws Exception {
         String canalTableName = HandlerUtil.getCanalTableNameCombination(entryHandler);
         if (TableNameEnum.ALL.name().toLowerCase().equals(canalTableName)) {
@@ -49,6 +55,13 @@ public class EntryColumnModelFactory extends AbstractModelFactory<List<CanalEntr
     }
 
     @Override
+    /**
+     * <p>New instance.</p>
+     * @param entryHandler
+     * @param columns
+     * @param updateColumn
+     * @return the result
+     */
     public <R> R newInstance(EntryHandler entryHandler, List<CanalEntry.Column> columns, Set<String> updateColumn) throws Exception {
         String canalTableName = HandlerUtil.getCanalTableNameCombination(entryHandler);
         if (TableNameEnum.ALL.name().toLowerCase().equals(canalTableName)) {

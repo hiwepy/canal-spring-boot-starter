@@ -36,6 +36,10 @@ public abstract class AbstractMQCanalClient<C extends CanalMQConnector> extends 
     }
 
     @Override
+    /**
+     * <p>Process.</p>
+     * @param connector
+     */
     public void process(C connector) {
         String destination = this.getDestination(connector);
         MessageHandler messageHandler = super.getMessageHandler();

@@ -28,6 +28,7 @@ public class ClusterCanalClient extends AbstractCanalClient<ClusterCanalConnecto
      * @return the destination name
      */
     @Override
+    /** @return return the destination. */
     protected String getDestination(ClusterCanalConnector connector) {
         Field destinationField =  ReflectionUtils.findField(ClusterCanalConnector.class, "destination");
         ReflectionUtils.makeAccessible(destinationField);
@@ -48,6 +49,11 @@ public class ClusterCanalClient extends AbstractCanalClient<ClusterCanalConnecto
          * @return the constructed cluster Canal client
          */
         @Override
+        /**
+         * <p>Build.</p>
+         * @param connectors
+         * @return the result
+         */
         public ClusterCanalClient build(List<ClusterCanalConnector> connectors) {
             ClusterCanalClient canalClient = new ClusterCanalClient(connectors);
             canalClient.setBatchSize(batchSize);

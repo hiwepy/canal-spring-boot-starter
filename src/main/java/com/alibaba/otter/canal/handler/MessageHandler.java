@@ -13,6 +13,11 @@ package com.alibaba.otter.canal.handler;
  * @since 1.0.0
  */
 @FunctionalInterface
+/**
+ * <p>Auto-configuration for MessageHandler.</p>
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
+ * @since 1.0.0
+ */
 public interface MessageHandler<T> {
 
     /**

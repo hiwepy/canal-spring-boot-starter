@@ -43,6 +43,11 @@ import java.util.function.Function;
  * @since 1.0.0
  */
 @ConfigurationProperties(CanalThreadPoolProperties.PREFIX)
+/**
+ * <p>Auto-configuration for CanalThreadPoolProperties.</p>
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
+ * @since 1.0.0
+ */
 public class CanalThreadPoolProperties {
 
 	/** Configuration prefix used by Spring Boot to bind properties. */
@@ -149,25 +154,45 @@ public class CanalThreadPoolProperties {
 
 	}
 
+	/** @return return the core pool size. */
 	public int getCorePoolSize() { return corePoolSize; }
+	/** @param corePoolSize set the core pool size. */
 	public void setCorePoolSize(int corePoolSize) { this.corePoolSize = corePoolSize; }
+	/** @return return the max pool size. */
 	public int getMaxPoolSize() { return maxPoolSize; }
+	/** @param maxPoolSize set the max pool size. */
 	public void setMaxPoolSize(int maxPoolSize) { this.maxPoolSize = maxPoolSize; }
+	/** @return return the queue capacity. */
 	public int getQueueCapacity() { return queueCapacity; }
+	/** @param queueCapacity set the queue capacity. */
 	public void setQueueCapacity(int queueCapacity) { this.queueCapacity = queueCapacity; }
+	/** @return return the keep alive. */
 	public Duration getKeepAlive() { return keepAlive; }
+	/** @param keepAlive set the keep alive. */
 	public void setKeepAlive(Duration keepAlive) { this.keepAlive = keepAlive; }
+	/** @return return whether allow core thread time out is enabled. */
 	public boolean isAllowCoreThreadTimeOut() { return allowCoreThreadTimeOut; }
+	/** @param allowCoreThreadTimeOut set the allow core thread time out. */
 	public void setAllowCoreThreadTimeOut(boolean allowCoreThreadTimeOut) { this.allowCoreThreadTimeOut = allowCoreThreadTimeOut; }
+	/** @return return whether wait for tasks to complete on shutdown is enabled. */
 	public boolean isWaitForTasksToCompleteOnShutdown() { return waitForTasksToCompleteOnShutdown; }
+	/** @param waitForTasksToCompleteOnShutdown set the wait for tasks to complete on shutdown. */
 	public void setWaitForTasksToCompleteOnShutdown(boolean waitForTasksToCompleteOnShutdown) { this.waitForTasksToCompleteOnShutdown = waitForTasksToCompleteOnShutdown; }
+	/** @return return the await termination seconds. */
 	public int getAwaitTerminationSeconds() { return awaitTerminationSeconds; }
+	/** @param awaitTerminationSeconds set the await termination seconds. */
 	public void setAwaitTerminationSeconds(int awaitTerminationSeconds) { this.awaitTerminationSeconds = awaitTerminationSeconds; }
+	/** @return return the thread name prefix. */
 	public String getThreadNamePrefix() { return threadNamePrefix; }
+	/** @param threadNamePrefix set the thread name prefix. */
 	public void setThreadNamePrefix(String threadNamePrefix) { this.threadNamePrefix = threadNamePrefix; }
+	/** @return return whether daemon is enabled. */
 	public boolean isDaemon() { return daemon; }
+	/** @param daemon set the daemon. */
 	public void setDaemon(boolean daemon) { this.daemon = daemon; }
+	/** @return return the rejected policy. */
 	public RejectedPolicy getRejectedPolicy() { return rejectedPolicy; }
+	/** @param rejectedPolicy set the rejected policy. */
 	public void setRejectedPolicy(RejectedPolicy rejectedPolicy) { this.rejectedPolicy = rejectedPolicy; }
 
 }

@@ -31,6 +31,7 @@ public class RocketMQCanalClient extends AbstractMQCanalClient<RocketMQCanalConn
      * @return the RocketMQ topic name
      */
     @Override
+    /** @return return the destination. */
     protected String getDestination(RocketMQCanalConnector connector) {
         Field topicField =  ReflectionUtils.findField(RocketMQCanalConnector.class, "topic");
         ReflectionUtils.makeAccessible(topicField);
@@ -51,6 +52,11 @@ public class RocketMQCanalClient extends AbstractMQCanalClient<RocketMQCanalConn
          * @return the constructed RocketMQ Canal client
          */
         @Override
+        /**
+         * <p>Build.</p>
+         * @param connectors
+         * @return the result
+         */
         public RocketMQCanalClient build(List<RocketMQCanalConnector> connectors) {
             RocketMQCanalClient canalClient = new RocketMQCanalClient(connectors);
             canalClient.setBatchSize(batchSize);

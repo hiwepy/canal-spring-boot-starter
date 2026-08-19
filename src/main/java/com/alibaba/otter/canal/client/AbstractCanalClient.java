@@ -63,6 +63,9 @@ public abstract class AbstractCanalClient<C extends CanalConnector> implements C
     }
 
     @Override
+    /**
+     * <p>Start.</p>
+     */
     public void start() {
         log.info("start canal client");
         workThreads = new Thread[connectors.size()];
@@ -78,6 +81,9 @@ public abstract class AbstractCanalClient<C extends CanalConnector> implements C
     }
 
     @Override
+    /**
+     * <p>Stop.</p>
+     */
     public void stop() {
         log.info("stop canal client");
         running = false;
@@ -97,6 +103,10 @@ public abstract class AbstractCanalClient<C extends CanalConnector> implements C
     protected abstract String getDestination(C connector);
 
     @Override
+    /**
+     * <p>Process.</p>
+     * @param connector
+     */
     public void process(C connector) {
         String destination = this.getDestination(connector);
         while (running) {
@@ -139,6 +149,9 @@ public abstract class AbstractCanalClient<C extends CanalConnector> implements C
     }
 
     @Override
+    /**
+     * <p>Destroy.</p>
+     */
     public void destroy() throws Exception {
         stop();
     }

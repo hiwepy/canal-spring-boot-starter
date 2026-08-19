@@ -37,6 +37,7 @@ public class PulsarMQCanalClient extends AbstractMQCanalClient<PulsarMQCanalConn
      * @return the Pulsar topic name
      */
     @Override
+    /** @return return the destination. */
     protected String getDestination(PulsarMQCanalConnector connector) {
         Field topicField =  ReflectionUtils.findField(PulsarMQCanalConnector.class, "topic");
         ReflectionUtils.makeAccessible(topicField);
@@ -57,6 +58,11 @@ public class PulsarMQCanalClient extends AbstractMQCanalClient<PulsarMQCanalConn
          * @return the constructed Pulsar Canal client
          */
         @Override
+        /**
+         * <p>Build.</p>
+         * @param connectors
+         * @return the result
+         */
         public PulsarMQCanalClient build(List<PulsarMQCanalConnector> connectors) {
             PulsarMQCanalClient canalClient = new PulsarMQCanalClient(connectors);
             canalClient.setBatchSize(batchSize);

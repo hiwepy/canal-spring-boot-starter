@@ -25,6 +25,11 @@ public class CanalThreadUncaughtExceptionHandler implements Thread.UncaughtExcep
      * @param e the uncaught throwable
      */
     @Override
+    /**
+     * <p>Uncaught exception.</p>
+     * @param t
+     * @param e
+     */
     public void uncaughtException(Thread t, Throwable e) {
         log.error("thread "+ t.getName()+" have a exception",e);
     }

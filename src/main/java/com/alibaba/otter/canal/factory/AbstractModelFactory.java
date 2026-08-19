@@ -19,6 +19,12 @@ import com.alibaba.otter.canal.util.HandlerUtil;
 public abstract class AbstractModelFactory<T> implements IModelFactory<T> {
 
     @Override
+    /**
+     * <p>New instance.</p>
+     * @param entryHandler
+     * @param t
+     * @return the result
+     */
     public <R> R newInstance(EntryHandler entryHandler, T t) throws Exception {
         String canalTableName = HandlerUtil.getCanalTableNameCombination(entryHandler);
         if (TableNameEnum.ALL.name().toLowerCase().equals(canalTableName)) {

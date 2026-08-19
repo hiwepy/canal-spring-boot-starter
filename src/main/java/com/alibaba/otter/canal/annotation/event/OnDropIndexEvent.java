@@ -22,6 +22,11 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @OnCanalEvent(eventType = CanalEntry.EventType.DINDEX)
+/**
+ * <p>Auto-configuration for OnDropIndexEvent.</p>
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
+ * @since 1.0.0
+ */
 public @interface OnDropIndexEvent {
     /**
      * Canal destination (instance) name. Defaults to empty, matching all destinations.

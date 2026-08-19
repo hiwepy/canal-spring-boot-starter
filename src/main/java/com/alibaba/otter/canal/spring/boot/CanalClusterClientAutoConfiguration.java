@@ -97,6 +97,11 @@ import java.util.stream.Collectors;
 @ConditionalOnProperty(value = CanalProperties.CANAL_MODE, havingValue = "cluster")
 @EnableConfigurationProperties({CanalProperties.class, CanalClusterProperties.class})
 @Import(CanalThreadPoolAutoConfiguration.class)
+/**
+ * <p>Auto-configuration for CanalClusterClientAutoConfiguration.</p>
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
+ * @since 1.0.0
+ */
 public class CanalClusterClientAutoConfiguration {
 
     /**

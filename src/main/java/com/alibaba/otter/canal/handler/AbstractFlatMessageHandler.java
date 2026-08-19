@@ -67,6 +67,11 @@ public abstract class AbstractFlatMessageHandler implements MessageHandler<FlatM
     }
 
     @Override
+    /**
+     * <p>Handle message.</p>
+     * @param destination
+     * @param flatMessage
+     */
     public void handleMessage(String destination, FlatMessage flatMessage) {
         // Skip if there is no data.
         List<Map<String, String>> data = flatMessage.getData();
@@ -182,6 +187,7 @@ public abstract class AbstractFlatMessageHandler implements MessageHandler<FlatM
      * @throws BeansException if bean lookup fails
      */
     @Override
+    /** @param applicationContext set the application context. */
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         log.info("{}: annotation event handler is initializing....", Thread.currentThread().getName());
         // Collect every @CanalEventHandler bean.

@@ -23,6 +23,11 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @OnCanalEvent(eventType = CanalEntry.EventType.INSERT)
+/**
+ * <p>Auto-configuration for OnInsertEvent.</p>
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
+ * @since 1.0.0
+ */
 public @interface OnInsertEvent {
 
     /**

@@ -46,6 +46,13 @@ public class MapRowDataHandlerImpl implements RowDataHandler<List<Map<String, St
      * @throws Exception if model creation or dispatch fails
      */
     @Override
+    /**
+     * <p>Handler row data.</p>
+     * @param list
+     * @param entryHandler
+     * @param eventType
+     * @return the result
+     */
     public <R> void handlerRowData(List<Map<String, String>> list, EntryHandler<R> entryHandler, CanalEntry.EventType eventType) throws Exception{
         if (Objects.isNull(list) || Objects.isNull(entryHandler) || Objects.isNull(eventType)) {
             return;

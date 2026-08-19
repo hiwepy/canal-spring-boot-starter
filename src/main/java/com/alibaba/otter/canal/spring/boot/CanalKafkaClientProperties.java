@@ -38,6 +38,11 @@ import java.util.List;
  * @since 1.0.0
  */
 @ConfigurationProperties(CanalKafkaClientProperties.PREFIX)
+/**
+ * <p>Auto-configuration for CanalKafkaClientProperties.</p>
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
+ * @since 1.0.0
+ */
 public class CanalKafkaClientProperties {
 
     private static final int DEFAULT_MAX_RETRIES = 3;
@@ -78,26 +83,43 @@ public class CanalKafkaClientProperties {
 		/** Whether Canal messages are flattened (plain JSON) on the broker side. */
 		private boolean flatMessage;
 
+		/** @return return whether earliest is enabled. */
 		public boolean isEarliest() { return earliest; }
+		/** @param earliest set the earliest. */
 		public void setEarliest(boolean earliest) { this.earliest = earliest; }
+		/** @return return the partition. */
 		public Integer getPartition() { return partition; }
+		/** @param partition set the partition. */
 		public void setPartition(Integer partition) { this.partition = partition; }
+		/** @return return the servers. */
 		public String getServers() { return servers; }
+		/** @param servers set the servers. */
 		public void setServers(String servers) { this.servers = servers; }
+		/** @return return the topic. */
 		public String getTopic() { return topic; }
+		/** @param topic set the topic. */
 		public void setTopic(String topic) { this.topic = topic; }
+		/** @return return the group id. */
 		public String getGroupId() { return groupId; }
+		/** @param groupId set the group id. */
 		public void setGroupId(String groupId) { this.groupId = groupId; }
+		/** @return return the batch size. */
 		public Integer getBatchSize() { return batchSize; }
+		/** @param batchSize set the batch size. */
 		public void setBatchSize(Integer batchSize) { this.batchSize = batchSize; }
+		/** @return return whether flat message is enabled. */
 		public boolean isFlatMessage() { return flatMessage; }
+		/** @param flatMessage set the flat message. */
 		public void setFlatMessage(boolean flatMessage) { this.flatMessage = flatMessage; }
 
 	}
 
+	/** @return return whether enabled is enabled. */
 	public boolean isEnabled() { return enabled; }
+	/** @param enabled set the enabled. */
 	public void setEnabled(boolean enabled) { this.enabled = enabled; }
 	public List<CanalKafkaClientProperties.Instance> getInstances() { return instances; }
+	/** @param instances set the instances. */
 	public void setInstances(List<CanalKafkaClientProperties.Instance> instances) { this.instances = instances; }
 
 }

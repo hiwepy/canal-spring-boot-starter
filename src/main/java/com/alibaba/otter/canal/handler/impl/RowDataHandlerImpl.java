@@ -49,6 +49,13 @@ public class RowDataHandlerImpl implements RowDataHandler<CanalEntry.RowData> {
      * @throws Exception if model creation or dispatch fails
      */
     @Override
+    /**
+     * <p>Handler row data.</p>
+     * @param rowData
+     * @param entryHandler
+     * @param eventType
+     * @return the result
+     */
     public <R> void handlerRowData(CanalEntry.RowData rowData, EntryHandler<R> entryHandler, CanalEntry.EventType eventType) throws Exception {
         if (Objects.isNull(rowData) || Objects.isNull(entryHandler) || Objects.isNull(eventType)) {
             return;

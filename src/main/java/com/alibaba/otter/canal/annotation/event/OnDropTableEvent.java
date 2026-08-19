@@ -23,6 +23,11 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @OnCanalEvent(eventType = CanalEntry.EventType.ERASE)
+/**
+ * <p>Auto-configuration for OnDropTableEvent.</p>
+ * @author <a href="https://github.com/loong10k">Loong Wan</a>
+ * @since 1.0.0
+ */
 public @interface OnDropTableEvent {
     /**
      * Canal destination (instance) name. Defaults to empty, matching all destinations.

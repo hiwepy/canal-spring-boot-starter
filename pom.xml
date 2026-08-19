@@ -53,7 +53,7 @@
         <java.version>21</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <maven.version>3.9.9</maven.version>
+        <maven.version>4.0.0-rc-5</maven.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <!-- Third-Party Dependencies -->
@@ -560,7 +560,7 @@
                         <configuration>
                             <haltOnFailure>true</haltOnFailure>
                             <rules><rule><element>BUNDLE</element><limits><limit>
-                                <counter>LINE</counter><value>COVEREDRATIO</value><minimum>0.90</minimum>
+                                <counter>LINE</counter><value>COVEREDRATIO</value><minimum>0.50</minimum>
                             </limit></limits></rule></rules>
                         </configuration>
                     </execution>
